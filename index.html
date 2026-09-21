@@ -48,8 +48,8 @@ table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;p
 <div class="app">
 <header>
   <div>
-    <div class="brand">Trade<span>Lens</span> V4</div>
-    <div class="muted">LIVE CRYPTO ANALYZER • MULTI-SOURCE • PAPER TRADING</div>
+    <div class="brand">Trade<span>Lens</span> V4.3</div>
+    <div class="muted">LIVE CRYPTO ANALYZER • CONFLUENCE ENGINE • PAPER TRADING</div>
   </div>
   <div class="actions">
     <button class="secondary" onclick="testConnection()">Test API</button>
@@ -115,6 +115,10 @@ table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;p
     <div class="metric"><span>STRUCTURE</span><b id="structure">—</b></div>
     <div class="metric"><span>24H CHANGE</span><b id="change">—</b></div>
     <div class="metric"><span>DATA</span><b id="datatype">—</b></div>
+    <div class="metric"><span>HTF TREND</span><b id="htf">—</b></div>
+    <div class="metric"><span>VOLUME RATIO</span><b id="volratio">—</b></div>
+    <div class="metric"><span>VOLATILITY</span><b id="volregime">—</b></div>
+    <div class="metric"><span>SETUP QUALITY</span><b id="quality">—</b></div>
   </div>
 </div>
 
@@ -125,12 +129,12 @@ table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;p
 
 <div class="card">
   <div class="head"><h2>Paper Journal</h2><button class="secondary" onclick="clearJournal()">Clear</button></div>
-  <table><thead><tr><th>Time</th><th>Pair</th><th>Bias</th><th>Score</th><th>Entry</th><th>Stop</th><th>Target</th></tr></thead>
+  <table><thead><tr><th>Time</th><th>Pair</th><th>Bias</th><th>Score</th><th>Quality</th><th>Entry</th><th>Stop</th><th>Target</th></tr></thead>
   <tbody id="journal"></tbody></table>
 </div>
 
 <div class="card">
-  <div class="small"><b>V4 architecture:</b> this is a static HTTPS-ready web app. It reads public market data and does not place orders. When hosted on GitHub Pages or another HTTPS host, it should no longer run under the restrictive <code>content://</code> origin that affected the downloaded file. TradeLens tries Binance first, then Coinbase and Kraken as public-data fallbacks. A secure server-side proxy can be added later if Binance is specifically blocked.</div>
+  <div class="small"><b>V4 architecture:</b> this is a static HTTPS-ready web app. It reads public market data and does not place orders. When hosted on GitHub Pages or another HTTPS host, it should no longer run under the restrictive <code>content://</code> origin that affected the downloaded file. TradeLens uses Binance first, Binance's public market-data endpoint as a backup, then Coinbase. Kraken remains in the network diagnostic only. The analysis is informational and paper-trading only.</div>
 </div>
 </div>
 
@@ -156,6 +160,7 @@ async function fetchJSON(url){
 
 const SOURCES = [
   {name:"Binance", type:"binance", hosts:["https://api.binance.com","https://api-gcp.binance.com","https://api1.binance.com","https://api2.binance.com","https://api3.binance.com","https://api4.binance.com"]},
+  {name:"Binance Market Data", type:"binanceVision", hosts:["https://data-api.binance.vision"]},
   {name:"Coinbase", type:"coinbase", hosts:["https://api.exchange.coinbase.com"]},
   {name:"Kraken", type:"kraken", hosts:["https://api.kraken.com"]}
 ];
@@ -168,11 +173,12 @@ function krakenPair(pair){return ({BTCUSDT:"XBTUSD",ETHUSDT:"ETHUSD",SOLUSDT:"SO
 function normalizeCandles(raw,type){
   if(type==="binance") return raw.map(x=>({t:x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]})).sort((a,b)=>a.t-b.t);
   if(type==="coinbase") return raw.map(x=>({t:+x[0]*1000,o:+x[3],h:+x[2],l:+x[1],c:+x[4],v:+x[5]})).sort((a,b)=>a.t-b.t);
+  if(type==="binanceVision") return raw.map(x=>({t:x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]})).sort((a,b)=>a.t-b.t);
   return raw.map(x=>({t:+x[0]*1000,o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[6]})).sort((a,b)=>a.t-b.t);
 }
 
 async function getCandles(source,pair,interval){
-  if(source.type==="binance")
+  if(source.type==="binance" || source.type==="binanceVision")
     return await fetchJSON(source.hosts[0]+"/api/v3/klines?symbol="+encodeURIComponent(pair)+"&interval="+encodeURIComponent(interval)+"&limit=200");
   if(source.type==="coinbase")
     return await fetchJSON(source.hosts[0]+"/products/"+encodeURIComponent(coinbaseProduct(pair))+"/candles?granularity="+granularity(interval));
@@ -203,7 +209,7 @@ async function testEndpoint(url){
 
 async function diagnoseSource(source){
   const results=[];
-  if(source.type==="binance"){
+  if(source.type==="binance" || source.type==="binanceVision"){
     for(const host of source.hosts){
       const r=await testEndpoint(host+"/api/v3/ping");
       results.push({host,r});
@@ -230,14 +236,14 @@ function renderDiagnostics(rows){
   }).join("");
   const good=rows.filter(x=>x.ok), bad=rows.filter(x=>!x.ok);
   $("diagStatus").textContent=good.length+"/"+rows.length+" reachable";
-  if(good.length===3) return '<div class="success"><b>All three providers are reachable.</b><br>Your network is not blocking these market-data connections.</div>';
-  if(good.length===0) return '<div class="error"><b>All three providers failed.</b><br>From this browser/network, Binance, Coinbase and Kraken could not be reached. This strongly points to a network, DNS, firewall, VPN, or regional routing restriction rather than a TradeLens hosting problem.</div>';
+  if(good.length===3) return '<div class="success"><b>All tested providers are reachable.</b><br>Your network is not blocking these market-data connections.</div>';
+  if(good.length===0) return '<div class="error"><b>All tested providers failed.</b><br>From this browser/network, Binance, Binance Market Data, Coinbase and Kraken could not be reached. This strongly points to a network, DNS, firewall, VPN, or regional routing restriction rather than a TradeLens hosting problem.</div>';
   return '<div class="info"><b>Partial connectivity detected.</b><br>'+good.map(x=>escapeHTML(x.source.name)).join(", ")+ ' reachable; '+bad.map(x=>escapeHTML(x.source.name)).join(", ")+ ' failed. The failed provider(s) are the ones your current network is unable to reach from the browser.</div>';
 }
 
 async function runNetworkDiagnostics(showMessage=true){
   $("diagStatus").textContent="Testing…";
-  $("sourceTests").innerHTML='<div class="info">Testing Binance, Coinbase and Kraken separately…</div>';
+  $("sourceTests").innerHTML='<div class="info">Testing Binance, Binance Market Data, Coinbase and Kraken separately…</div>';
   const rows=await Promise.all(SOURCES.map(s=>diagnoseSource(s)));
   lastDiagnostics=rows;
   const summary=renderDiagnostics(rows);
@@ -265,7 +271,7 @@ async function loadLive(){
   if(!sourceInfo) sourceInfo=await findWorkingSource();
   if(!sourceInfo.source){
     $("status").textContent="Connection failed";
-    $("diagnostic").innerHTML='<div class="error"><b>Could not reach Binance, Coinbase or Kraken.</b><br><br>Try another network such as Wi‑Fi or another SIM. If that works, we have confirmed a network-level block or timeout.</div>';
+    $("diagnostic").innerHTML='<div class="error"><b>Could not reach any live market source.</b><br><br>Try another network such as Wi‑Fi or another SIM. If that works, we have confirmed a network-level block or timeout.</div>';
     return;
   }
   const attempts=[sourceInfo.source,...SOURCES.filter(s=>s!==sourceInfo.source)];
@@ -275,6 +281,9 @@ async function loadLive(){
       const normalized=normalizeCandles(await getCandles(source,pair,interval),source.type);
       if(normalized.length<30) throw new Error("Too few candles returned");
       candles=normalized.slice(-200);
+      window.htfCandles=[];
+      const htfInterval=interval==="15m"?"1h":interval==="1h"?"4h":interval==="4h"?"1d":null;
+      if(htfInterval){try{window.htfCandles=normalizeCandles(await getCandles(source,pair,htfInterval),source.type).slice(-200);}catch(_){window.htfCandles=[];}}
       sourceInfo={source,host:source.hosts[0]};
       $("status").textContent="LIVE • "+source.name+" • "+new Date().toLocaleTimeString();
       $("datatype").textContent=source.name.toUpperCase();
@@ -291,42 +300,69 @@ async function loadLive(){
 
 function analyze(){
   if(candles.length<60)return;
-  const v=candles.map(x=>x.c),e20=ema(v,20),e50=ema(v,50),R=rsi(v),M=macd(v),A=atr(candles),last=v.at(-1);
-  const recent=candles.slice(-12),rh=Math.max(...recent.map(x=>x.h)),rl=Math.min(...recent.map(x=>x.l));
+  const raw=candles.slice();
+  const closed=raw.length>2?raw.slice(0,-1):raw;
+  const v=closed.map(x=>x.c), last=v.at(-1), prev=v.at(-2);
+  const e20=ema(v,20),e50=ema(v,50),R=rsi(v),M=macd(v),A=atr(closed);
+  const recent=closed.slice(-20),rh=Math.max(...recent.map(x=>x.h)),rl=Math.min(...recent.map(x=>x.l));
   const mid=(rl+rh)/2;
-  const bull=[last>e20,e20>e50,M>0,R>50,R<75,last>mid].filter(Boolean).length;
-  const bear=[last<e20,e20<e50,M<0,R<50,R>25,last<mid].filter(Boolean).length;
+  const avgVol=recent.reduce((a,x)=>a+x.v,0)/Math.max(1,recent.length);
+  const volRatio=avgVol?closed.at(-1).v/avgVol:null;
+  const atrPct=A&&last?A/last*100:null;
+  const trendGap=A?Math.abs(e20-e50)/A:0;
+  const trendBull=last>e20&&e20>e50, trendBear=last<e20&&e20<e50;
+  const momBull=M>0, momBear=M<0;
+  const rsiBull=R>50&&R<72, rsiBear=R<50&&R>28;
+  const structureBull=last>mid, structureBear=last<mid;
+  const breakoutBull=last>rh*0.998 && prev<=rh, breakoutBear=last<rl*1.002 && prev>=rl;
+  const volumePass=volRatio==null||volRatio>=1;
+  const bull=[trendBull,momBull,rsiBull,structureBull,breakoutBull,volumePass,trendGap>=0.35].filter(Boolean).length;
+  const bear=[trendBear,momBear,rsiBear,structureBear,breakoutBear,volumePass,trendGap>=0.35].filter(Boolean).length;
   let bias=bull>=4&&bull>bear?"BULLISH":bear>=4&&bear>bull?"BEARISH":"NEUTRAL";
-  let score=Math.max(bull,bear);
+  let score=Math.min(10,Math.max(bull,bear)+((trendGap>=0.35)?1:0)+((volRatio!=null&&volRatio>=1.2)?1:0));
+  const htf=window.htfCandles||[];
+  let htfTrend="—";
+  if(htf.length>=60){const hv=htf.map(x=>x.c),he20=ema(hv,20),he50=ema(hv,50),hl=hv.at(-1);htfTrend=hl>he20&&he20>he50?"BULLISH":hl<he20&&he20<he50?"BEARISH":"MIXED";}
+  if(bias!=="NEUTRAL" && ((bias==="BULLISH"&&htfTrend==="BEARISH")||(bias==="BEARISH"&&htfTrend==="BULLISH"))) score=Math.max(0,score-2);
+  const quality=score>=8&&bias!=="NEUTRAL"?"STRONG":score>=6&&bias!=="NEUTRAL"?"VALID":"WAIT";
   const entry=last, stopDist=(A||0)*1.25, direction=bias==="BEARISH"?-1:1;
   const stop=stopDist?entry-direction*stopDist:null;
   const target=stopDist?entry+direction*stopDist*2:null;
-  const account=+($("account").value||0),riskPct=+($("risk").value||0),maxLoss=account*riskPct/100;
-  const position=stopDist?maxLoss/stopDist:null;
-  analysis={bias,score,e20,e50,R,M,A,entry,stop,target,maxLoss,position,stopDist};
-  $("bias").textContent=bias;
-  $("score").textContent=score;
-  $("state").textContent=bias==="NEUTRAL"?"WAIT":"PAPER SETUP";
-  $("entry").textContent=fmt(entry);$("stop").textContent=fmt(stop);$("target").textContent=fmt(target);
-  $("position").textContent=position?position.toFixed(5):"—";$("loss").textContent=maxLoss?"$"+maxLoss.toFixed(2):"—";
-  $("atrstop").textContent=stopDist?fmt(stopDist):"—";$("rr").textContent=stopDist?"R:R 1:2":"R:R —";
-  $("ema20").textContent=fmt(e20);$("ema50").textContent=fmt(e50);$("rsi").textContent=R?R.toFixed(1):"—";$("macd").textContent=fmt(M);
-  $("atr").textContent=fmt(A);$("count").textContent=candles.length+" candles";
-  const structure=e20>e50&&last>e20?"HH/HL bias":e20<e50&&last<e20?"LH/LL bias":"mixed";
-  $("structure").textContent=structure;
-  const first=candles.find(x=>x.t>=Date.now()-86400000), change=first?((last-first.o)/first.o*100):null;
-  $("change").textContent=change==null?"—":change.toFixed(2)+"%";
+  const account=+($('account').value||0),riskPct=+($('risk').value||0),maxLoss=account*riskPct/100;
+  const rawPosition=stopDist?maxLoss/stopDist:null;
+  const maxNotional=account;
+  const position=rawPosition&&entry?Math.min(rawPosition,maxNotional/entry):null;
+  const capped=rawPosition&&position&&position<rawPosition;
+  analysis={bias,score,e20,e50,R,M,A,entry,stop,target,maxLoss,position,stopDist,htfTrend,volRatio,atrPct,quality,capped};
+  $('bias').textContent=bias;
+  $('score').textContent=score;
+  $('state').textContent=quality==="WAIT"?"WAIT":quality;
+  $('entry').textContent=fmt(entry);$('stop').textContent=fmt(stop);$('target').textContent=fmt(target);
+  $('position').textContent=position?position.toFixed(5):"—";$('loss').textContent=maxLoss?'$'+maxLoss.toFixed(2):'—';
+  $('atrstop').textContent=stopDist?fmt(stopDist):'—';$('rr').textContent=stopDist?'R:R 1:2':'R:R —';
+  $('ema20').textContent=fmt(e20);$('ema50').textContent=fmt(e50);$('rsi').textContent=R?R.toFixed(1):'—';$('macd').textContent=fmt(M);
+  $('atr').textContent=fmt(A);$('count').textContent=closed.length+' closed candles';$('htf').textContent=htfTrend;
+  $('volratio').textContent=volRatio?volRatio.toFixed(2)+'x':'—';$('volregime').textContent=atrPct==null?'—':atrPct<1?'LOW':atrPct<3?'NORMAL':'HIGH';$('quality').textContent=quality;
+  const structure=trendBull?'HH/HL bias':trendBear?'LH/LL bias':structureBull?'upper-half':'lower-half';
+  $('structure').textContent=structure;
+  const first=closed.find(x=>x.t>=Date.now()-86400000),change=first?((last-first.o)/first.o*100):null;
+  $('change').textContent=change==null?'—':change.toFixed(2)+'%';
   const checks=[
-    ["Trend alignment",bias!=="NEUTRAL"],
-    ["Momentum",M!=null&&(bias==="BULLISH"?M>0:bias==="BEARISH"?M<0:false)],
-    ["RSI zone",R!=null&&(bias==="BULLISH"?R>50&&R<75:bias==="BEARISH"?R<50&&R>25:false)],
-    ["Structure",structure!=="mixed"],
-    ["Data quality",candles.length>=60]
+    ['Trend alignment',trendBull||trendBear],
+    ['Higher timeframe',htfTrend==='MIXED'||htfTrend==='—'||htfTrend===bias],
+    ['Momentum',M!=null&&(bias==='BULLISH'?M>0:bias==='BEARISH'?M<0:false)],
+    ['RSI zone',R!=null&&(bias==='BULLISH'?rsiBull:bias==='BEARISH'?rsiBear:false)],
+    ['Structure',structure!=='upper-half'&&structure!=='lower-half'],
+    ['Volume',volRatio==null||volRatio>=1],
+    ['Volatility usable',atrPct!=null&&atrPct>0],
+    ['Data quality',closed.length>=60]
   ];
-  $("checks").innerHTML=checks.map(([n,p])=>'<span class="chip '+(p?'pass':'wait')+'">'+(p?'✓':'•')+' '+n+'</span>').join("");
-  $("explain").innerHTML=
-    "Bias is derived from EMA alignment, MACD momentum, RSI, recent price structure and the last-candle position within its recent range. "+
-    "The risk plan uses "+(A? "1.25× ATR for the stop and 2× stop distance for the target":"ATR unavailable")+"; it is a calculation aid, not a guaranteed forecast.";
+  $('checks').innerHTML=checks.map(([n,p])=>'<span class="chip '+(p?'pass':'wait')+'">'+(p?'✓':'•')+' '+n+'</span>').join('');
+  $('explain').innerHTML=
+    'Setup quality combines trend alignment, higher-timeframe direction, MACD momentum, RSI, recent structure, volume and volatility. '+
+    (htfTrend!=="—"?'Higher timeframe: <b>'+htfTrend+'</b>. ':'')+
+    (capped?'Position size was capped at 100% of account notional for this spot-style paper model. ':'')+
+    'The score is a rule-based confluence measure, not a probability of profit or a guaranteed forecast.';
 }
 
 function draw(){
@@ -357,7 +393,7 @@ function saveSetup(){
 }
 function renderJournal(){
   const rows=JSON.parse(localStorage.getItem("tradelens_v4_journal")||"[]");
-  $("journal").innerHTML=rows.length?rows.map(r=>'<tr><td>'+escapeHTML(r.time)+'</td><td>'+escapeHTML(r.pair)+'</td><td>'+escapeHTML(r.bias)+'</td><td>'+r.score+'</td><td>'+escapeHTML(r.entry)+'</td><td>'+escapeHTML(r.stop)+'</td><td>'+escapeHTML(r.target)+'</td></tr>').join(""):'<tr><td colspan="7" class="small">No saved paper setups.</td></tr>';
+  $("journal").innerHTML=rows.length?rows.map(r=>'<tr><td>'+escapeHTML(r.time)+'</td><td>'+escapeHTML(r.pair)+'</td><td>'+escapeHTML(r.bias)+'</td><td>'+r.score+'</td><td>'+escapeHTML(r.quality||'—')+'</td><td>'+escapeHTML(r.entry)+'</td><td>'+escapeHTML(r.stop)+'</td><td>'+escapeHTML(r.target)+'</td></tr>').join(""):'<tr><td colspan="8" class="small">No saved paper setups.</td></tr>';
 }
 function clearJournal(){localStorage.removeItem("tradelens_v4_journal");renderJournal()}
 
