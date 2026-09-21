@@ -36,6 +36,7 @@ canvas{width:100%;height:300px;background:#0c1425;border-radius:8px;display:bloc
 .error{background:#24151a;border:1px solid #54303a;color:#ffb5bd;padding:10px;border-radius:8px;font-size:10px;line-height:1.5}
 .success{background:#10241d;border:1px solid #235943;color:#9ce6c5;padding:10px;border-radius:8px;font-size:10px;line-height:1.5}
 .info{background:#111d33;border:1px solid #293b5d;color:#b9c9e6;padding:10px;border-radius:8px;font-size:10px;line-height:1.5}
+.diaggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}.diagitem{background:#0d1527;border:1px solid #293752;border-radius:8px;padding:9px}.diagitem b{display:block;font-size:11px;margin-bottom:4px}.diagok{color:#61d7a6}.diagbad{color:#ff9da8}.diagwarn{color:#e7c77d}@media(max-width:800px){.diaggrid{grid-template-columns:1fr}}
 table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;padding:8px;border-bottom:1px solid #202b45}th{color:#8290a8}
 .green{color:#61d7a6}.red{color:#e78c8c}.yellow{color:#e7c77d}
 .badge{padding:5px 8px;border-radius:20px;background:#172139;font-size:9px}
@@ -48,7 +49,7 @@ table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;p
 <header>
   <div>
     <div class="brand">Trade<span>Lens</span> V4</div>
-    <div class="muted">HOSTING-READY LIVE CRYPTO ANALYZER • PAPER TRADING</div>
+    <div class="muted">LIVE CRYPTO ANALYZER • MULTI-SOURCE • PAPER TRADING</div>
   </div>
   <div class="actions">
     <button class="secondary" onclick="testConnection()">Test API</button>
@@ -57,6 +58,12 @@ table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;p
 </header>
 
 <div id="diagnostic"></div>
+
+<div class="card">
+  <div class="head"><h2>Network Diagnostics</h2><span class="status" id="diagStatus">Not tested</span></div>
+  <div class="small">TradeLens tests each provider separately. A timeout/network error means your current network could not complete the request; an HTTP response means the connection reached the provider.</div>
+  <div id="sourceTests" class="diaggrid"></div>
+</div>
 
 <div class="card">
   <div class="head"><h2>Market</h2><span class="status" id="status">Ready</span></div>
@@ -123,7 +130,7 @@ table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;p
 </div>
 
 <div class="card">
-  <div class="small"><b>V4 architecture:</b> this is a static HTTPS-ready web app. It reads public market data and does not place orders. When hosted on GitHub Pages or another HTTPS host, it should no longer run under the restrictive <code>content://</code> origin that affected the downloaded file. Binance provides multiple Spot REST base endpoints; this app tries several of them automatically.</div>
+  <div class="small"><b>V4 architecture:</b> this is a static HTTPS-ready web app. It reads public market data and does not place orders. When hosted on GitHub Pages or another HTTPS host, it should no longer run under the restrictive <code>content://</code> origin that affected the downloaded file. TradeLens tries Binance first, then Coinbase and Kraken as public-data fallbacks. A secure server-side proxy can be added later if Binance is specifically blocked.</div>
 </div>
 </div>
 
@@ -147,60 +154,139 @@ async function fetchJSON(url){
   } finally{clearTimeout(tm)}
 }
 
-const API_HOSTS=[
-  "https://api.binance.com",
-  "https://api-gcp.binance.com",
-  "https://api1.binance.com",
-  "https://api2.binance.com",
-  "https://api3.binance.com",
-  "https://api4.binance.com"
+const SOURCES = [
+  {name:"Binance", type:"binance", hosts:["https://api.binance.com","https://api-gcp.binance.com","https://api1.binance.com","https://api2.binance.com","https://api3.binance.com","https://api4.binance.com"]},
+  {name:"Coinbase", type:"coinbase", hosts:["https://api.exchange.coinbase.com"]},
+  {name:"Kraken", type:"kraken", hosts:["https://api.kraken.com"]}
 ];
+let sourceInfo=null, lastDiagnostics=[];
 
-async function findWorkingAPI(){
-  const errors=[];
-  for(const h of API_HOSTS){
-    try{await fetchJSON(h+"/api/v3/ping");return {host:h,errors}}
-    catch(e){errors.push(h+": "+(e.name==="AbortError"?"timeout":e.message))}
+function granularity(interval){return interval==="15m"?900:interval==="1h"?3600:interval==="4h"?21600:86400}
+function coinbaseProduct(pair){return pair.replace("USDT","-USD")}
+function krakenPair(pair){return ({BTCUSDT:"XBTUSD",ETHUSDT:"ETHUSD",SOLUSDT:"SOLUSD",XRPUSDT:"XRPUSD",BNBUSDT:"BNBUSD"})[pair]||pair.replace("USDT","USD")}
+
+function normalizeCandles(raw,type){
+  if(type==="binance") return raw.map(x=>({t:x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]})).sort((a,b)=>a.t-b.t);
+  if(type==="coinbase") return raw.map(x=>({t:+x[0]*1000,o:+x[3],h:+x[2],l:+x[1],c:+x[4],v:+x[5]})).sort((a,b)=>a.t-b.t);
+  return raw.map(x=>({t:+x[0]*1000,o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[6]})).sort((a,b)=>a.t-b.t);
+}
+
+async function getCandles(source,pair,interval){
+  if(source.type==="binance")
+    return await fetchJSON(source.hosts[0]+"/api/v3/klines?symbol="+encodeURIComponent(pair)+"&interval="+encodeURIComponent(interval)+"&limit=200");
+  if(source.type==="coinbase")
+    return await fetchJSON(source.hosts[0]+"/products/"+encodeURIComponent(coinbaseProduct(pair))+"/candles?granularity="+granularity(interval));
+  const j=await fetchJSON(source.hosts[0]+"/0/public/OHLC?pair="+encodeURIComponent(krakenPair(pair))+"&interval="+(interval==="15m"?15:interval==="1h"?60:interval==="4h"?240:1440));
+  if(j.error && j.error.length) throw new Error(j.error.join(", "));
+  const key=Object.keys(j.result||{}).find(k=>k!=="last");
+  if(!key) throw new Error("Kraken returned no candle series");
+  return j.result[key];
+}
+
+function classifyError(e){
+  const m=String(e&&e.message||e||"");
+  if(/AbortError|timeout/i.test(m)) return {kind:"TIMEOUT",detail:"Request timed out"};
+  if(/^HTTP \d+/.test(m)) return {kind:"HTTP",detail:m};
+  if(/Failed to fetch|NetworkError|Load failed|fetch/i.test(m)) return {kind:"NETWORK/CORS",detail:"Browser could not complete the connection"};
+  return {kind:"ERROR",detail:m||"Unknown error"};
+}
+
+async function testEndpoint(url){
+  const started=performance.now();
+  try{
+    await fetchJSON(url);
+    return {ok:true,ms:Math.round(performance.now()-started),kind:"OK",detail:"HTTP response received"};
+  }catch(e){
+    const x=classifyError(e); return {ok:false,ms:Math.round(performance.now()-started),...x};
   }
-  return {host:null,errors};
+}
+
+async function diagnoseSource(source){
+  const results=[];
+  if(source.type==="binance"){
+    for(const host of source.hosts){
+      const r=await testEndpoint(host+"/api/v3/ping");
+      results.push({host,r});
+      if(r.ok) break;
+    }
+  }else if(source.type==="coinbase"){
+    results.push({host:source.hosts[0],r:await testEndpoint(source.hosts[0]+"/products/BTC-USD/stats")});
+  }else{
+    results.push({host:source.hosts[0],r:await testEndpoint(source.hosts[0]+"/0/public/Time")});
+  }
+  const ok=results.some(x=>x.r.ok);
+  const best=results.find(x=>x.r.ok)||results[results.length-1];
+  return {source,ok,results,best};
+}
+
+function renderDiagnostics(rows){
+  const box=$("sourceTests");
+  box.innerHTML=rows.map(x=>{
+    const r=x.best.r;
+    const cls=r.ok?"diagok":(r.kind==="HTTP"?"diagwarn":"diagbad");
+    const label=r.ok?"REACHABLE":r.kind==="TIMEOUT"?"TIMEOUT":r.kind==="HTTP"?"REACHED • "+r.detail:r.kind;
+    const host=x.best.host.replace(/^https:\/\//,"");
+    return '<div class="diagitem"><b>'+escapeHTML(x.source.name)+' <span class="'+cls+'">'+escapeHTML(label)+'</span></b><div class="small">'+escapeHTML(host)+'<br>'+r.ms+' ms • '+escapeHTML(r.detail)+'</div></div>';
+  }).join("");
+  const good=rows.filter(x=>x.ok), bad=rows.filter(x=>!x.ok);
+  $("diagStatus").textContent=good.length+"/"+rows.length+" reachable";
+  if(good.length===3) return '<div class="success"><b>All three providers are reachable.</b><br>Your network is not blocking these market-data connections.</div>';
+  if(good.length===0) return '<div class="error"><b>All three providers failed.</b><br>From this browser/network, Binance, Coinbase and Kraken could not be reached. This strongly points to a network, DNS, firewall, VPN, or regional routing restriction rather than a TradeLens hosting problem.</div>';
+  return '<div class="info"><b>Partial connectivity detected.</b><br>'+good.map(x=>escapeHTML(x.source.name)).join(", ")+ ' reachable; '+bad.map(x=>escapeHTML(x.source.name)).join(", ")+ ' failed. The failed provider(s) are the ones your current network is unable to reach from the browser.</div>';
+}
+
+async function runNetworkDiagnostics(showMessage=true){
+  $("diagStatus").textContent="Testing…";
+  $("sourceTests").innerHTML='<div class="info">Testing Binance, Coinbase and Kraken separately…</div>';
+  const rows=await Promise.all(SOURCES.map(s=>diagnoseSource(s)));
+  lastDiagnostics=rows;
+  const summary=renderDiagnostics(rows);
+  if(showMessage) $("diagnostic").innerHTML=summary;
+  return rows;
 }
 
 async function testConnection(){
-  $("status").textContent="Testing…";$("diagnostic").innerHTML="";
-  const result=await findWorkingAPI();
-  if(result.host){
-    apiBase=result.host;
-    $("status").textContent="API connected";
-    $("diagnostic").innerHTML='<div class="success">✓ Connected to <b>'+escapeHTML(result.host)+'</b>. TradeLens is ready to load live candles.</div>';
-  }else{
-    $("status").textContent="Connection failed";
-    $("diagnostic").innerHTML='<div class="error"><b>No Binance API endpoint could be reached.</b><br>'+result.errors.join("<br>")+'<br><br>If you are opening the downloaded file from <code>content://</code>, upload this V4 to an HTTPS host first. If it is already hosted, check whether your mobile network, DNS, VPN, ad-blocker, or ISP is blocking Binance.</div>';
-  }
+  $("status").textContent="Testing…";
+  const rows=await runNetworkDiagnostics(true);
+  const first=rows.find(x=>x.ok);
+  if(first){sourceInfo={source:first.source,host:first.best.host};$("status").textContent="API connected";}
+  else{$("status").textContent="All sources failed";sourceInfo=null;}
+}
+
+async function findWorkingSource(){
+  const rows=lastDiagnostics.length?lastDiagnostics:await runNetworkDiagnostics(false);
+  const first=rows.find(x=>x.ok);
+  return first?{source:first.source,host:first.best.host}:{source:null,host:null};
 }
 
 async function loadLive(){
-  $("status").textContent="Loading…";$("diagnostic").innerHTML="";
-  const pair=$("pair").value,interval=$("interval").value;
-  if(!apiBase){
-    const result=await findWorkingAPI();
-    if(!result.host){
-      $("status").textContent="Connection failed";
-      $("diagnostic").innerHTML='<div class="error"><b>Could not reach the live market API.</b><br>'+result.errors.join("<br>")+'<br><br>Host TradeLens on HTTPS and try again. The downloaded <code>content://</code> version is only for local preview.</div>';
+  $("status").textContent="Loading…"; $("diagnostic").innerHTML="";
+  const pair=$("pair").value, interval=$("interval").value;
+  if(!sourceInfo) sourceInfo=await findWorkingSource();
+  if(!sourceInfo.source){
+    $("status").textContent="Connection failed";
+    $("diagnostic").innerHTML='<div class="error"><b>Could not reach Binance, Coinbase or Kraken.</b><br><br>Try another network such as Wi‑Fi or another SIM. If that works, we have confirmed a network-level block or timeout.</div>';
+    return;
+  }
+  const attempts=[sourceInfo.source,...SOURCES.filter(s=>s!==sourceInfo.source)];
+  const errors=[];
+  for(const source of attempts){
+    try{
+      const normalized=normalizeCandles(await getCandles(source,pair,interval),source.type);
+      if(normalized.length<30) throw new Error("Too few candles returned");
+      candles=normalized.slice(-200);
+      sourceInfo={source,host:source.hosts[0]};
+      $("status").textContent="LIVE • "+source.name+" • "+new Date().toLocaleTimeString();
+      $("datatype").textContent=source.name.toUpperCase();
+      analyze(); draw();
+      $("diagnostic").innerHTML='<div class="success">✓ Live data loaded from <b>'+escapeHTML(source.name)+'</b>.</div>';
+      clearInterval(timer); timer=setInterval(loadLive,60000);
       return;
-    }
-    apiBase=result.host;
+    }catch(e){errors.push(source.name+": "+e.message)}
   }
-  try{
-    const raw=await fetchJSON(apiBase+"/api/v3/klines?symbol="+encodeURIComponent(pair)+"&interval="+encodeURIComponent(interval)+"&limit=200");
-    candles=raw.map(x=>({t:x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]}));
-    $("status").textContent="LIVE • "+new Date().toLocaleTimeString();
-    $("datatype").textContent="LIVE";
-    analyze();draw();
-    clearInterval(timer);timer=setInterval(loadLive,60000);
-  }catch(e){
-    apiBase=null;$("status").textContent="Data load failed";
-    $("diagnostic").innerHTML='<div class="error"><b>API connection was found, but candle loading failed.</b><br>'+escapeHTML(e.message)+'<br><br>Tap <b>Load live market</b> again. TradeLens will test the available Binance endpoints again.</div>';
-  }
+  sourceInfo=null;
+  $("status").textContent="Data load failed";
+  $("diagnostic").innerHTML='<div class="error"><b>All live sources failed for this pair/timeframe.</b><br>'+errors.map(escapeHTML).join("<br>")+'</div>';
 }
 
 function analyze(){
@@ -278,6 +364,8 @@ function clearJournal(){localStorage.removeItem("tradelens_v4_journal");renderJo
 window.addEventListener("resize",draw);
 ["pair","interval","account","risk"].forEach(id=>$(id).addEventListener("change",()=>{if(candles.length)analyze()}));
 renderJournal();
+
+window.addEventListener("load",()=>{ setTimeout(()=>runNetworkDiagnostics(true),350); });
 </script>
 </body>
 </html>
