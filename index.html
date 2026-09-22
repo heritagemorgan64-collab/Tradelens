@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080d19">
-<title>TradeLens V4.4</title>
+<title>TradeLens V5</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#080d19;color:#e8edf7;font-family:Arial,system-ui,sans-serif}
@@ -52,6 +52,27 @@ table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;p
 .miniBtn{padding:5px 7px;font-size:9px;border-radius:6px;border:1px solid #2b3855;background:#172139;color:#e5ebf4;cursor:pointer}
 @media(max-width:800px){.setupgrid,.statgrid{grid-template-columns:1fr 1fr}}
 @media(max-width:470px){.setupgrid,.statgrid{grid-template-columns:1fr}}
+
+.mtfgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tfbox{background:#151f34;border-radius:8px;padding:11px;border:1px solid #202b45}
+.tfbox .tfhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.tfbox .tfname{font-size:11px;font-weight:800}
+.tfbox .tftrend{font-size:9px;padding:4px 7px;border-radius:12px;background:#172139}
+.tfmetrics{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tfmetric{background:#0d1527;border-radius:6px;padding:7px}
+.tfmetric span{display:block;color:#8491a9;font-size:8px}
+.tfmetric b{display:block;margin-top:3px;font-size:11px}
+.confluence{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.confitem{background:#151f34;padding:10px;border-radius:8px}
+.confitem span{display:block;color:#8491a9;font-size:9px}
+.confitem b{display:block;margin-top:4px;font-size:13px}
+.trigger{background:#0d1527;border:1px solid #293752;border-radius:8px;padding:11px;margin-top:9px}
+.trigger strong{font-size:14px}
+.missing{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.missing span{padding:5px 8px;border-radius:15px;background:#172139;font-size:9px;color:#e7c77d}
+.confirmed{color:#61d7a6}.forming{color:#e7c77d}.waiting{color:#e78c8c}
+@media(max-width:800px){.mtfgrid{grid-template-columns:1fr}.confluence{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -59,7 +80,7 @@ table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;p
 <header>
   <div>
     <div class="brand">Trade<span>Lens</span> V4.4</div>
-    <div class="muted">LIVE CRYPTO ANALYZER • SETUP ENGINE • PAPER TRADING</div>
+    <div class="muted">LIVE CRYPTO ANALYZER • MULTI-TIMEFRAME CONFLUENCE • PAPER TRADING</div>
   </div>
   <div class="actions">
     <button class="secondary" onclick="testConnection()">Test API</button>
@@ -92,6 +113,61 @@ table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;p
 <div class="card">
   <div class="head"><h2>Price Chart</h2><span id="price">—</span></div>
   <canvas id="chart"></canvas>
+</div>
+
+
+<div class="card">
+  <div class="head">
+    <h2>V5 Multi-Timeframe Confluence</h2>
+    <span id="v5State" class="badge">WAITING</span>
+  </div>
+  <div class="small">
+    V5 separates direction from entry timing: <b>4H → 1H → 15M</b>.
+    A setup only becomes confirmed when the higher-timeframe direction and the lower-timeframe trigger align.
+  </div>
+
+  <div class="mtfgrid" style="margin-top:10px">
+    <div class="tfbox">
+      <div class="tfhead"><span class="tfname">4 HOUR • DIRECTION</span><span id="tf4hTrend" class="tftrend">—</span></div>
+      <div class="tfmetrics">
+        <div class="tfmetric"><span>EMA 20 / 50</span><b id="tf4hEma">—</b></div>
+        <div class="tfmetric"><span>RSI</span><b id="tf4hRsi">—</b></div>
+        <div class="tfmetric"><span>MACD</span><b id="tf4hMacd">—</b></div>
+        <div class="tfmetric"><span>STRUCTURE</span><b id="tf4hStructure">—</b></div>
+      </div>
+    </div>
+    <div class="tfbox">
+      <div class="tfhead"><span class="tfname">1 HOUR • CONFIRMATION</span><span id="tf1hTrend" class="tftrend">—</span></div>
+      <div class="tfmetrics">
+        <div class="tfmetric"><span>EMA 20 / 50</span><b id="tf1hEma">—</b></div>
+        <div class="tfmetric"><span>RSI</span><b id="tf1hRsi">—</b></div>
+        <div class="tfmetric"><span>MACD</span><b id="tf1hMacd">—</b></div>
+        <div class="tfmetric"><span>STRUCTURE</span><b id="tf1hStructure">—</b></div>
+      </div>
+    </div>
+    <div class="tfbox">
+      <div class="tfhead"><span class="tfname">15 MIN • ENTRY</span><span id="tf15mTrend" class="tftrend">—</span></div>
+      <div class="tfmetrics">
+        <div class="tfmetric"><span>EMA 20 / 50</span><b id="tf15mEma">—</b></div>
+        <div class="tfmetric"><span>RSI</span><b id="tf15mRsi">—</b></div>
+        <div class="tfmetric"><span>VOLUME</span><b id="tf15mVol">—</b></div>
+        <div class="tfmetric"><span>TRIGGER</span><b id="tf15mTrigger">—</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="confluence" style="margin-top:9px">
+    <div class="confitem"><span>CONFLUENCE</span><b id="v5Confluence">—</b></div>
+    <div class="confitem"><span>DIRECTION</span><b id="v5Direction">WAIT</b></div>
+    <div class="confitem"><span>ENTRY ZONE</span><b id="v5EntryZone">—</b></div>
+    <div class="confitem"><span>INVALIDATION</span><b id="v5Invalidation">—</b></div>
+  </div>
+
+  <div class="trigger">
+    <strong id="v5TriggerTitle">No confirmed entry trigger</strong>
+    <div class="small" id="v5TriggerText" style="margin-top:5px">Load live market data to run the V5 engine.</div>
+    <div class="missing" id="v5Missing"></div>
+  </div>
 </div>
 
 <div class="grid">
@@ -172,7 +248,7 @@ table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;p
 </div>
 
 <div class="card">
-  <div class="small"><b>V4.4 architecture:</b> this is a static HTTPS-ready web app. It reads public market data and does not place orders. When hosted on GitHub Pages or another HTTPS host, it should no longer run under the restrictive <code>content://</code> origin that affected the downloaded file. TradeLens uses Binance first, Binance's public market-data endpoint as a backup, then Coinbase. Kraken remains in diagnostics only because it is not reachable from the current browser/network. The setup engine is rule-based and does not guarantee outcomes. The analysis is informational and paper-trading only.</div>
+  <div class="small"><b>V5 architecture:</b> static HTTPS-ready paper-trading web app. It reads public market data and does not place orders. V5 checks <b>4H direction → 1H confirmation → 15M entry trigger</b>, identifies missing conditions, and calculates paper risk levels. Binance is used first, Binance Market Data is a backup, then Coinbase. Kraken remains diagnostics-only on the current browser/network. The engine is rule-based and does not guarantee outcomes.</div>
 </div>
 </div>
 
@@ -309,7 +385,7 @@ async function loadLive(){
   if(!sourceInfo) sourceInfo=await findWorkingSource();
   if(!sourceInfo.source){
     $("status").textContent="Connection failed";
-    $("diagnostic").innerHTML='<div class="error"><b>Could not reach any live market source.</b><br><br>Try another network such as Wi‑Fi or another SIM. If that works, we have confirmed a network-level block or timeout.</div>';
+    $("diagnostic").innerHTML='<div class="error"><b>Could not reach any live market source.</b><br><br>Try another network such as Wi‑Fi or another SIM.</div>';
     return;
   }
   const attempts=[sourceInfo.source,...SOURCES.filter(s=>s!==sourceInfo.source)];
@@ -319,14 +395,18 @@ async function loadLive(){
       const normalized=normalizeCandles(await getCandles(source,pair,interval),source.type);
       if(normalized.length<30) throw new Error("Too few candles returned");
       candles=normalized.slice(-200);
-      window.htfCandles=[];
-      const htfInterval=interval==="15m"?"1h":interval==="1h"?"4h":interval==="4h"?"1d":null;
-      if(htfInterval){try{window.htfCandles=normalizeCandles(await getCandles(source,pair,htfInterval),source.type).slice(-200);}catch(_){window.htfCandles=[];}}
+
+      try{
+        await loadV5Timeframes(source,pair);
+      }catch(v5err){
+        v5TF={h4:[],h1:[],m15:[]};
+      }
+
       sourceInfo={source,host:source.hosts[0]};
       $("status").textContent="LIVE • "+source.name+" • "+new Date().toLocaleTimeString();
       $("datatype").textContent=source.name.toUpperCase();
       analyze(); draw();
-      $("diagnostic").innerHTML='<div class="success">✓ Live data loaded from <b>'+escapeHTML(source.name)+'</b>.</div>';
+      $("diagnostic").innerHTML='<div class="success">✓ Live data loaded from <b>'+escapeHTML(source.name)+'</b>. V5 loaded 4H + 1H + 15M confluence data.</div>';
       clearInterval(timer); timer=setInterval(loadLive,60000);
       return;
     }catch(e){errors.push(source.name+": "+e.message)}
@@ -335,7 +415,6 @@ async function loadLive(){
   $("status").textContent="Data load failed";
   $("diagnostic").innerHTML='<div class="error"><b>All live sources failed for this pair/timeframe.</b><br>'+errors.map(escapeHTML).join("<br>")+'</div>';
 }
-
 
 function pivotLevels(arr, lookback=60){
   const data=arr.slice(-lookback);
@@ -418,6 +497,188 @@ function renderSetup(s){
     "</b><br>Target 1: <b>"+fmt(s.target1)+"</b> • Target 2: <b>"+fmt(s.target2)+"</b><br>Confluence: <b>"+s.confluence+"/6</b>. Invalidation is the level that would invalidate this setup idea.";
   $("setupChecks").innerHTML=s.checks.map(([n,p])=>'<span class="chip '+(p?'pass':'wait')+'">'+(p?'✓':'•')+' '+n+'</span>').join("");
 }
+
+let v5TF={h4:[],h1:[],m15:[]},v5Engine=null;
+
+function tfSnapshot(arr){
+  if(!arr || arr.length<60) return null;
+  const closed=arr.length>1?arr.slice(0,-1):arr;
+  const v=closed.map(x=>x.c), last=v.at(-1);
+  const e20=ema(v,20),e50=ema(v,50),R=rsi(v),M=macd(v),A=atr(closed);
+  const recent=closed.slice(-20);
+  const avgVol=recent.reduce((a,x)=>a+x.v,0)/Math.max(1,recent.length);
+  const volRatio=avgVol?closed.at(-1).v/avgVol:null;
+  const mid=(Math.min(...recent.map(x=>x.l))+Math.max(...recent.map(x=>x.h)))/2;
+  const trend=last>e20&&e20>e50?"BULLISH":last<e20&&e20<e50?"BEARISH":"MIXED";
+  const structure=trend==="BULLISH"?"HH/HL":trend==="BEARISH"?"LH/LL":last>=mid?"UPPER-HALF":"LOWER-HALF";
+  const lastC=closed.at(-1);
+  const range=Math.max(1,lastC.h-lastC.l);
+  const closePos=(lastC.c-lastC.l)/range;
+  return {closed,last,e20,e50,R,M,A,volRatio,trend,structure,closePos};
+}
+
+function trigger15(s,dir){
+  if(!s) return {ok:false,type:"DATA WAIT",detail:"15-minute data unavailable"};
+  const d=s.closed, last=s.last, prev=d.at(-2), A=s.A||last*0.01;
+  const look=d.slice(-11,-1);
+  const hi=Math.max(...look.map(x=>x.h)), lo=Math.min(...look.map(x=>x.l));
+  const touchedEma=d.slice(-5).some(x=>x.l<=s.e20+A*0.35 && x.h>=s.e20-A*0.35);
+  const bullCandle=s.closePos>=0.65 && last>last===false ? false : s.closePos>=0.65 && lastCandleBull(d);
+  const bearCandle=s.closePos<=0.35 && lastCandleBear(d);
+  const breakoutUp=last>hi && prev.c<=hi;
+  const breakoutDown=last<lo && prev.c>=lo;
+  const reclaimUp=touchedEma && last>s.e20 && bullCandle;
+  const reclaimDown=touchedEma && last<s.e20 && bearCandle;
+  const volPass=s.volRatio==null||s.volRatio>=1;
+  if(dir==="LONG"){
+    if(breakoutUp && bullCandle && volPass) return {ok:true,type:"BREAKOUT",detail:"15m closed above the recent range with bullish candle confirmation and acceptable volume."};
+    if(reclaimUp && volPass) return {ok:true,type:"EMA RECLAIM",detail:"15m reclaimed EMA20 after a pullback with bullish candle confirmation."};
+    return {ok:false,type:"WAIT",detail:volPass?"No confirmed 15m long trigger yet.":"Volume is below the confirmation threshold."};
+  }
+  if(dir==="SHORT"){
+    if(breakoutDown && bearCandle && volPass) return {ok:true,type:"BREAKDOWN",detail:"15m closed below the recent range with bearish candle confirmation and acceptable volume."};
+    if(reclaimDown && volPass) return {ok:true,type:"EMA REJECTION",detail:"15m rejected EMA20 after a pullback with bearish candle confirmation."};
+    return {ok:false,type:"WAIT",detail:volPass?"No confirmed 15m short trigger yet.":"Volume is below the confirmation threshold."};
+  }
+  return {ok:false,type:"WAIT",detail:"Higher timeframes are not aligned enough to choose a direction."};
+}
+
+function lastCandleBull(d){const x=d.at(-1);return x.c>x.o}
+function lastCandleBear(d){const x=d.at(-1);return x.c<x.o}
+
+function v5Run(){
+  const h4=tfSnapshot(v5TF.h4), h1=tfSnapshot(v5TF.h1), m15=tfSnapshot(v5TF.m15);
+  if(!h4||!h1||!m15){
+    v5Engine=null; renderV5(null); return null;
+  }
+
+  const longBase=[
+    ["4H bullish",h4.trend==="BULLISH"],
+    ["1H bullish",h1.trend==="BULLISH"],
+    ["15M bullish",m15.trend==="BULLISH" || (m15.last>m15.e20 && m15.M>0)],
+    ["Momentum positive",m15.M>0 && h1.M>0],
+    ["RSI healthy",m15.R>50 && m15.R<72],
+    ["Volume confirmed",m15.volRatio==null || m15.volRatio>=1]
+  ];
+  const shortBase=[
+    ["4H bearish",h4.trend==="BEARISH"],
+    ["1H bearish",h1.trend==="BEARISH"],
+    ["15M bearish",m15.trend==="BEARISH" || (m15.last<m15.e20 && m15.M<0)],
+    ["Momentum negative",m15.M<0 && h1.M<0],
+    ["RSI healthy",m15.R<50 && m15.R>28],
+    ["Volume confirmed",m15.volRatio==null || m15.volRatio>=1]
+  ];
+
+  const longBaseScore=longBase.filter(x=>x[1]).length;
+  const shortBaseScore=shortBase.filter(x=>x[1]).length;
+  const preferred=longBaseScore>shortBaseScore?"LONG":shortBaseScore>longBaseScore?"SHORT":"WAIT";
+  const trg=trigger15(m15,preferred);
+  const base=preferred==="LONG"?longBase:preferred==="SHORT"?shortBase:[["Direction",false]];
+  const score=base.filter(x=>x[1]).length+(trg.ok?2:0);
+  const aligned=preferred!=="WAIT" &&
+    ((preferred==="LONG"&&h4.trend==="BULLISH"&&h1.trend==="BULLISH") ||
+     (preferred==="SHORT"&&h4.trend==="BEARISH"&&h1.trend==="BEARISH"));
+  let state="WAIT", quality="WAIT";
+  if(aligned && trg.ok && score>=7){state="CONFIRMED";quality="CONFIRMED"}
+  else if(score>=4 && preferred!=="WAIT"){state="FORMING";quality="FORMING"}
+
+  const d=m15.closed, last=m15.last, A=m15.A||last*0.01;
+  const recent=d.slice(-30);
+  const support=Math.min(...recent.map(x=>x.l));
+  const resistance=Math.max(...recent.map(x=>x.h));
+  let zoneLow=null,zoneHigh=null,invalidation=null,target1=null,target2=null;
+  if(preferred==="LONG"){
+    const anchor=Math.max(m15.e20,support);
+    zoneLow=Math.max(0,Math.min(last,anchor-A*0.15));
+    zoneHigh=Math.max(last,anchor+A*0.35);
+    invalidation=Math.min(support,anchor)-A*0.5;
+    target1=last+A*2;
+    target2=last+A*3.5;
+  }else if(preferred==="SHORT"){
+    const anchor=Math.min(m15.e20,resistance);
+    zoneHigh=Math.max(last,anchor+A*0.15);
+    zoneLow=Math.max(0,Math.min(last,anchor-A*0.35));
+    invalidation=Math.max(resistance,anchor)+A*0.5;
+    target1=last-A*2;
+    target2=last-A*3.5;
+  }
+
+  const missing=(preferred==="LONG"?longBase:preferred==="SHORT"?shortBase:[["4H/1H alignment",false],["15M trigger",false]])
+    .filter(x=>!x[1]).map(x=>x[0]);
+  if(preferred!=="WAIT" && !trg.ok) missing.push("15M entry trigger");
+  const uniqueMissing=[...new Set(missing)];
+
+  v5Engine={
+    h4,h1,m15,direction:preferred,state,quality,score,maxScore:8,
+    trigger:trg,missing:uniqueMissing,zoneLow,zoneHigh,invalidation,target1,target2,
+    baseLong:longBase,baseShort:shortBase
+  };
+  renderV5(v5Engine);
+  return v5Engine;
+}
+
+function setTF(prefix,s){
+  if(!s){
+    ["Trend","Ema","Rsi","Macd","Structure","Vol","Trigger"].forEach(k=>{
+      const el=$(("tf"+prefix+k).replace("tf"+prefix+"Trend","tf"+prefix+"Trend"));
+    });
+    return;
+  }
+  const trendEl=$("tf"+prefix+"Trend");
+  trendEl.textContent=s.trend;
+  trendEl.className="tftrend "+(s.trend==="BULLISH"?"confirmed":s.trend==="BEARISH"?"waiting":"forming");
+  $("tf"+prefix+"Ema").textContent=fmt(s.e20)+" / "+fmt(s.e50);
+  $("tf"+prefix+"Rsi").textContent=s.R.toFixed(1);
+  $("tf"+prefix+"Macd").textContent=fmt(s.M);
+  $("tf"+prefix+"Structure").textContent=s.structure;
+}
+
+function renderV5(e){
+  if(!e){
+    $("v5State").textContent="WAITING";
+    $("v5State").className="badge";
+    $("v5Confluence").textContent="—";
+    $("v5Direction").textContent="WAIT";
+    $("v5EntryZone").textContent="—";
+    $("v5Invalidation").textContent="—";
+    $("v5TriggerTitle").textContent="No confirmed entry trigger";
+    $("v5TriggerText").textContent="Load live market data to run the V5 engine.";
+    $("v5Missing").innerHTML="";
+    return;
+  }
+  setTF("4h",e.h4); setTF("1h",e.h1); setTF("15m",e.m15);
+  $("tf15mVol").textContent=e.m15.volRatio==null?"—":e.m15.volRatio.toFixed(2)+"x";
+  $("tf15mTrigger").textContent=e.trigger.type;
+  $("v5State").textContent=e.state;
+  $("v5State").className="badge "+(e.state==="CONFIRMED"?"pass":e.state==="FORMING"?"wait":"bad");
+  $("v5Confluence").textContent=e.score+"/8";
+  $("v5Direction").textContent=e.direction;
+  $("v5EntryZone").textContent=e.direction==="WAIT"?"—":fmt(e.zoneLow)+" – "+fmt(e.zoneHigh);
+  $("v5Invalidation").textContent=e.direction==="WAIT"?"—":fmt(e.invalidation);
+  $("v5TriggerTitle").textContent=e.state==="CONFIRMED"
+    ? e.direction+" SETUP CONFIRMED"
+    : e.state==="FORMING"
+      ? e.direction+" SETUP FORMING"
+      : "NO CONFIRMED SETUP";
+  $("v5TriggerText").textContent=e.trigger.detail;
+  $("v5Missing").innerHTML=e.missing.length
+    ? e.missing.map(x=>'<span>• '+escapeHTML(x)+'</span>').join("")
+    : '<span class="pass">✓ All V5 conditions aligned</span>';
+}
+
+async function loadV5Timeframes(source,pair){
+  const [h4,h1,m15]=await Promise.all([
+    getCandles(source,pair,"4h"),
+    getCandles(source,pair,"1h"),
+    getCandles(source,pair,"15m")
+  ]);
+  v5TF={
+    h4:normalizeCandles(h4,source.type).slice(-200),
+    h1:normalizeCandles(h1,source.type).slice(-200),
+    m15:normalizeCandles(m15,source.type).slice(-200)
+  };
+}
+
 function analyze(){
   if(candles.length<60)return;
   const raw=candles.slice();
@@ -453,7 +714,23 @@ function analyze(){
   const maxNotional=account;
   const position=rawPosition&&entry?Math.min(rawPosition,maxNotional/entry):null;
   const capped=rawPosition&&position&&position<rawPosition;
-  analysis={bias,score,e20,e50,R,M,A,entry,stop,target,maxLoss,position,stopDist,htfTrend,volRatio,atrPct,quality,capped};
+  const v5=v5Run();
+  if(v5 && v5.direction!=="WAIT"){
+    bias=v5.direction==="LONG"?"BULLISH":"BEARISH";
+    score=Math.min(10,Math.round(v5.score/8*10));
+    if(v5.state==="CONFIRMED") quality="CONFIRMED";
+    else if(v5.state==="FORMING") quality="FORMING";
+    else quality="WAIT";
+    const v5Entry=v5.direction==="LONG"?v5.zoneHigh:v5.zoneLow;
+    const v5Stop=v5.invalidation;
+    const v5Target=v5.target1;
+    const v5Risk=Math.abs(v5Entry-v5Stop);
+    const v5RawPos=v5Risk?maxLoss/v5Risk:null;
+    const v5Pos=v5RawPos&&v5Entry?Math.min(v5RawPos,account/v5Entry):null;
+    analysis={bias,score,e20,e50,R,M,A,entry:v5Entry,stop:v5Stop,target:v5Target,maxLoss,position:v5Pos,stopDist:v5Risk,htfTrend,volRatio,atrPct,quality,capped:v5RawPos&&v5Pos&&v5Pos<v5RawPos,v5};
+  }else{
+    analysis={bias,score,e20,e50,R,M,A,entry,stop,target,maxLoss,position,stopDist,htfTrend,volRatio,atrPct,quality,capped,v5};
+  }
   analysis.setup=deriveSetup(closed,last,A,trendBull,trendBear,htfTrend,R,M,volRatio); renderSetup(analysis.setup);
   $('bias').textContent=bias;
   $('score').textContent=score;
@@ -480,7 +757,7 @@ function analyze(){
   ];
   $('checks').innerHTML=checks.map(([n,p])=>'<span class="chip '+(p?'pass':'wait')+'">'+(p?'✓':'•')+' '+n+'</span>').join('');
   $('explain').innerHTML=
-    'Setup quality combines trend alignment, higher-timeframe direction, MACD momentum, RSI, recent structure, volume and volatility. '+
+    'V5 separates higher-timeframe direction from lower-timeframe entry timing. It checks 4H → 1H → 15M confluence, then requires a 15M trigger before a setup can become confirmed. The supporting analysis also uses MACD momentum, RSI, structure, volume and volatility. '+
     (htfTrend!=="—"?'Higher timeframe: <b>'+htfTrend+'</b>. ':'')+
     (capped?'Position size was capped at 100% of account notional for this spot-style paper model. ':'')+
     'The score is a rule-based confluence measure, not a probability of profit or a guaranteed forecast.';
