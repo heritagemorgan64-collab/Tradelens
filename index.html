@@ -4,850 +4,102 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080d19">
-<title>TradeLens V5</title>
+<title>TradeLens V6</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#080d19;color:#e8edf7;font-family:Arial,system-ui,sans-serif}
-.app{max-width:1180px;margin:auto;padding:14px}
-header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
-.brand{font-size:26px;font-weight:800}.brand span{color:#61d7a6}
-.muted{font-size:10px;color:#7f8ca5;margin-top:3px}
-.actions{display:flex;gap:7px;flex-wrap:wrap}
-button{font:inherit;cursor:pointer}
-.primary{background:#61d7a6;color:#06140e;border:0;border-radius:8px;padding:10px 14px;font-weight:800}
-.secondary{background:#172139;color:#e5ebf4;border:1px solid #2b3855;border-radius:8px;padding:9px 12px}
-.card{background:#10182b;border:1px solid #202b45;border-radius:12px;padding:15px;margin-bottom:13px}
-.head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:13px}
-.head h2{font-size:15px;margin:0}.status{font-size:10px;color:#61d7a6}
-.controls{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;gap:9px}
-.field{display:grid;gap:5px}.field label{font-size:9px;color:#8592aa}
-select,input{width:100%;background:#0d1527;color:#e8edf7;border:1px solid #293752;border-radius:7px;padding:9px}
-.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:13px}
-.bias{font-size:30px;font-weight:800}.score{font-size:34px;font-weight:800}.score small{font-size:10px;color:#8290a8}
-.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
-.chip{padding:7px 9px;border-radius:20px;background:#172139;font-size:10px}
-.pass{color:#61d7a6}.wait{color:#e7c77d}.bad{color:#e78c8c}
-.levels{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.level{background:#151f34;border-radius:8px;padding:10px}.level span{display:block;color:#8491a9;font-size:9px}.level b{font-size:14px}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.metric{background:#151f34;padding:10px;border-radius:8px}.metric span{display:block;color:#8491a9;font-size:9px}.metric b{display:block;margin-top:4px;font-size:13px}
-canvas{width:100%;height:300px;background:#0c1425;border-radius:8px;display:block}
-.small{font-size:10px;line-height:1.55;color:#8290a8}
-.error{background:#24151a;border:1px solid #54303a;color:#ffb5bd;padding:10px;border-radius:8px;font-size:10px;line-height:1.5}
-.success{background:#10241d;border:1px solid #235943;color:#9ce6c5;padding:10px;border-radius:8px;font-size:10px;line-height:1.5}
-.info{background:#111d33;border:1px solid #293b5d;color:#b9c9e6;padding:10px;border-radius:8px;font-size:10px;line-height:1.5}
-.diaggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}.diagitem{background:#0d1527;border:1px solid #293752;border-radius:8px;padding:9px}.diagitem b{display:block;font-size:11px;margin-bottom:4px}.diagok{color:#61d7a6}.diagbad{color:#ff9da8}.diagwarn{color:#e7c77d}@media(max-width:800px){.diaggrid{grid-template-columns:1fr}}
-table{width:100%;border-collapse:collapse;font-size:10px}th,td{text-align:left;padding:8px;border-bottom:1px solid #202b45}th{color:#8290a8}
-.green{color:#61d7a6}.red{color:#e78c8c}.yellow{color:#e7c77d}
-.badge{padding:5px 8px;border-radius:20px;background:#172139;font-size:9px}
-@media(max-width:800px){.controls,.grid{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}
-@media(max-width:470px){.app{padding:10px}header{align-items:flex-start;flex-direction:column}.actions{width:100%}.actions button{flex:1}}
-
-.setupgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.setupbox{background:#151f34;padding:10px;border-radius:8px}.setupbox span{display:block;color:#8491a9;font-size:9px}.setupbox b{display:block;margin-top:4px;font-size:13px}
-.zone{background:#0d1527;border:1px solid #293752;border-radius:8px;padding:11px;margin-top:9px}
-.zone b{font-size:13px}.zone .small{margin-top:4px}
-.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.stat{background:#151f34;padding:10px;border-radius:8px}.stat span{display:block;color:#8491a9;font-size:9px}.stat b{display:block;margin-top:4px;font-size:14px}
-.miniBtn{padding:5px 7px;font-size:9px;border-radius:6px;border:1px solid #2b3855;background:#172139;color:#e5ebf4;cursor:pointer}
-@media(max-width:800px){.setupgrid,.statgrid{grid-template-columns:1fr 1fr}}
-@media(max-width:470px){.setupgrid,.statgrid{grid-template-columns:1fr}}
-
-.mtfgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.tfbox{background:#151f34;border-radius:8px;padding:11px;border:1px solid #202b45}
-.tfbox .tfhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.tfbox .tfname{font-size:11px;font-weight:800}
-.tfbox .tftrend{font-size:9px;padding:4px 7px;border-radius:12px;background:#172139}
-.tfmetrics{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.tfmetric{background:#0d1527;border-radius:6px;padding:7px}
-.tfmetric span{display:block;color:#8491a9;font-size:8px}
-.tfmetric b{display:block;margin-top:3px;font-size:11px}
-.confluence{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.confitem{background:#151f34;padding:10px;border-radius:8px}
-.confitem span{display:block;color:#8491a9;font-size:9px}
-.confitem b{display:block;margin-top:4px;font-size:13px}
-.trigger{background:#0d1527;border:1px solid #293752;border-radius:8px;padding:11px;margin-top:9px}
-.trigger strong{font-size:14px}
-.missing{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-.missing span{padding:5px 8px;border-radius:15px;background:#172139;font-size:9px;color:#e7c77d}
-.confirmed{color:#61d7a6}.forming{color:#e7c77d}.waiting{color:#e78c8c}
-@media(max-width:800px){.mtfgrid{grid-template-columns:1fr}.confluence{grid-template-columns:1fr}}
-
+*{box-sizing:border-box}body{margin:0;background:#080d19;color:#edf3ff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.app{max-width:1180px;margin:auto;padding:18px}.brand{font-size:30px;font-weight:850}.green{color:#57d7a1}.muted{color:#8290aa}
+header{display:flex;justify-content:space-between;gap:15px;margin-bottom:18px}.badge{padding:7px 11px;border:1px solid #263653;border-radius:999px;background:#0d1425;font-size:12px}
+.card{background:#10182b;border:1px solid #263653;border-radius:18px;padding:18px;margin-bottom:16px}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}label{display:block;font-size:12px;color:#8290aa;margin-bottom:7px}
+input,select,button{width:100%;border-radius:12px;border:1px solid #263653;background:#0d1527;color:#edf3ff;padding:13px;font-size:15px}button{font-weight:750;cursor:pointer}.primary{background:#57d7a1;color:#07140f!important}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.status{padding:12px;border-radius:12px;background:#0d1527;border:1px solid #263653;margin-top:12px}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{padding:13px;border-radius:12px;background:#0c1425;border:1px solid #263653}.v{font-size:20px;font-weight:800;margin-top:3px}
+.good{color:#57d7a1}.bad{color:#ff7180}.warn{color:#f2c66d}.score{font-size:42px;font-weight:850}.meter{height:10px;border-radius:10px;background:#0a1120;overflow:hidden}.meter>div{height:100%;background:#57d7a1;width:0}
+.rows{display:grid;gap:8px}.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1d2940}.row:last-child{border-bottom:0}
+.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.box{background:#0c1425;border:1px solid #263653;border-radius:12px;padding:13px}
+canvas{width:100%;height:330px;background:#0a1120;border:1px solid #263653;border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px;border-bottom:1px solid #263653}th{color:#8290aa}
+.footer{text-align:center;color:#8290aa;font-size:11px;padding:10px 0 30px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.statgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.app{padding:12px}.controls,.actions{grid-template-columns:1fr}.plan{grid-template-columns:1fr}.brand{font-size:27px}canvas{height:270px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header>
-  <div>
-    <div class="brand">Trade<span>Lens</span> V4.4</div>
-    <div class="muted">LIVE CRYPTO ANALYZER • MULTI-TIMEFRAME CONFLUENCE • PAPER TRADING</div>
-  </div>
-  <div class="actions">
-    <button class="secondary" onclick="testConnection()">Test API</button>
-    <button class="primary" onclick="loadLive()">Load live market</button>
-  </div>
-</header>
+<header><div><div class="brand">Trade<span class="green">Lens</span> V6</div><div class="muted">LIVE CRYPTO ANALYZER • MULTI-TIMEFRAME • RISK ENGINE • PAPER TRADING</div></div><div class="badge" id="live">READY</div></header>
 
-<div id="diagnostic"></div>
-
-<div class="card">
-  <div class="head"><h2>Network Diagnostics</h2><span class="status" id="diagStatus">Not tested</span></div>
-  <div class="small">TradeLens tests each provider separately. A timeout/network error means your current network could not complete the request; an HTTP response means the connection reached the provider.</div>
-  <div id="sourceTests" class="diaggrid"></div>
+<div class="card"><h2>Market Control</h2>
+<div class="controls">
+<div><label>PAIR</label><select id="pair"><option>BTCUSDT</option><option>ETHUSDT</option><option>BNBUSDT</option><option>SOLUSDT</option><option>XRPUSDT</option></select></div>
+<div><label>TIMEFRAME</label><select id="tf"><option value="15m">15 minutes</option><option value="1h">1 hour</option><option value="4h">4 hours</option><option value="1d">1 day</option></select></div>
+<div><label>ACCOUNT ($)</label><input id="account" type="number" value="500"></div>
+<div><label>RISK / TRADE (%)</label><input id="risk" type="number" value="1" step=".1"></div>
 </div>
+<div class="actions"><button onclick="testAPI()">Test API</button><button class="primary" onclick="loadMarket()">Load Live Market</button></div>
+<div class="status" id="status">TradeLens V6 is ready.</div></div>
 
-<div class="card">
-  <div class="head"><h2>Market</h2><span class="status" id="status">Ready</span></div>
-  <div class="controls">
-    <div class="field"><label>PAIR</label><select id="pair">
-      <option>BTCUSDT</option><option>ETHUSDT</option><option>BNBUSDT</option><option>SOLUSDT</option><option>XRPUSDT</option>
-    </select></div>
-    <div class="field"><label>TIMEFRAME</label><select id="interval">
-      <option value="15m">15 minutes</option><option value="1h">1 hour</option><option value="4h">4 hours</option><option value="1d">1 day</option>
-    </select></div>
-    <div class="field"><label>ACCOUNT ($)</label><input id="account" type="number" value="500" min="1"></div>
-    <div class="field"><label>RISK / TRADE (%)</label><input id="risk" type="number" value="1" min=".1" max="10" step=".1"></div>
-  </div>
-</div>
+<div class="grid"><main>
+<div class="card"><h2>Price Chart</h2><canvas id="chart"></canvas></div>
+<div class="card"><h2>Market Snapshot</h2><div class="statgrid">
+<div class="stat"><div class="muted">PRICE</div><div class="v" id="price">—</div></div>
+<div class="stat"><div class="muted">24H CHANGE</div><div class="v" id="change">—</div></div>
+<div class="stat"><div class="muted">ATR</div><div class="v" id="atr">—</div></div>
+<div class="stat"><div class="muted">VOL RATIO</div><div class="v" id="vol">—</div></div>
+</div></div>
+<div class="card"><h2>Indicators</h2><div class="rows">
+<div class="row"><span>EMA 20 / EMA 50</span><strong id="ema">—</strong></div>
+<div class="row"><span>RSI 14</span><strong id="rsi">—</strong></div>
+<div class="row"><span>MACD</span><strong id="macd">—</strong></div>
+<div class="row"><span>Trend</span><strong id="trend">—</strong></div>
+<div class="row"><span>Structure</span><strong id="structure">—</strong></div>
+</div></div></main>
 
-<div class="card">
-  <div class="head"><h2>Price Chart</h2><span id="price">—</span></div>
-  <canvas id="chart"></canvas>
-</div>
+<aside>
+<div class="card"><h2>V6 Setup Engine</h2><div class="score" id="score">—<span class="muted" style="font-size:15px">/10</span></div>
+<div class="meter"><div id="meter"></div></div><p id="setup" class="muted">Waiting for market data.</p>
+<div class="rows">
+<div class="row"><span>HTF bias</span><strong id="htf">—</strong></div>
+<div class="row"><span>Momentum</span><strong id="momentum">—</strong></div>
+<div class="row"><span>RSI zone</span><strong id="rsizone">—</strong></div>
+<div class="row"><span>Data quality</span><strong id="quality">—</strong></div>
+</div></div>
 
+<div class="card"><h2>Risk Plan</h2><div class="plan">
+<div class="box"><div class="muted">ENTRY</div><strong id="entry">—</strong></div>
+<div class="box"><div class="muted">STOP</div><strong id="stop">—</strong></div>
+<div class="box"><div class="muted">TARGET</div><strong id="target">—</strong></div>
+</div><div class="rows" style="margin-top:12px">
+<div class="row"><span>Max loss</span><strong id="maxloss">—</strong></div>
+<div class="row"><span>Position size</span><strong id="size">—</strong></div>
+<div class="row"><span>Risk : Reward</span><strong>1 : 2</strong></div>
+</div></div>
 
-<div class="card">
-  <div class="head">
-    <h2>V5 Multi-Timeframe Confluence</h2>
-    <span id="v5State" class="badge">WAITING</span>
-  </div>
-  <div class="small">
-    V5 separates direction from entry timing: <b>4H → 1H → 15M</b>.
-    A setup only becomes confirmed when the higher-timeframe direction and the lower-timeframe trigger align.
-  </div>
+<div class="card"><h2>Paper Journal</h2><div class="actions"><button onclick="saveTrade()">Save Snapshot</button><button onclick="clearJournal()">Clear</button></div>
+<div style="overflow:auto;margin-top:10px"><table><thead><tr><th>Time</th><th>Pair</th><th>Bias</th><th>Score</th></tr></thead><tbody id="journal"></tbody></table></div></div>
+</aside></div>
 
-  <div class="mtfgrid" style="margin-top:10px">
-    <div class="tfbox">
-      <div class="tfhead"><span class="tfname">4 HOUR • DIRECTION</span><span id="tf4hTrend" class="tftrend">—</span></div>
-      <div class="tfmetrics">
-        <div class="tfmetric"><span>EMA 20 / 50</span><b id="tf4hEma">—</b></div>
-        <div class="tfmetric"><span>RSI</span><b id="tf4hRsi">—</b></div>
-        <div class="tfmetric"><span>MACD</span><b id="tf4hMacd">—</b></div>
-        <div class="tfmetric"><span>STRUCTURE</span><b id="tf4hStructure">—</b></div>
-      </div>
-    </div>
-    <div class="tfbox">
-      <div class="tfhead"><span class="tfname">1 HOUR • CONFIRMATION</span><span id="tf1hTrend" class="tftrend">—</span></div>
-      <div class="tfmetrics">
-        <div class="tfmetric"><span>EMA 20 / 50</span><b id="tf1hEma">—</b></div>
-        <div class="tfmetric"><span>RSI</span><b id="tf1hRsi">—</b></div>
-        <div class="tfmetric"><span>MACD</span><b id="tf1hMacd">—</b></div>
-        <div class="tfmetric"><span>STRUCTURE</span><b id="tf1hStructure">—</b></div>
-      </div>
-    </div>
-    <div class="tfbox">
-      <div class="tfhead"><span class="tfname">15 MIN • ENTRY</span><span id="tf15mTrend" class="tftrend">—</span></div>
-      <div class="tfmetrics">
-        <div class="tfmetric"><span>EMA 20 / 50</span><b id="tf15mEma">—</b></div>
-        <div class="tfmetric"><span>RSI</span><b id="tf15mRsi">—</b></div>
-        <div class="tfmetric"><span>VOLUME</span><b id="tf15mVol">—</b></div>
-        <div class="tfmetric"><span>TRIGGER</span><b id="tf15mTrigger">—</b></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="confluence" style="margin-top:9px">
-    <div class="confitem"><span>CONFLUENCE</span><b id="v5Confluence">—</b></div>
-    <div class="confitem"><span>DIRECTION</span><b id="v5Direction">WAIT</b></div>
-    <div class="confitem"><span>ENTRY ZONE</span><b id="v5EntryZone">—</b></div>
-    <div class="confitem"><span>INVALIDATION</span><b id="v5Invalidation">—</b></div>
-  </div>
-
-  <div class="trigger">
-    <strong id="v5TriggerTitle">No confirmed entry trigger</strong>
-    <div class="small" id="v5TriggerText" style="margin-top:5px">Load live market data to run the V5 engine.</div>
-    <div class="missing" id="v5Missing"></div>
-  </div>
-</div>
-
-<div class="grid">
-  <div class="card">
-    <div class="head"><h2>Analysis</h2><span id="state" class="badge">WAITING</span></div>
-    <div class="bias" id="bias">—</div>
-    <div class="score"><span id="score">—</span><small>/10</small></div>
-    <div class="chips" id="checks"></div>
-  </div>
-  <div class="card">
-    <div class="head"><h2>Risk Plan</h2><span id="rr">R:R —</span></div>
-    <div class="levels">
-      <div class="level"><span>ENTRY</span><b id="entry">—</b></div>
-      <div class="level"><span>STOP</span><b id="stop">—</b></div>
-      <div class="level"><span>TARGET</span><b id="target">—</b></div>
-      <div class="level"><span>POSITION SIZE</span><b id="position">—</b></div>
-      <div class="level"><span>MAX LOSS</span><b id="loss">—</b></div>
-      <div class="level"><span>ATR STOP</span><b id="atrstop">—</b></div>
-    </div>
-  </div>
-</div>
-
-
-<div class="card">
-  <div class="head"><h2>Setup Engine</h2><span id="setupBadge" class="badge">WAITING</span></div>
-  <div class="setupgrid">
-    <div class="setupbox"><span>SETUP TYPE</span><b id="setupType">—</b></div>
-    <div class="setupbox"><span>DIRECTION</span><b id="setupDirection">—</b></div>
-    <div class="setupbox"><span>ENTRY ZONE</span><b id="entryZone">—</b></div>
-    <div class="setupbox"><span>INVALIDATION</span><b id="invalidation">—</b></div>
-  </div>
-  <div class="zone">
-    <b id="zoneTitle">Levels</b>
-    <div class="small" id="zoneText">Load live market data to detect support, resistance and setup structure.</div>
-  </div>
-  <div class="chips" id="setupChecks"></div>
-</div>
-
-<div class="card">
-  <div class="head"><h2>Indicators</h2><span id="count">—</span></div>
-  <div class="metrics">
-    <div class="metric"><span>EMA 20</span><b id="ema20">—</b></div>
-    <div class="metric"><span>EMA 50</span><b id="ema50">—</b></div>
-    <div class="metric"><span>RSI 14</span><b id="rsi">—</b></div>
-    <div class="metric"><span>MACD</span><b id="macd">—</b></div>
-    <div class="metric"><span>ATR 14</span><b id="atr">—</b></div>
-    <div class="metric"><span>STRUCTURE</span><b id="structure">—</b></div>
-    <div class="metric"><span>24H CHANGE</span><b id="change">—</b></div>
-    <div class="metric"><span>DATA</span><b id="datatype">—</b></div>
-    <div class="metric"><span>HTF TREND</span><b id="htf">—</b></div>
-    <div class="metric"><span>VOLUME RATIO</span><b id="volratio">—</b></div>
-    <div class="metric"><span>VOLATILITY</span><b id="volregime">—</b></div>
-    <div class="metric"><span>SETUP QUALITY</span><b id="quality">—</b></div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="head"><h2>Why?</h2><button class="secondary" onclick="saveSetup()">Save setup</button></div>
-  <div id="explain" class="small">Load live market data to analyze the selected pair.</div>
-</div>
-
-
-<div class="card">
-  <div class="head"><h2>Setup Performance</h2><span class="status">From saved paper setups</span></div>
-  <div class="statgrid">
-    <div class="stat"><span>CLOSED</span><b id="statClosed">0</b></div>
-    <div class="stat"><span>WIN RATE</span><b id="statWinRate">—</b></div>
-    <div class="stat"><span>AVG R</span><b id="statAvgR">—</b></div>
-    <div class="stat"><span>TOTAL R</span><b id="statTotalR">—</b></div>
-  </div>
-  <div class="small" style="margin-top:9px">This tracks the outcomes you record; it is not a forecast of future performance.</div>
-</div>
-
-<div class="card">
-  <div class="head"><h2>Paper Journal</h2><button class="secondary" onclick="clearJournal()">Clear</button></div>
-  <table><thead><tr><th>Time</th><th>Pair</th><th>Bias</th><th>Score</th><th>Quality</th><th>Setup</th><th>Entry</th><th>Stop</th><th>Target</th><th>Outcome</th></tr></thead>
-  <tbody id="journal"></tbody></table>
-</div>
-
-<div class="card">
-  <div class="small"><b>V5 architecture:</b> static HTTPS-ready paper-trading web app. It reads public market data and does not place orders. V5 checks <b>4H direction → 1H confirmation → 15M entry trigger</b>, identifies missing conditions, and calculates paper risk levels. Binance is used first, Binance Market Data is a backup, then Coinbase. Kraken remains diagnostics-only on the current browser/network. The engine is rule-based and does not guarantee outcomes.</div>
-</div>
+<div class="card"><h3>TradeLens V6</h3><div class="muted">Rule-based analysis combines EMA trend, RSI, MACD, structure, volatility and volume. It is an informational/paper-trading tool and does not place real orders or guarantee future results.</div></div>
+<div class="footer">TradeLens V6 • Public market data • Paper trading only</div>
 </div>
 
 <script>
-let candles=[],analysis=null,timer=null,apiBase=null;
-const $=id=>document.getElementById(id);
-
-function ema(v,n){if(v.length<n)return null;let e=v.slice(0,n).reduce((a,b)=>a+b,0)/n,k=2/(n+1);for(let i=n;i<v.length;i++)e=v[i]*k+e*(1-k);return e}
-function rsi(v,n=14){if(v.length<=n)return null;let g=0,l=0;for(let i=1;i<=n;i++){let d=v[i]-v[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)}let ag=g/n,al=l/n;for(let i=n+1;i<v.length;i++){let d=v[i]-v[i-1];ag=(ag*(n-1)+Math.max(d,0))/n;al=(al*(n-1)+Math.max(-d,0))/n}return al?100-100/(1+ag/al):100}
-function atr(c,n=14){if(c.length<n+1)return null;let tr=[];for(let i=1;i<c.length;i++)tr.push(Math.max(c[i].h-c[i].l,Math.abs(c[i].h-c[i-1].c),Math.abs(c[i].l-c[i-1].c)));return tr.slice(-n).reduce((a,b)=>a+b,0)/n}
-function macd(v){let a=ema(v,12),b=ema(v,26);return a!=null&&b!=null?a-b:null}
-function fmt(x){return x==null?"—":x>=100?x.toFixed(2):x.toFixed(5)}
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-
-async function fetchJSON(url){
-  const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),9000);
-  try{
-    const r=await fetch(url,{cache:"no-store",signal:ctl.signal,mode:"cors"});
-    if(!r.ok)throw new Error("HTTP "+r.status);
-    return await r.json();
-  } finally{clearTimeout(tm)}
-}
-
-const SOURCES = [
-  {name:"Binance", type:"binance", hosts:["https://api.binance.com","https://api-gcp.binance.com","https://api1.binance.com","https://api2.binance.com","https://api3.binance.com","https://api4.binance.com"]},
-  {name:"Binance Market Data", type:"binanceVision", hosts:["https://data-api.binance.vision"]},
-  {name:"Coinbase", type:"coinbase", hosts:["https://api.exchange.coinbase.com"]},
-  {name:"Kraken", type:"kraken", hosts:["https://api.kraken.com"]}
-];
-let sourceInfo=null, lastDiagnostics=[];
-
-function granularity(interval){return interval==="15m"?900:interval==="1h"?3600:interval==="4h"?21600:86400}
-function coinbaseProduct(pair){return pair.replace("USDT","-USD")}
-function krakenPair(pair){return ({BTCUSDT:"XBTUSD",ETHUSDT:"ETHUSD",SOLUSDT:"SOLUSD",XRPUSDT:"XRPUSD",BNBUSDT:"BNBUSD"})[pair]||pair.replace("USDT","USD")}
-
-function normalizeCandles(raw,type){
-  if(type==="binance") return raw.map(x=>({t:x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]})).sort((a,b)=>a.t-b.t);
-  if(type==="coinbase") return raw.map(x=>({t:+x[0]*1000,o:+x[3],h:+x[2],l:+x[1],c:+x[4],v:+x[5]})).sort((a,b)=>a.t-b.t);
-  if(type==="binanceVision") return raw.map(x=>({t:x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]})).sort((a,b)=>a.t-b.t);
-  return raw.map(x=>({t:+x[0]*1000,o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[6]})).sort((a,b)=>a.t-b.t);
-}
-
-async function getCandles(source,pair,interval){
-  if(source.type==="binance" || source.type==="binanceVision")
-    return await fetchJSON(source.hosts[0]+"/api/v3/klines?symbol="+encodeURIComponent(pair)+"&interval="+encodeURIComponent(interval)+"&limit=200");
-  if(source.type==="coinbase")
-    return await fetchJSON(source.hosts[0]+"/products/"+encodeURIComponent(coinbaseProduct(pair))+"/candles?granularity="+granularity(interval));
-  const j=await fetchJSON(source.hosts[0]+"/0/public/OHLC?pair="+encodeURIComponent(krakenPair(pair))+"&interval="+(interval==="15m"?15:interval==="1h"?60:interval==="4h"?240:1440));
-  if(j.error && j.error.length) throw new Error(j.error.join(", "));
-  const key=Object.keys(j.result||{}).find(k=>k!=="last");
-  if(!key) throw new Error("Kraken returned no candle series");
-  return j.result[key];
-}
-
-function classifyError(e){
-  const m=String(e&&e.message||e||"");
-  if(/AbortError|timeout/i.test(m)) return {kind:"TIMEOUT",detail:"Request timed out"};
-  if(/^HTTP \d+/.test(m)) return {kind:"HTTP",detail:m};
-  if(/Failed to fetch|NetworkError|Load failed|fetch/i.test(m)) return {kind:"NETWORK/CORS",detail:"Browser could not complete the connection"};
-  return {kind:"ERROR",detail:m||"Unknown error"};
-}
-
-async function testEndpoint(url){
-  const started=performance.now();
-  try{
-    await fetchJSON(url);
-    return {ok:true,ms:Math.round(performance.now()-started),kind:"OK",detail:"HTTP response received"};
-  }catch(e){
-    const x=classifyError(e); return {ok:false,ms:Math.round(performance.now()-started),...x};
-  }
-}
-
-async function diagnoseSource(source){
-  const results=[];
-  if(source.type==="binance" || source.type==="binanceVision"){
-    for(const host of source.hosts){
-      const r=await testEndpoint(host+"/api/v3/ping");
-      results.push({host,r});
-      if(r.ok) break;
-    }
-  }else if(source.type==="coinbase"){
-    results.push({host:source.hosts[0],r:await testEndpoint(source.hosts[0]+"/products/BTC-USD/stats")});
-  }else{
-    results.push({host:source.hosts[0],r:await testEndpoint(source.hosts[0]+"/0/public/Time")});
-  }
-  const ok=results.some(x=>x.r.ok);
-  const best=results.find(x=>x.r.ok)||results[results.length-1];
-  return {source,ok,results,best};
-}
-
-function renderDiagnostics(rows){
-  const box=$("sourceTests");
-  box.innerHTML=rows.map(x=>{
-    const r=x.best.r;
-    const cls=r.ok?"diagok":(r.kind==="HTTP"?"diagwarn":"diagbad");
-    const label=r.ok?"REACHABLE":r.kind==="TIMEOUT"?"TIMEOUT":r.kind==="HTTP"?"REACHED • "+r.detail:r.kind;
-    const host=x.best.host.replace(/^https:\/\//,"");
-    return '<div class="diagitem"><b>'+escapeHTML(x.source.name)+' <span class="'+cls+'">'+escapeHTML(label)+'</span></b><div class="small">'+escapeHTML(host)+'<br>'+r.ms+' ms • '+escapeHTML(r.detail)+'</div></div>';
-  }).join("");
-  const good=rows.filter(x=>x.ok), bad=rows.filter(x=>!x.ok);
-  $("diagStatus").textContent=good.length+"/"+rows.length+" reachable";
-  if(good.length===3) return '<div class="success"><b>All tested providers are reachable.</b><br>Your network is not blocking these market-data connections.</div>';
-  if(good.length===0) return '<div class="error"><b>All tested providers failed.</b><br>From this browser/network, Binance, Binance Market Data, Coinbase and Kraken could not be reached. This strongly points to a network, DNS, firewall, VPN, or regional routing restriction rather than a TradeLens hosting problem.</div>';
-  return '<div class="info"><b>Partial connectivity detected.</b><br>'+good.map(x=>escapeHTML(x.source.name)).join(", ")+ ' reachable; '+bad.map(x=>escapeHTML(x.source.name)).join(", ")+ ' failed. The failed provider(s) are the ones your current network is unable to reach from the browser.</div>';
-}
-
-async function runNetworkDiagnostics(showMessage=true){
-  $("diagStatus").textContent="Testing…";
-  $("sourceTests").innerHTML='<div class="info">Testing Binance, Binance Market Data, Coinbase and Kraken separately…</div>';
-  const rows=await Promise.all(SOURCES.map(s=>diagnoseSource(s)));
-  lastDiagnostics=rows;
-  const summary=renderDiagnostics(rows);
-  if(showMessage) $("diagnostic").innerHTML=summary;
-  return rows;
-}
-
-async function testConnection(){
-  $("status").textContent="Testing…";
-  const rows=await runNetworkDiagnostics(true);
-  const first=rows.find(x=>x.ok);
-  if(first){sourceInfo={source:first.source,host:first.best.host};$("status").textContent="API connected";}
-  else{$("status").textContent="All sources failed";sourceInfo=null;}
-}
-
-async function findWorkingSource(){
-  const rows=lastDiagnostics.length?lastDiagnostics:await runNetworkDiagnostics(false);
-  const first=rows.find(x=>x.ok);
-  return first?{source:first.source,host:first.best.host}:{source:null,host:null};
-}
-
-async function loadLive(){
-  $("status").textContent="Loading…"; $("diagnostic").innerHTML="";
-  const pair=$("pair").value, interval=$("interval").value;
-  if(!sourceInfo) sourceInfo=await findWorkingSource();
-  if(!sourceInfo.source){
-    $("status").textContent="Connection failed";
-    $("diagnostic").innerHTML='<div class="error"><b>Could not reach any live market source.</b><br><br>Try another network such as Wi‑Fi or another SIM.</div>';
-    return;
-  }
-  const attempts=[sourceInfo.source,...SOURCES.filter(s=>s!==sourceInfo.source)];
-  const errors=[];
-  for(const source of attempts){
-    try{
-      const normalized=normalizeCandles(await getCandles(source,pair,interval),source.type);
-      if(normalized.length<30) throw new Error("Too few candles returned");
-      candles=normalized.slice(-200);
-
-      try{
-        await loadV5Timeframes(source,pair);
-      }catch(v5err){
-        v5TF={h4:[],h1:[],m15:[]};
-      }
-
-      sourceInfo={source,host:source.hosts[0]};
-      $("status").textContent="LIVE • "+source.name+" • "+new Date().toLocaleTimeString();
-      $("datatype").textContent=source.name.toUpperCase();
-      analyze(); draw();
-      $("diagnostic").innerHTML='<div class="success">✓ Live data loaded from <b>'+escapeHTML(source.name)+'</b>. V5 loaded 4H + 1H + 15M confluence data.</div>';
-      clearInterval(timer); timer=setInterval(loadLive,60000);
-      return;
-    }catch(e){errors.push(source.name+": "+e.message)}
-  }
-  sourceInfo=null;
-  $("status").textContent="Data load failed";
-  $("diagnostic").innerHTML='<div class="error"><b>All live sources failed for this pair/timeframe.</b><br>'+errors.map(escapeHTML).join("<br>")+'</div>';
-}
-
-function pivotLevels(arr, lookback=60){
-  const data=arr.slice(-lookback);
-  const supports=[],resistances=[];
-  for(let i=2;i<data.length-2;i++){
-    const q=data[i];
-    if(q.l<=data[i-1].l&&q.l<=data[i-2].l&&q.l<=data[i+1].l&&q.l<=data[i+2].l) supports.push(q.l);
-    if(q.h>=data[i-1].h&&q.h>=data[i-2].h&&q.h>=data[i+1].h&&q.h>=data[i+2].h) resistances.push(q.h);
-  }
-  return {supports,resistances};
-}
-function nearestBelow(levels,p){const a=levels.filter(x=>x<p).sort((x,y)=>y-x);return a[0]??null}
-function nearestAbove(levels,p){const a=levels.filter(x=>x>p).sort((x,y)=>x-y);return a[0]??null}
-function pctDistance(a,b){return a&&b?Math.abs(a-b)/b:Infinity}
-function deriveSetup(closed,last,A,trendBull,trendBear,htfTrend,R,M,volRatio){
-  const {supports,resistances}=pivotLevels(closed,70);
-  const support=nearestBelow(supports,last);
-  const resistance=nearestAbove(resistances,last);
-  const recent=closed.slice(-20);
-  const recentHigh=Math.max(...recent.map(x=>x.h));
-  const recentLow=Math.min(...recent.map(x=>x.l));
-  const prevClose=closed.at(-2)?.c;
-  const atrVal=A||last*0.01;
-  const nearEma20=analysis?.e20 ? pctDistance(last,analysis.e20) <= Math.max(0.004,atrVal/last*0.6) : false;
-  const brokeUp=prevClose!=null && last>recentHigh && prevClose<=recentHigh;
-  const brokeDown=prevClose!=null && last<recentLow && prevClose>=recentLow;
-  const retestUp=trendBull && support && pctDistance(last,support)<=Math.max(0.006,atrVal/last*0.75);
-  const retestDown=trendBear && resistance && pctDistance(last,resistance)<=Math.max(0.006,atrVal/last*0.75);
-  const pullbackBull=trendBull && (nearEma20||retestUp);
-  const pullbackBear=trendBear && (nearEma20||retestDown);
-  let type="NO CLEAR SETUP", direction="WAIT";
-  if(brokeUp && trendBull){type="BREAKOUT";direction="LONG"}
-  else if(brokeDown && trendBear){type="BREAKOUT";direction="SHORT"}
-  else if(pullbackBull && (htfTrend==="BULLISH"||htfTrend==="—"||htfTrend==="MIXED")){type="PULLBACK / RETEST";direction="LONG"}
-  else if(pullbackBear && (htfTrend==="BEARISH"||htfTrend==="—"||htfTrend==="MIXED")){type="PULLBACK / RETEST";direction="SHORT"}
-  else if(trendBull && R>50 && M>0){type="TREND CONTINUATION WATCH";direction="LONG"}
-  else if(trendBear && R<50 && M<0){type="TREND CONTINUATION WATCH";direction="SHORT"}
-  const buffer=atrVal*0.25;
-  let zoneLow=last,zoneHigh=last,invalidation=null,target1=null,target2=null;
-  if(direction==="LONG"){
-    const anchor=support||analysis?.e20||last;
-    zoneLow=Math.max(0,Math.min(last,anchor+buffer*0.15));
-    zoneHigh=Math.max(last,anchor+buffer*0.65);
-    invalidation=(support||anchor)-buffer;
-    target1=resistance&&resistance>last?resistance:last+atrVal*1.5;
-    target2=target1+atrVal*1.25;
-  }else if(direction==="SHORT"){
-    const anchor=resistance||analysis?.e20||last;
-    zoneHigh=Math.max(last,anchor-buffer*0.15);
-    zoneLow=Math.max(0,Math.min(last,anchor-buffer*0.65));
-    invalidation=(resistance||anchor)+buffer;
-    target1=support&&support<last?support:last-atrVal*1.5;
-    target2=target1-atrVal*1.25;
-  }
-  const usable=direction!=="WAIT" && zoneLow>0 && zoneHigh>0 && invalidation!=null;
-  const checks=[
-    ["Trend",direction==="LONG"?trendBull:direction==="SHORT"?trendBear:false],
-    ["HTF",direction==="LONG"?htfTrend==="BULLISH":direction==="SHORT"?htfTrend==="BEARISH":false],
-    ["Momentum",direction==="LONG"?M>0:direction==="SHORT"?M<0:false],
-    ["RSI",direction==="LONG"?R>50&&R<72:direction==="SHORT"?R<50&&R>28:false],
-    ["Volume",volRatio==null||volRatio>=1],
-    ["Structure",support!=null||resistance!=null]
-  ];
-  const confluence=checks.filter(x=>x[1]).length;
-  const quality=usable&&confluence>=5?"ACTIONABLE":usable&&confluence>=4?"WATCH":"WAIT";
-  return {type,direction,support,resistance,zoneLow,zoneHigh,invalidation,target1,target2,checks,confluence,quality,usable};
-}
-function renderSetup(s){
-  if(!s){return}
-  $("setupType").textContent=s.type;
-  $("setupDirection").textContent=s.direction;
-  $("entryZone").textContent=s.direction==="WAIT"?"—":fmt(s.zoneLow)+" – "+fmt(s.zoneHigh);
-  $("invalidation").textContent=s.direction==="WAIT"?"—":fmt(s.invalidation);
-  $("setupBadge").textContent=s.quality;
-  $("setupBadge").className="badge "+(s.quality==="ACTIONABLE"?"pass":s.quality==="WATCH"?"wait":"bad");
-  $("zoneTitle").textContent=s.direction==="WAIT"?"No trade setup confirmed":(s.direction==="LONG"?"Long plan":"Short plan");
-  $("zoneText").innerHTML=s.direction==="WAIT" ?
-    "The engine sees no sufficiently aligned entry structure right now. Wait for a cleaner setup rather than forcing a trade." :
-    "Support: <b>"+(s.support?fmt(s.support):"—")+"</b> • Resistance: <b>"+(s.resistance?fmt(s.resistance):"—")+
-    "</b><br>Target 1: <b>"+fmt(s.target1)+"</b> • Target 2: <b>"+fmt(s.target2)+"</b><br>Confluence: <b>"+s.confluence+"/6</b>. Invalidation is the level that would invalidate this setup idea.";
-  $("setupChecks").innerHTML=s.checks.map(([n,p])=>'<span class="chip '+(p?'pass':'wait')+'">'+(p?'✓':'•')+' '+n+'</span>').join("");
-}
-
-let v5TF={h4:[],h1:[],m15:[]},v5Engine=null;
-
-function tfSnapshot(arr){
-  if(!arr || arr.length<60) return null;
-  const closed=arr.length>1?arr.slice(0,-1):arr;
-  const v=closed.map(x=>x.c), last=v.at(-1);
-  const e20=ema(v,20),e50=ema(v,50),R=rsi(v),M=macd(v),A=atr(closed);
-  const recent=closed.slice(-20);
-  const avgVol=recent.reduce((a,x)=>a+x.v,0)/Math.max(1,recent.length);
-  const volRatio=avgVol?closed.at(-1).v/avgVol:null;
-  const mid=(Math.min(...recent.map(x=>x.l))+Math.max(...recent.map(x=>x.h)))/2;
-  const trend=last>e20&&e20>e50?"BULLISH":last<e20&&e20<e50?"BEARISH":"MIXED";
-  const structure=trend==="BULLISH"?"HH/HL":trend==="BEARISH"?"LH/LL":last>=mid?"UPPER-HALF":"LOWER-HALF";
-  const lastC=closed.at(-1);
-  const range=Math.max(1,lastC.h-lastC.l);
-  const closePos=(lastC.c-lastC.l)/range;
-  return {closed,last,e20,e50,R,M,A,volRatio,trend,structure,closePos};
-}
-
-function trigger15(s,dir){
-  if(!s) return {ok:false,type:"DATA WAIT",detail:"15-minute data unavailable"};
-  const d=s.closed, last=s.last, prev=d.at(-2), A=s.A||last*0.01;
-  const look=d.slice(-11,-1);
-  const hi=Math.max(...look.map(x=>x.h)), lo=Math.min(...look.map(x=>x.l));
-  const touchedEma=d.slice(-5).some(x=>x.l<=s.e20+A*0.35 && x.h>=s.e20-A*0.35);
-  const bullCandle=s.closePos>=0.65 && last>last===false ? false : s.closePos>=0.65 && lastCandleBull(d);
-  const bearCandle=s.closePos<=0.35 && lastCandleBear(d);
-  const breakoutUp=last>hi && prev.c<=hi;
-  const breakoutDown=last<lo && prev.c>=lo;
-  const reclaimUp=touchedEma && last>s.e20 && bullCandle;
-  const reclaimDown=touchedEma && last<s.e20 && bearCandle;
-  const volPass=s.volRatio==null||s.volRatio>=1;
-  if(dir==="LONG"){
-    if(breakoutUp && bullCandle && volPass) return {ok:true,type:"BREAKOUT",detail:"15m closed above the recent range with bullish candle confirmation and acceptable volume."};
-    if(reclaimUp && volPass) return {ok:true,type:"EMA RECLAIM",detail:"15m reclaimed EMA20 after a pullback with bullish candle confirmation."};
-    return {ok:false,type:"WAIT",detail:volPass?"No confirmed 15m long trigger yet.":"Volume is below the confirmation threshold."};
-  }
-  if(dir==="SHORT"){
-    if(breakoutDown && bearCandle && volPass) return {ok:true,type:"BREAKDOWN",detail:"15m closed below the recent range with bearish candle confirmation and acceptable volume."};
-    if(reclaimDown && volPass) return {ok:true,type:"EMA REJECTION",detail:"15m rejected EMA20 after a pullback with bearish candle confirmation."};
-    return {ok:false,type:"WAIT",detail:volPass?"No confirmed 15m short trigger yet.":"Volume is below the confirmation threshold."};
-  }
-  return {ok:false,type:"WAIT",detail:"Higher timeframes are not aligned enough to choose a direction."};
-}
-
-function lastCandleBull(d){const x=d.at(-1);return x.c>x.o}
-function lastCandleBear(d){const x=d.at(-1);return x.c<x.o}
-
-function v5Run(){
-  const h4=tfSnapshot(v5TF.h4), h1=tfSnapshot(v5TF.h1), m15=tfSnapshot(v5TF.m15);
-  if(!h4||!h1||!m15){
-    v5Engine=null; renderV5(null); return null;
-  }
-
-  const longBase=[
-    ["4H bullish",h4.trend==="BULLISH"],
-    ["1H bullish",h1.trend==="BULLISH"],
-    ["15M bullish",m15.trend==="BULLISH" || (m15.last>m15.e20 && m15.M>0)],
-    ["Momentum positive",m15.M>0 && h1.M>0],
-    ["RSI healthy",m15.R>50 && m15.R<72],
-    ["Volume confirmed",m15.volRatio==null || m15.volRatio>=1]
-  ];
-  const shortBase=[
-    ["4H bearish",h4.trend==="BEARISH"],
-    ["1H bearish",h1.trend==="BEARISH"],
-    ["15M bearish",m15.trend==="BEARISH" || (m15.last<m15.e20 && m15.M<0)],
-    ["Momentum negative",m15.M<0 && h1.M<0],
-    ["RSI healthy",m15.R<50 && m15.R>28],
-    ["Volume confirmed",m15.volRatio==null || m15.volRatio>=1]
-  ];
-
-  const longBaseScore=longBase.filter(x=>x[1]).length;
-  const shortBaseScore=shortBase.filter(x=>x[1]).length;
-  const preferred=longBaseScore>shortBaseScore?"LONG":shortBaseScore>longBaseScore?"SHORT":"WAIT";
-  const trg=trigger15(m15,preferred);
-  const base=preferred==="LONG"?longBase:preferred==="SHORT"?shortBase:[["Direction",false]];
-  const score=base.filter(x=>x[1]).length+(trg.ok?2:0);
-  const aligned=preferred!=="WAIT" &&
-    ((preferred==="LONG"&&h4.trend==="BULLISH"&&h1.trend==="BULLISH") ||
-     (preferred==="SHORT"&&h4.trend==="BEARISH"&&h1.trend==="BEARISH"));
-  let state="WAIT", quality="WAIT";
-  if(aligned && trg.ok && score>=7){state="CONFIRMED";quality="CONFIRMED"}
-  else if(score>=4 && preferred!=="WAIT"){state="FORMING";quality="FORMING"}
-
-  const d=m15.closed, last=m15.last, A=m15.A||last*0.01;
-  const recent=d.slice(-30);
-  const support=Math.min(...recent.map(x=>x.l));
-  const resistance=Math.max(...recent.map(x=>x.h));
-  let zoneLow=null,zoneHigh=null,invalidation=null,target1=null,target2=null;
-  if(preferred==="LONG"){
-    const anchor=Math.max(m15.e20,support);
-    zoneLow=Math.max(0,Math.min(last,anchor-A*0.15));
-    zoneHigh=Math.max(last,anchor+A*0.35);
-    invalidation=Math.min(support,anchor)-A*0.5;
-    target1=last+A*2;
-    target2=last+A*3.5;
-  }else if(preferred==="SHORT"){
-    const anchor=Math.min(m15.e20,resistance);
-    zoneHigh=Math.max(last,anchor+A*0.15);
-    zoneLow=Math.max(0,Math.min(last,anchor-A*0.35));
-    invalidation=Math.max(resistance,anchor)+A*0.5;
-    target1=last-A*2;
-    target2=last-A*3.5;
-  }
-
-  const missing=(preferred==="LONG"?longBase:preferred==="SHORT"?shortBase:[["4H/1H alignment",false],["15M trigger",false]])
-    .filter(x=>!x[1]).map(x=>x[0]);
-  if(preferred!=="WAIT" && !trg.ok) missing.push("15M entry trigger");
-  const uniqueMissing=[...new Set(missing)];
-
-  v5Engine={
-    h4,h1,m15,direction:preferred,state,quality,score,maxScore:8,
-    trigger:trg,missing:uniqueMissing,zoneLow,zoneHigh,invalidation,target1,target2,
-    baseLong:longBase,baseShort:shortBase
-  };
-  renderV5(v5Engine);
-  return v5Engine;
-}
-
-function setTF(prefix,s){
-  if(!s){
-    ["Trend","Ema","Rsi","Macd","Structure","Vol","Trigger"].forEach(k=>{
-      const el=$(("tf"+prefix+k).replace("tf"+prefix+"Trend","tf"+prefix+"Trend"));
-    });
-    return;
-  }
-  const trendEl=$("tf"+prefix+"Trend");
-  trendEl.textContent=s.trend;
-  trendEl.className="tftrend "+(s.trend==="BULLISH"?"confirmed":s.trend==="BEARISH"?"waiting":"forming");
-  $("tf"+prefix+"Ema").textContent=fmt(s.e20)+" / "+fmt(s.e50);
-  $("tf"+prefix+"Rsi").textContent=s.R.toFixed(1);
-  $("tf"+prefix+"Macd").textContent=fmt(s.M);
-  $("tf"+prefix+"Structure").textContent=s.structure;
-}
-
-function renderV5(e){
-  if(!e){
-    $("v5State").textContent="WAITING";
-    $("v5State").className="badge";
-    $("v5Confluence").textContent="—";
-    $("v5Direction").textContent="WAIT";
-    $("v5EntryZone").textContent="—";
-    $("v5Invalidation").textContent="—";
-    $("v5TriggerTitle").textContent="No confirmed entry trigger";
-    $("v5TriggerText").textContent="Load live market data to run the V5 engine.";
-    $("v5Missing").innerHTML="";
-    return;
-  }
-  setTF("4h",e.h4); setTF("1h",e.h1); setTF("15m",e.m15);
-  $("tf15mVol").textContent=e.m15.volRatio==null?"—":e.m15.volRatio.toFixed(2)+"x";
-  $("tf15mTrigger").textContent=e.trigger.type;
-  $("v5State").textContent=e.state;
-  $("v5State").className="badge "+(e.state==="CONFIRMED"?"pass":e.state==="FORMING"?"wait":"bad");
-  $("v5Confluence").textContent=e.score+"/8";
-  $("v5Direction").textContent=e.direction;
-  $("v5EntryZone").textContent=e.direction==="WAIT"?"—":fmt(e.zoneLow)+" – "+fmt(e.zoneHigh);
-  $("v5Invalidation").textContent=e.direction==="WAIT"?"—":fmt(e.invalidation);
-  $("v5TriggerTitle").textContent=e.state==="CONFIRMED"
-    ? e.direction+" SETUP CONFIRMED"
-    : e.state==="FORMING"
-      ? e.direction+" SETUP FORMING"
-      : "NO CONFIRMED SETUP";
-  $("v5TriggerText").textContent=e.trigger.detail;
-  $("v5Missing").innerHTML=e.missing.length
-    ? e.missing.map(x=>'<span>• '+escapeHTML(x)+'</span>').join("")
-    : '<span class="pass">✓ All V5 conditions aligned</span>';
-}
-
-async function loadV5Timeframes(source,pair){
-  const [h4,h1,m15]=await Promise.all([
-    getCandles(source,pair,"4h"),
-    getCandles(source,pair,"1h"),
-    getCandles(source,pair,"15m")
-  ]);
-  v5TF={
-    h4:normalizeCandles(h4,source.type).slice(-200),
-    h1:normalizeCandles(h1,source.type).slice(-200),
-    m15:normalizeCandles(m15,source.type).slice(-200)
-  };
-}
-
-function analyze(){
-  if(candles.length<60)return;
-  const raw=candles.slice();
-  const closed=raw.length>2?raw.slice(0,-1):raw;
-  const v=closed.map(x=>x.c), last=v.at(-1), prev=v.at(-2);
-  const e20=ema(v,20),e50=ema(v,50),R=rsi(v),M=macd(v),A=atr(closed);
-  const recent=closed.slice(-20),rh=Math.max(...recent.map(x=>x.h)),rl=Math.min(...recent.map(x=>x.l));
-  const mid=(rl+rh)/2;
-  const avgVol=recent.reduce((a,x)=>a+x.v,0)/Math.max(1,recent.length);
-  const volRatio=avgVol?closed.at(-1).v/avgVol:null;
-  const atrPct=A&&last?A/last*100:null;
-  const trendGap=A?Math.abs(e20-e50)/A:0;
-  const trendBull=last>e20&&e20>e50, trendBear=last<e20&&e20<e50;
-  const momBull=M>0, momBear=M<0;
-  const rsiBull=R>50&&R<72, rsiBear=R<50&&R>28;
-  const structureBull=last>mid, structureBear=last<mid;
-  const breakoutBull=last>rh*0.998 && prev<=rh, breakoutBear=last<rl*1.002 && prev>=rl;
-  const volumePass=volRatio==null||volRatio>=1;
-  const bull=[trendBull,momBull,rsiBull,structureBull,breakoutBull,volumePass,trendGap>=0.35].filter(Boolean).length;
-  const bear=[trendBear,momBear,rsiBear,structureBear,breakoutBear,volumePass,trendGap>=0.35].filter(Boolean).length;
-  let bias=bull>=4&&bull>bear?"BULLISH":bear>=4&&bear>bull?"BEARISH":"NEUTRAL";
-  let score=Math.min(10,Math.max(bull,bear)+((trendGap>=0.35)?1:0)+((volRatio!=null&&volRatio>=1.2)?1:0));
-  const htf=window.htfCandles||[];
-  let htfTrend="—";
-  if(htf.length>=60){const hv=htf.map(x=>x.c),he20=ema(hv,20),he50=ema(hv,50),hl=hv.at(-1);htfTrend=hl>he20&&he20>he50?"BULLISH":hl<he20&&he20<he50?"BEARISH":"MIXED";}
-  if(bias!=="NEUTRAL" && ((bias==="BULLISH"&&htfTrend==="BEARISH")||(bias==="BEARISH"&&htfTrend==="BULLISH"))) score=Math.max(0,score-2);
-  const quality=score>=8&&bias!=="NEUTRAL"?"STRONG":score>=6&&bias!=="NEUTRAL"?"VALID":"WAIT";
-  const entry=last, stopDist=(A||0)*1.25, direction=bias==="BEARISH"?-1:1;
-  const stop=stopDist?entry-direction*stopDist:null;
-  const target=stopDist?entry+direction*stopDist*2:null;
-  const account=+($('account').value||0),riskPct=+($('risk').value||0),maxLoss=account*riskPct/100;
-  const rawPosition=stopDist?maxLoss/stopDist:null;
-  const maxNotional=account;
-  const position=rawPosition&&entry?Math.min(rawPosition,maxNotional/entry):null;
-  const capped=rawPosition&&position&&position<rawPosition;
-  const v5=v5Run();
-  if(v5 && v5.direction!=="WAIT"){
-    bias=v5.direction==="LONG"?"BULLISH":"BEARISH";
-    score=Math.min(10,Math.round(v5.score/8*10));
-    if(v5.state==="CONFIRMED") quality="CONFIRMED";
-    else if(v5.state==="FORMING") quality="FORMING";
-    else quality="WAIT";
-    const v5Entry=v5.direction==="LONG"?v5.zoneHigh:v5.zoneLow;
-    const v5Stop=v5.invalidation;
-    const v5Target=v5.target1;
-    const v5Risk=Math.abs(v5Entry-v5Stop);
-    const v5RawPos=v5Risk?maxLoss/v5Risk:null;
-    const v5Pos=v5RawPos&&v5Entry?Math.min(v5RawPos,account/v5Entry):null;
-    analysis={bias,score,e20,e50,R,M,A,entry:v5Entry,stop:v5Stop,target:v5Target,maxLoss,position:v5Pos,stopDist:v5Risk,htfTrend,volRatio,atrPct,quality,capped:v5RawPos&&v5Pos&&v5Pos<v5RawPos,v5};
-  }else{
-    analysis={bias,score,e20,e50,R,M,A,entry,stop,target,maxLoss,position,stopDist,htfTrend,volRatio,atrPct,quality,capped,v5};
-  }
-  analysis.setup=deriveSetup(closed,last,A,trendBull,trendBear,htfTrend,R,M,volRatio); renderSetup(analysis.setup);
-  $('bias').textContent=bias;
-  $('score').textContent=score;
-  $('state').textContent=quality==="WAIT"?"WAIT":quality;
-  $('entry').textContent=fmt(entry);$('stop').textContent=fmt(stop);$('target').textContent=fmt(target);
-  $('position').textContent=position?position.toFixed(5):"—";$('loss').textContent=maxLoss?'$'+maxLoss.toFixed(2):'—';
-  $('atrstop').textContent=stopDist?fmt(stopDist):'—';$('rr').textContent=stopDist?'R:R 1:2':'R:R —';
-  $('ema20').textContent=fmt(e20);$('ema50').textContent=fmt(e50);$('rsi').textContent=R?R.toFixed(1):'—';$('macd').textContent=fmt(M);
-  $('atr').textContent=fmt(A);$('count').textContent=closed.length+' closed candles';$('htf').textContent=htfTrend;
-  $('volratio').textContent=volRatio?volRatio.toFixed(2)+'x':'—';$('volregime').textContent=atrPct==null?'—':atrPct<1?'LOW':atrPct<3?'NORMAL':'HIGH';$('quality').textContent=quality;
-  const structure=trendBull?'HH/HL bias':trendBear?'LH/LL bias':structureBull?'upper-half':'lower-half';
-  $('structure').textContent=structure;
-  const first=closed.find(x=>x.t>=Date.now()-86400000),change=first?((last-first.o)/first.o*100):null;
-  $('change').textContent=change==null?'—':change.toFixed(2)+'%';
-  const checks=[
-    ['Trend alignment',trendBull||trendBear],
-    ['Higher timeframe',htfTrend==='MIXED'||htfTrend==='—'||htfTrend===bias],
-    ['Momentum',M!=null&&(bias==='BULLISH'?M>0:bias==='BEARISH'?M<0:false)],
-    ['RSI zone',R!=null&&(bias==='BULLISH'?rsiBull:bias==='BEARISH'?rsiBear:false)],
-    ['Structure',structure!=='upper-half'&&structure!=='lower-half'],
-    ['Volume',volRatio==null||volRatio>=1],
-    ['Volatility usable',atrPct!=null&&atrPct>0],
-    ['Data quality',closed.length>=60]
-  ];
-  $('checks').innerHTML=checks.map(([n,p])=>'<span class="chip '+(p?'pass':'wait')+'">'+(p?'✓':'•')+' '+n+'</span>').join('');
-  $('explain').innerHTML=
-    'V5 separates higher-timeframe direction from lower-timeframe entry timing. It checks 4H → 1H → 15M confluence, then requires a 15M trigger before a setup can become confirmed. The supporting analysis also uses MACD momentum, RSI, structure, volume and volatility. '+
-    (htfTrend!=="—"?'Higher timeframe: <b>'+htfTrend+'</b>. ':'')+
-    (capped?'Position size was capped at 100% of account notional for this spot-style paper model. ':'')+
-    'The score is a rule-based confluence measure, not a probability of profit or a guaranteed forecast.';
-}
-
-function draw(){
-  const c=$("chart"),ctx=c.getContext("2d"),d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;
-  c.width=w*d;c.height=h*d;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);
-  if(!candles.length)return;
-  const data=candles.slice(-80),hi=Math.max(...data.map(x=>x.h)),lo=Math.min(...data.map(x=>x.l)),pad=22;
-  const x=i=>pad+i*(w-pad*2)/(data.length-1),y=p=>h-pad-(p-lo)/(hi-lo)*(h-pad*2);
-  ctx.strokeStyle="#202b45";ctx.lineWidth=1;
-  for(let i=0;i<5;i++){let yy=pad+i*(h-pad*2)/4;ctx.beginPath();ctx.moveTo(pad,yy);ctx.lineTo(w-pad,yy);ctx.stroke()}
-  data.forEach((q,i)=>{
-    const xx=x(i),yo=y(q.o),yc=y(q.c),yh=y(q.h),yl=y(q.l),up=q.c>=q.o;
-    ctx.strokeStyle=up?"#61d7a6":"#e78c8c";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(xx,yh);ctx.lineTo(xx,yl);ctx.stroke();
-    ctx.fillStyle=up?"#61d7a6":"#e78c8c";const top=Math.min(yo,yc),bh=Math.max(1,Math.abs(yc-yo));ctx.fillRect(xx-2.4,top,4.8,bh);
-  });
-  if(analysis){
-    ctx.strokeStyle="#e7c77d";ctx.lineWidth=1.5;ctx.beginPath();
-    data.forEach((q,i)=>{const yy=y(analysis.entry);if(i===0)ctx.moveTo(x(i),yy);else ctx.lineTo(x(i),yy)});ctx.stroke();
-  }
-  $("price").textContent=fmt(candles.at(-1).c);
-}
-
-function saveSetup(){
-  if(!analysis){alert("Load live market data first.");return}
-  const s=analysis.setup||{};
-  const rows=JSON.parse(localStorage.getItem("tradelens_v4_journal")||"[]");
-  rows.unshift({
-    id:Date.now(),
-    time:new Date().toLocaleString(),
-    pair:$("pair").value,
-    bias:analysis.bias,
-    score:analysis.score,
-    quality:analysis.quality,
-    setup:s.type||"—",
-    direction:s.direction||"WAIT",
-    entry:analysis.entry,
-    zoneLow:s.zoneLow,
-    zoneHigh:s.zoneHigh,
-    stop:analysis.stop,
-    target:analysis.target,
-    invalidation:s.invalidation,
-    outcome:"OPEN",
-    r:null
-  });
-  localStorage.setItem("tradelens_v4_journal",JSON.stringify(rows.slice(0,100)));
-  renderJournal();
-}
-function renderJournal(){
-  const rows=JSON.parse(localStorage.getItem("tradelens_v4_journal")||"[]");
-  $("journal").innerHTML=rows.length?rows.map((r,i)=>{
-    const outcome=r.outcome||"OPEN";
-    const outcomeClass=outcome==="WIN"?"green":outcome==="LOSS"?"red":"yellow";
-    const buttons=outcome==="OPEN"?
-      '<button class="miniBtn" onclick="markOutcome('+r.id+',\'WIN\')">W</button> <button class="miniBtn" onclick="markOutcome('+r.id+',\'LOSS\')">L</button>':
-      '<span class="'+outcomeClass+'">'+escapeHTML(outcome)+' '+(r.r!=null?('('+Number(r.r).toFixed(2)+'R)'):"")+'</span>';
-    return '<tr><td>'+escapeHTML(r.time)+'</td><td>'+escapeHTML(r.pair)+'</td><td>'+escapeHTML(r.bias)+'</td><td>'+r.score+'</td><td>'+escapeHTML(r.quality||'—')+'</td><td>'+escapeHTML(r.setup||'—')+'</td><td>'+fmt(+r.entry)+'</td><td>'+fmt(+r.stop)+'</td><td>'+fmt(+r.target)+'</td><td>'+buttons+'</td></tr>';
-  }).join(""):'<tr><td colspan="10" class="small">No saved paper setups.</td></tr>';
-  updateStats(rows);
-}
-function markOutcome(id,outcome){
-  const rows=JSON.parse(localStorage.getItem("tradelens_v4_journal")||"[]");
-  const r=rows.find(x=>x.id===id); if(!r)return;
-  const entry=Number(r.entry), stop=Number(r.stop), target=Number(r.target);
-  const risk=Math.abs(entry-stop);
-  r.outcome=outcome;
-  r.r=outcome==="WIN" ? (risk?Math.abs(target-entry)/risk:0) : (risk?-1:0);
-  r.closedAt=new Date().toLocaleString();
-  localStorage.setItem("tradelens_v4_journal",JSON.stringify(rows));
-  renderJournal();
-}
-function updateStats(rows){
-  const closed=rows.filter(r=>r.outcome==="WIN"||r.outcome==="LOSS");
-  const wins=closed.filter(r=>r.outcome==="WIN").length;
-  const rs=closed.map(r=>Number(r.r)).filter(Number.isFinite);
-  const total=rs.reduce((a,b)=>a+b,0),avg=rs.length?total/rs.length:null;
-  $("statClosed").textContent=closed.length;
-  $("statWinRate").textContent=closed.length?(wins/closed.length*100).toFixed(1)+"%":"—";
-  $("statAvgR").textContent=avg==null?"—":avg.toFixed(2)+"R";
-  $("statTotalR").textContent=rs.length?total.toFixed(2)+"R":"—";
-}
-function clearJournal(){localStorage.removeItem("tradelens_v4_journal");renderJournal()}
-
-window.addEventListener("resize",draw);
-["pair","interval","account","risk"].forEach(id=>$(id).addEventListener("change",()=>{if(candles.length)analyze()}));
-renderJournal();
-
-window.addEventListener("load",()=>{ setTimeout(()=>runNetworkDiagnostics(true),350); });
+const $=id=>document.getElementById(id);let candles=[],last=null;
+const hosts=['https://api.binance.com','https://data-api.binance.vision','https://api1.binance.com','https://api2.binance.com','https://api3.binance.com'];
+const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+const fmt=(n,d=2)=>Number.isFinite(n)?Number(n).toLocaleString(undefined,{maximumFractionDigits:d}):'—';
+function ema(a,p){let k=2/(p+1),e=a[0];for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e}
+function rsi(a,p=14){if(a.length<=p)return 50;let g=0,l=0;for(let i=1;i<=p;i++){let d=a[i]-a[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)}let ag=g/p,al=l/p;for(let i=p+1;i<a.length;i++){let d=a[i]-a[i-1];ag=(ag*(p-1)+Math.max(d,0))/p;al=(al*(p-1)+Math.max(-d,0))/p}return al?100-100/(1+ag/al):100}
+function atr(c,p=14){let t=[];for(let i=1;i<c.length;i++){let x=c[i],q=c[i-1];t.push(Math.max(x.h-x.l,Math.abs(x.h-q.c),Math.abs(x.l-q.c)))}return avg(t.slice(-p))}
+function macd(a){return ema(a,12)-ema(a,26)}
+async function get(url,ms=10000){let c=new AbortController(),t=setTimeout(()=>c.abort(),ms);try{let r=await fetch(url,{cache:'no-store',signal:c.signal});if(!r.ok)throw Error();return await r.json()}finally{clearTimeout(t)}}
+async function loadMarket(){ $('status').textContent='Loading live market data…';$('live').textContent='LOADING';try{let p=$('pair').value,t=$('tf').value,d=null;for(const h of hosts){try{d=await get(h+'/api/v3/klines?symbol='+p+'&interval='+t+'&limit=150');if(Array.isArray(d)&&d.length>50)break}catch(e){d=null}}if(!d)throw Error();candles=d.map(x=>({t:x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]}));analyze();$('status').textContent='Live market loaded successfully.';$('live').textContent='LIVE • BINANCE'}catch(e){$('status').textContent='Could not load live market data. Check your connection and try again.';$('live').textContent='OFFLINE'}}
+async function testAPI(){try{await get('https://api.binance.com/api/v3/ping',8000);$('status').textContent='Binance API is reachable from this browser.';$('live').textContent='API OK'}catch(e){$('status').textContent='Binance API test failed on this network.'}}
+function analyze(){let a=candles.map(x=>x.c),p=a.at(-1),e20=ema(a.slice(-80),20),e50=ema(a.slice(-100),50),R=rsi(a),M=macd(a),A=atr(candles),V=avg(candles.slice(-20).map(x=>x.v))/(avg(candles.slice(-60,-20).map(x=>x.v))||1),s=(p>e20?2:0)+(e20>e50?2:0)+(M>0?2:0)+(R>=50&&R<=70?1:0)+(avg(a.slice(-10))>avg(a.slice(-20,-10))?1:0)+(V>=1?1:0)+(A/p<.02?1:0),bias=s>=7?'LONG BIAS':s<=3?'SHORT/WEAK BIAS':'WAIT',structure=p>Math.max(...candles.slice(-10,-1).map(x=>x.h))?'BREAKOUT UP':p<Math.min(...candles.slice(-10,-1).map(x=>x.l))?'BREAKDOWN':'RANGE / TREND',dist=Math.max(A*1.25,p*.005),max=+($('account').value||0)*(+$('risk').value||0)/100,sz=max/dist,stop=bias==='LONG BIAS'?p-dist:p+dist,target=bias==='LONG BIAS'?p+dist*2:p-dist*2;
+last={p,s,bias,stop,target,max,sz};$('price').textContent=fmt(p);$('change').textContent=fmt((p-candles.at(-2).c)/candles.at(-2).c*100)+'%';$('atr').textContent=fmt(A);$('vol').textContent=fmt(V)+'x';$('ema').textContent=fmt(e20)+' / '+fmt(e50);$('rsi').textContent=fmt(R,1);$('macd').textContent=fmt(M,4);$('trend').textContent=e20>e50?'Bullish':'Bearish';$('structure').textContent=structure;$('score').innerHTML=s+'<span class="muted" style="font-size:15px">/10</span>';$('meter').style.width=s*10+'%';$('setup').textContent=bias==='LONG BIAS'?'Bullish confluence detected for paper analysis.':bias==='WAIT'?'No clear high-confluence setup.':'Conditions are weak/bearish; wait for confirmation.';$('htf').textContent=e20>e50?'Bullish':'Bearish';$('momentum').textContent=M>0?'Positive':'Negative';$('rsizone').textContent=R<30?'Oversold':R>70?'Overbought':'Neutral';$('quality').textContent=s>=7?'GOOD':'WAIT';$('entry').textContent=fmt(p);$('stop').textContent=fmt(stop);$('target').textContent=fmt(target);$('maxloss').textContent='$'+fmt(max);$('size').textContent=fmt(sz,6);draw()}
+function draw(){let c=$('chart'),x=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,d=devicePixelRatio||1;c.width=w*d;c.height=h*d;x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,w,h);if(!candles.length)return;let a=candles.slice(-80),hi=Math.max(...a.map(q=>q.h)),lo=Math.min(...a.map(q=>q.l)),pad=20,xx=i=>pad+i*(w-2*pad)/(a.length-1),yy=v=>pad+(hi-v)*(h-2*pad)/(hi-lo||1);a.forEach((q,i)=>{x.strokeStyle=q.c>=q.o?'#57d7a1':'#ff7180';x.beginPath();x.moveTo(xx(i),yy(q.h));x.lineTo(xx(i),yy(q.l));x.stroke();let bw=Math.max(2,(w-40)/a.length*.6);x.fillRect(xx(i)-bw/2,yy(Math.max(q.o,q.c)),bw,Math.max(1,Math.abs(yy(q.o)-yy(q.c))))})}
+function saveTrade(){if(!last)return;let j=JSON.parse(localStorage.getItem('tlv6')||'[]');j.unshift({time:new Date().toLocaleString(),pair:$('pair').value,bias:last.bias,score:last.s});localStorage.setItem('tlv6',JSON.stringify(j.slice(0,30)));render()}
+function clearJournal(){localStorage.removeItem('tlv6');render()}
+function render(){let j=JSON.parse(localStorage.getItem('tlv6')||'[]');$('journal').innerHTML=j.map(x=>'<tr><td>'+x.time+'</td><td>'+x.pair+'</td><td>'+x.bias+'</td><td>'+x.score+'/10</td></tr>').join('')||'<tr><td colspan="4" class="muted">No saved snapshots</td></tr>'}
+addEventListener('resize',draw);render();
 </script>
-</body>
-</html>
+</body></html>
