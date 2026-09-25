@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07101f">
-<title>TradeLens V7 — Advanced Market Lab</title>
+<title>TradeLens V8 — Quant Market Lab</title>
 <style>
 :root{--bg:#07101f;--card:#0d1729;--card2:#0a1323;--line:#20304a;--text:#eef5ff;--muted:#8190aa;--green:#52d6a0;--red:#ff6f82;--yellow:#f1c66b;--blue:#66a7ff}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#07101f,#091426 55%,#07101f);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -147,7 +147,23 @@ canvas{display:block;width:100%;height:370px;background:#07101d;border:1px solid
 <h3>What V7 does</h3>
 <p class="notice">TradeLens combines EMA trend, RSI, MACD, ADX, Bollinger position, ATR volatility, recent structure and volume into a transparent rule-based score. It can retrieve public market candles, calculate a paper-trade plan, and run a basic historical simulation. It does not place real orders, manage an exchange account, or guarantee outcomes.</p>
 </section>
-<div class="footer">TradeLens V7 • Public market data • Analysis and paper trading only</div>
+
+<section class="card" id="v8panel"><h2>TradeLens V8 Advanced Layer</h2>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+<div class="stat"><small>MTF CONSENSUS</small><strong id="v8Consensus">—</strong></div>
+<div class="stat"><small>REGIME</small><strong id="v8Regime">—</strong></div>
+<div class="stat"><small>CONFIDENCE</small><strong id="v8Confidence">—</strong></div>
+<div class="stat"><small>RISK STATE</small><strong id="v8Risk">—</strong></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+<div><h3>Multi-Timeframe</h3><div id="v8MTF" class="rows"></div></div>
+<div><h3>Strategy Controls</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><label class="field">Signal threshold<input id="v8Threshold" type="number" value="68" min="40" max="95"></label><label class="field">Slippage %<input id="v8Slip" type="number" value="0.05" min="0" step="0.01"></label><label class="field">Lookback<input id="v8Lookback" type="number" value="240" min="80" max="300"></label><label class="field">Cooldown bars<input id="v8Cooldown" type="number" value="3" min="0" max="50"></label></div></div>
+</div>
+<div class="actions" style="margin-top:12px"><button onclick="v8Analyze()">Run V8 Analysis</button><button onclick="v8MTF()">Refresh Timeframes</button><button onclick="v8Backtest()">V8 Backtest</button><button onclick="v8Export()">Export Analysis</button></div>
+<div class="status" id="v8Status">V8 advanced layer ready.</div>
+<div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>TF</th><th>Trend</th><th>RSI</th><th>ADX</th><th>Vol</th><th>Score</th></tr></thead><tbody id="v8Table"></tbody></table></div>
+</section>
+<div class="footer">TradeLens V8 • Public market data • Analysis and paper trading only</div>
 </div>
 
 <script>
@@ -187,5 +203,15 @@ function exportJournal(){let j=JSON.parse(localStorage.getItem('tlv7')||'[]');if
 function schedule(){if(timer)clearInterval(timer);let sec=+$('refresh').value;if(sec)timer=setInterval(loadMarket,sec*1000)}
 $('refresh').addEventListener('change',schedule);addEventListener('resize',draw);render();schedule();
 </script>
-</body>
+<script>
+/* V8 Advanced Layer: builds on V7 without external libraries. */
+const v8State={frames:{},last:null,signals:[]};
+function v8Regime(q){const ap=q.A/q.p; if(q.D>=25&&ap<.02)return 'TREND'; if(ap>.035)return 'HIGH VOL'; if(q.B.pct<.12||q.B.pct>.88)return 'BREAKOUT'; return 'RANGE';}
+function v8Score(q,cons){let s=50;s+=q.trend==='BULL'?14:q.trend==='BEAR'?-14:0;s+=q.M>0?8:-8;s+=q.R>=50&&q.R<=70?9:q.R<30?3:q.R>70?-3:0;s+=q.D>=25?9:q.D>=18?4:0;s+=q.V>=1.15?8:q.V>=.9?4:-3;s+=q.S==='HH/HL'?7:q.S==='LH/LL'?-7:0;s+=q.ROC>0?5:-5;s+=cons==='BULL'?10:cons==='BEAR'?-10:0;return Math.max(0,Math.min(100,s));}
+async function v8MTF(){const pair=$('pair').value,frames=['15m','1h','4h','1d'];$('v8Status').textContent='Refreshing multi-timeframe data…';for(const tf of frames){try{let c=(tf===$('tf').value&&candles.length)?candles:await fetchCandles(pair,tf,220);v8State.frames[tf]=calc(c)}catch(e){v8State.frames[tf]=null}}let vals=frames.map(tf=>v8State.frames[tf]).filter(Boolean),bull=vals.filter(q=>q.trend==='BULL').length,bear=vals.filter(q=>q.trend==='BEAR').length,cons=bull>=3?'BULL':bear>=3?'BEAR':'MIXED';$('v8Consensus').textContent=cons;$('v8MTF').innerHTML=frames.map(tf=>{let q=v8State.frames[tf];return '<div class="row"><span>'+tf+'</span><strong>'+(q?q.trend:'N/A')+'</strong></div>'}).join('');$('v8Table').innerHTML=frames.map(tf=>{let q=v8State.frames[tf];if(!q)return '<tr><td>'+tf+'</td><td colspan="5">N/A</td></tr>';return '<tr><td>'+tf+'</td><td>'+q.trend+'</td><td>'+fmt(q.R,1)+'</td><td>'+fmt(q.D,1)+'</td><td>'+fmt(q.V,2)+'x</td><td>'+Math.round(v8Score(q,cons))+'/100</td></tr>'}).join('');if(last){$('v8Regime').textContent=v8Regime(last);$('v8Confidence').textContent=Math.round(v8Score(last,cons))+'/100';$('v8Risk').textContent=last.A/last.p>.04?'HIGH':'NORMAL'}$('v8Status').textContent='Multi-timeframe refresh complete.'}
+function v8Analyze(){if(!candles.length){$('v8Status').textContent='Load V7 market data first.';return}let q=calc(candles);last=q;v8State.last=q;let frames=Object.values(v8State.frames).filter(Boolean),bull=frames.filter(x=>x.trend==='BULL').length,bear=frames.filter(x=>x.trend==='BEAR').length,cons=bull>=3?'BULL':bear>=3?'BEAR':'MIXED',sc=v8Score(q,cons);$('v8Consensus').textContent=cons;$('v8Regime').textContent=v8Regime(q);$('v8Confidence').textContent=Math.round(sc)+'/100';$('v8Risk').textContent=q.A/q.p>.04?'HIGH':'NORMAL';$('v8Status').textContent='V8 analysis: '+(sc>=+$('v8Threshold').value?'qualified setup':'no qualified setup')+' • '+Math.round(sc)+'/100';}
+async function v8Backtest(){if(candles.length<100){$('v8Status').textContent='Load market data first.';return}let threshold=+$('v8Threshold').value||68,look=Math.min(+$('v8Lookback').value||240,candles.length-30),slip=(+$('v8Slip').value||0)/100,cool=+$('v8Cooldown').value||0,start=Math.max(60,candles.length-look),equity=0,peak=0,dd=0,trades=[],lastTrade=-999;for(let i=start;i<candles.length-2;i++){if(i-lastTrade<cool)continue;let q=calc(candles.slice(0,i+1)),sc=v8Score(q,'MIXED');if(sc<threshold||q.trend==='MIXED')continue;let dir=q.trend==='BULL'?1:-1,entry=candles[i].c,dist=Math.max(q.A*1.35,entry*.006),stop=entry-dir*dist,target=entry+dir*dist*2,result=null;for(let j=i+1;j<candles.length;j++){let z=candles[j];if(dir>0&&z.l<=stop){result=-1-(slip*2);break}if(dir<0&&z.h>=stop){result=-1-(slip*2);break}if(dir>0&&z.h>=target){result=2-(slip*2);break}if(dir<0&&z.l<=target){result=2-(slip*2);break}}if(result==null)continue;equity+=result;peak=Math.max(peak,equity);dd=Math.min(dd,equity-peak);trades.push(result);lastTrade=i}let wins=trades.filter(x=>x>0).length,net=trades.reduce((a,b)=>a+b,0);$('v8Status').textContent='V8 backtest: '+trades.length+' trades • '+(trades.length?Math.round(wins/trades.length*100)+'% win rate':'no trades')+' • '+fmt(net,2)+' R • max DD '+fmt(Math.abs(dd),2)+' R';}
+function v8Export(){let q=last;if(!q){$('v8Status').textContent='Run an analysis first.';return}let rows=[['Metric','Value'],['Pair',$('pair').value],['Timeframe',$('tf').value],['Price',q.p],['RSI',q.R],['ADX',q.D],['ATR',q.A],['Volume ratio',q.V],['Trend',q.trend],['Structure',q.S],['Regime',v8Regime(q)],['Confidence',v8Score(q,'MIXED')]];let csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='tradelens-v8-analysis.csv';a.click();URL.revokeObjectURL(a.href);$('v8Status').textContent='Analysis CSV exported.'}
+const oldLoadAll=typeof loadMarket==='function'?loadMarket:null;function v8Boot(){v8MTF().catch(()=>{});if(candles.length)v8Analyze()}setTimeout(v8Boot,900);
+</script></body>
 </html>
