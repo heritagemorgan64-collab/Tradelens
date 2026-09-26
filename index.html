@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V10.1</title>
+<title>TradeLens V10.2</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -17,10 +17,36 @@ table{width:100%;border-collapse:collapse}td,th{padding:9px 7px;border-bottom:1p
 .two{display:grid;grid-template-columns:1.25fr .75fr;gap:12px}.sectionTitle{display:flex;justify-content:space-between;align-items:center}.small{font-size:12px;color:var(--muted)}.why{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 @media(max-width:760px){.controls,.grid3,.grid4,.two{grid-template-columns:1fr}.why{grid-template-columns:1fr}td,th{white-space:normal}}
 </style>
+
+<script>
+function TLv102_direction(trend,momentum,rsi){
+  if(trend==="BULLISH" && momentum==="POSITIVE") return "BULLISH";
+  if(trend==="BEARISH" && momentum==="NEGATIVE") return "BEARISH";
+  return "NEUTRAL";
+}
+function TLv102_weighted(states){
+  const w={"15m":1,"1h":2,"4h":3}; let b=0,r=0,t=0;
+  ["15m","1h","4h"].forEach(tf=>{t+=w[tf]; if(states[tf]==="BULLISH")b+=w[tf]; if(states[tf]==="BEARISH")r+=w[tf];});
+  if(b>r)return {direction:"BULLISH",percent:Math.round(b/t*100)};
+  if(r>b)return {direction:"BEARISH",percent:Math.round(r/t*100)};
+  return {direction:"MIXED",percent:Math.round(Math.max(b,r)/t*100)};
+}
+function TLv102_regime(c){
+  const vals=[];
+  for(let i=14;i<c.length;i++){
+    let s=0;
+    for(let j=i-13;j<=i;j++) s+=Math.max(c[j].h-c[j].l,Math.abs(c[j].h-c[j-1].c),Math.abs(c[j].l-c[j-1].c));
+    vals.push(s/14);
+  }
+  const cur=vals.at(-1); const sorted=[...vals.slice(-80)].sort((a,b)=>a-b);
+  const rank=sorted.length?sorted.filter(x=>x<=cur).length/sorted.length:0.5;
+  return rank<=.2?"LOW VOLATILITY":rank>=.8?"HIGH VOLATILITY":"NORMAL VOLATILITY";
+}
+</script>
 </head>
-<body>
+<body><div class="card" style="margin-top:12px"><b>V10.2 Direction Integrity:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V10.1</h1>
+<h1>TradeLens V10.2</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -109,7 +135,7 @@ function analyze(c){
  const trendScore=trend==='MIXED'?1:2;
  const momScore=momentum==='FLAT'?1:2;
  const rsiScore=(r>=50&&r<=70)?1:0;
- const volScore=vr>=1?1:0;
+ const volScore=vr>=1.05?1:vr>=0.80?0:-1;
  const structureScore=(structure==='BREAKOUT UP'||structure==='BREAKDOWN')?1:(trend!=='MIXED'?1:0);
  const volatilityScore=atrPct<.025?1:0;
  const extension=pct(p,e20); const extensionStatus=extension<=atrPct*2?'ACCEPTABLE':'EXTENDED';
@@ -168,7 +194,7 @@ function qualify(rs,c){
  return {checks,blockers,status,volumeWeak:vol<2,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
 }
 function render(rs,c,q,detail){
- $('selectedTitle').textContent=$('pair').value+' • V10.1 Analysis';
+ $('selectedTitle').textContent=$('pair').value+' • V10.2 Analysis';
  $('decisionBadge').textContent=q.status;
  $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
  $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
@@ -207,7 +233,7 @@ async function run(){
   }catch(e){console.warn(symbol,e)}
   out.sort((a,b)=>b.strength-a.strength);
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V10.1 scan complete. '+out.length+' pairs analyzed.';
+  $('status').textContent='V10.2 scan complete. '+out.length+' pairs analyzed.';
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
 $('test').onclick=async()=>{try{await get(HOSTS[0]+'/api/v3/ping',5000);$('apiBadge').textContent='API: ONLINE';$('apiBadge').className='badge ok';$('status').textContent='Binance API reachable.'}catch(e){$('apiBadge').textContent='API: OFFLINE';$('apiBadge').className='badge bad';$('status').textContent='API test failed.'}};
