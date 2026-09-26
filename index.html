@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V14.1</title>
+<title>TradeLens V15</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -17,7 +17,7 @@ table{width:100%;border-collapse:collapse}td,th{padding:9px 7px;border-bottom:1p
 .two{display:grid;grid-template-columns:1.25fr .75fr;gap:12px}.sectionTitle{display:flex;justify-content:space-between;align-items:center}.small{font-size:12px;color:var(--muted)}.why{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 @media(max-width:760px){.controls,.grid3,.grid4,.two{grid-template-columns:1fr}.why{grid-template-columns:1fr}td,th{white-space:normal}}
 
-.tl-chart-toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:10px 0}.tl-chart-toolbar button{width:auto;margin:0;padding:7px 10px;font-size:11px}.tl-chart-toolbar button.active{border-color:#64b5ff;background:#102b40;color:#fff}.tl-chart-wrap{background:#07131d;border:1px solid #203744;border-radius:12px;overflow:hidden;position:relative}.tl-chart-canvas{width:100%;height:430px;display:block;touch-action:none}.tl-vol-canvas{width:100%;height:100px;display:block;border-top:1px solid #203744;touch-action:none}.tl-chart-info{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:8px}.tl-chart-info .metric{padding:8px}.tl-chart-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#8ea5b4;margin-top:8px}.tl-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}.tl-green{background:#42d19c}.tl-red{background:#ff6f7d}.tl-blue{background:#64b5ff}.tl-yellow{background:#f4c95d}@media(max-width:760px){.tl-chart-info{grid-template-columns:repeat(3,1fr)}.tl-chart-canvas{height:340px}}
+.tl-chart-toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:10px 0}.tl-chart-toolbar button{width:auto;margin:0;padding:7px 10px;font-size:11px}.tl-chart-toolbar button.active{border-color:#64b5ff;background:#102b40;color:#fff}.tl-chart-wrap{background:#07131d;border:1px solid #203744;border-radius:12px;overflow:hidden;position:relative}.tl-chart-canvas{width:100%;height:430px;display:block;touch-action:none}.tl-vol-canvas{width:100%;height:100px;display:block;border-top:1px solid #203744;touch-action:none}.tl-indicator-canvas{width:100%;height:190px;display:block;border-top:1px solid #203744;touch-action:none}.tl-chart-info{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:8px}.tl-chart-info .metric{padding:8px}.tl-chart-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#8ea5b4;margin-top:8px}.tl-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}.tl-green{background:#42d19c}.tl-red{background:#ff6f7d}.tl-blue{background:#64b5ff}.tl-yellow{background:#f4c95d}@media(max-width:760px){.tl-chart-info{grid-template-columns:repeat(3,1fr)}.tl-chart-canvas{height:340px}}
 </style>
 
 <script>
@@ -76,9 +76,9 @@ function TLv103_enforceDirectionIntegrity(a){
 @media(max-width:700px){.v11-grid{grid-template-columns:1fr}.v11-smallgrid{grid-template-columns:1fr}}
 </style>
 </head>
-<body><div class="card" style="margin-top:12px"><b>V14 Chart & Decision Integrity:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V15 Advanced Technical Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V14.1</h1>
+<h1>TradeLens V15</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -108,14 +108,22 @@ function TLv103_enforceDirectionIntegrity(a){
   <button class="tl-count active" data-count="100">100</button><button class="tl-count" data-count="200">200</button>
   <button id="refreshChart">↻ Refresh</button>
   <button id="toggleEMA20">EMA 20</button><button id="toggleEMA50">EMA 50</button>
+  <button id="toggleVWAP">VWAP</button><button id="toggleBB">Bollinger</button>
+  <button id="toggleRSI">RSI</button><button id="toggleMACD">MACD</button>
 </div>
 <div class="tl-chart-wrap">
   <canvas id="candleChart" class="tl-chart-canvas"></canvas>
   <canvas id="volumeChart" class="tl-vol-canvas"></canvas>
+  <canvas id="indicatorChart" class="tl-indicator-canvas"></canvas>
 </div>
 <div id="chartOHLC" class="tl-chart-info"></div>
-<div class="tl-chart-legend"><span><i class="tl-dot tl-green"></i>Up candle</span><span><i class="tl-dot tl-red"></i>Down candle</span><span><i class="tl-dot tl-blue"></i>EMA 20</span><span><i class="tl-dot tl-yellow"></i>EMA 50</span><span>Scroll/drag: chart navigation • Hover/tap: OHLC • Latest candle may still be forming</span></div>
+<div class="tl-chart-legend"><span><i class="tl-dot tl-green"></i>Up candle</span><span><i class="tl-dot tl-red"></i>Down candle</span><span><i class="tl-dot tl-blue"></i>EMA 20</span><span><i class="tl-dot tl-yellow"></i>EMA 50</span><span><i class="tl-dot tl-blue"></i>VWAP</span><span><i class="tl-dot tl-yellow"></i>Bollinger</span><span>RSI/MACD appear in the indicator panel • Latest candle may still be forming</span></div>
 <p id="chartStatus" class="small">Run a scan to populate the candlestick chart.</p>
+</section>
+
+<section class="panel">
+<div class="sectionTitle"><h2>V15 Technical Indicator Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
+<div id="indicatorSummary" class="grid3"></div>
 </section>
 
 <section class="two">
@@ -168,6 +176,12 @@ function avg(a,n){a=a.slice(-n);return a.length?a.reduce((x,y)=>x+y,0)/a.length:
 function rsi(a,n=14){let g=0,l=0;for(let i=1;i<=n;i++){let d=a[i]-a[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)}g/=n;l/=n;for(let i=n+1;i<a.length;i++){let d=a[i]-a[i-1];g=(g*(n-1)+Math.max(d,0))/n;l=(l*(n-1)+Math.max(-d,0))/n}return l?100-100/(1+g/l):100}
 function atr(c,n=14){let a=[];for(let i=1;i<c.length;i++)a.push(Math.max(c[i].h-c[i].l,Math.abs(c[i].h-c[i-1].c),Math.abs(c[i].l-c[i-1].c)));return avg(a,n)}
 function pct(a,b){return b?Math.abs(a-b)/b:0}
+function emaSeries(a,n){if(!a.length)return [];const k=2/(n+1);let e=a[0],out=[e];for(let i=1;i<a.length;i++){e=a[i]*k+e*(1-k);out.push(e)}return out}
+function rsiSeries(a,n=14){let out=Array(a.length).fill(null);if(a.length<=n)return out;let g=0,l=0;for(let i=1;i<=n;i++){let d=a[i]-a[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)}g/=n;l/=n;out[n]=l?100-100/(1+g/l):100;for(let i=n+1;i<a.length;i++){let d=a[i]-a[i-1];g=(g*(n-1)+Math.max(d,0))/n;l=(l*(n-1)+Math.max(-d,0))/n;out[i]=l?100-100/(1+g/l):100}return out}
+function macdSeries(a){const e12=emaSeries(a,12),e26=emaSeries(a,26),line=a.map((_,i)=>e12[i]-e26[i]);const signal=emaSeries(line.slice(0),9);return {line,signal,hist:line.map((x,i)=>x-signal[i])}}
+function bollinger(a,n=20,m=2){const mid=[],up=[],low=[];for(let i=0;i<a.length;i++){const w=a.slice(Math.max(0,i-n+1),i+1),mean=w.reduce((x,y)=>x+y,0)/w.length,sd=Math.sqrt(w.reduce((x,y)=>x+(y-mean)**2,0)/w.length);mid.push(mean);up.push(mean+m*sd);low.push(mean-m*sd)}return {mid,up,low}}
+function vwapSeries(c){let pv=0,vol=0,out=[];for(const z of c){const tp=(z.h+z.l+z.c)/3;pv+=tp*z.v;vol+=z.v;out.push(vol?pv/vol:tp)}return out}
+function atrSeries(c,n=14){let tr=[];for(let i=0;i<c.length;i++){tr.push(i?Math.max(c[i].h-c[i].l,Math.abs(c[i].h-c[i-1].c),Math.abs(c[i].l-c[i-1].c)):c[i].h-c[i].l)}let out=Array(c.length).fill(null);if(c.length<n)return out;let a=tr.slice(0,n).reduce((x,y)=>x+y,0)/n;out[n-1]=a;for(let i=n;i<c.length;i++){a=(a*(n-1)+tr[i])/n;out[i]=a}return out}
 function analyze(c){
  const a=c.map(x=>x.c),v=c.map(x=>x.v),q=c.map(x=>x.qv),p=a.at(-1);
  const e20=ema(a,20),e50=ema(a,50),e100=ema(a,100),mac=ema(a,12)-ema(a,26),r=rsi(a),at=atr(c),atrPct=at/p;
@@ -197,7 +211,7 @@ function analyze(c){
  const state=TLv102_direction(trend,momentum,rsi);
  const now=Date.now(),ageMin=Math.max(0,(now-c.at(-1).closeTime)/60000);
  const freshness=ageMin<=30?'FRESH':ageMin<=180?'AGING':'STALE';
- return {p,e20,e50,e100,mac,r,at,atrPct,vr,liq,trend,momentum,structure,regime,rsiStatus,volume,trendScore,momScore,rsiScore,volScore,structureScore,volatilityScore,extensionStatus,extensionScore,srScore,liquidityScore,raw,strength,state,extension,support,resistance,freshness,ageMin,candles:c};
+ const rsis=rsiSeries(a),mcd=macdSeries(a),bb=bollinger(a),vw=vwapSeries(c),ats=atrSeries(c); return {p,e20,e50,e100,mac,r,at,atrPct,vr,liq,trend,momentum,structure,regime,rsiStatus,volume,trendScore,momScore,rsiScore,volScore,structureScore,volatilityScore,extensionStatus,extensionScore,srScore,liquidityScore,raw,strength,state,extension,support,resistance,freshness,ageMin,candles:c,ema20Series:emaSeries(a,20),ema50Series:emaSeries(a,50),vwapSeries:vw,bbMid:bb.mid,bbUp:bb.up,bbLow:bb.low,rsiSeries:rsis,macdLine:mcd.line,macdSignal:mcd.signal,macdHist:mcd.hist,atrSeries:ats};
 }
 function confluence(rs){
  const bull=rs.filter(x=>x.state==='BULLISH').length,bear=rs.filter(x=>x.state==='BEARISH').length;
@@ -243,7 +257,7 @@ function qualify(rs,c){
  return {checks,blockers,status,volumeWeak:vol<2,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
 }
 function render(rs,c,q,detail){
- $('selectedTitle').textContent=$('pair').value+' • V14.1 Analysis';
+ $('selectedTitle').textContent=$('pair').value+' • V15 Analysis';
  $('decisionBadge').textContent=q.status;
  $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
  $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
@@ -272,22 +286,25 @@ function renderRisk(x,c,q){
  const stop=dir==='SHORT'?x.p+dist:x.p-dist,target=dir==='SHORT'?x.p-2*dist:x.p+2*dist,size=max/dist,fee=max*.001;
  $('riskOut').innerHTML=[['STATUS','QUALIFIED PLAN'],['DIRECTION',dir],['ENTRY',fmt(x.p)],['STOP',fmt(stop)],['TARGET',fmt(target)],['POSITION SIZE',fmt(size,6)],['MAX LOSS','$'+fmt(max)],['POTENTIAL PROFIT','$'+fmt(max*2)],['R:R','1 : 2'],['FEE ALLOWANCE','$'+fmt(fee)]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
 }
-let TLV14_chart={tf:"15m",count:100,ema20:true,ema50:true,hover:null,rs:null};
-function tlv14_emaSeries(vals,n){if(!vals.length)return [];const k=2/(n+1);let e=vals[0],out=[e];for(let i=1;i<vals.length;i++){e=vals[i]*k+e*(1-k);out.push(e)}return out}
-function tlv14_resize(canvas,h){const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1,w=Math.max(320,Math.floor(r.width));canvas.width=w*d;canvas.height=h*d;const c=canvas.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h}}
-function tlv14_grid(c,w,h,pad,min,max){c.strokeStyle='#1b3441';c.lineWidth=1;c.font='10px system-ui';c.fillStyle='#718897';for(let i=0;i<=5;i++){const y=pad.t+(h-pad.t-pad.b)*i/5;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();const val=max-(max-min)*i/5;c.fillText(fmt(val,2),5,y+3)}}
-function tlv14_draw(rs,tf,count){const x=rs?.[tf==='15m'?0:tf==='1h'?1:2];if(!x||!x.candles)return;TLV14_chart.rs=rs;const raw=x.candles.slice(-count),cc=document.getElementById('candleChart'),vc=document.getElementById('volumeChart');if(!cc||!vc)return;const A=tlv14_resize(cc,430),c=A.c,w=A.w,h=A.h,pad={l:58,r:16,t:18,b:28};const max=Math.max(...raw.map(z=>z.h)),min=Math.min(...raw.map(z=>z.l)),range=max-min||1; c.clearRect(0,0,w,h);tlv14_grid(c,w,h,pad,min,max);const plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b,step=plotW/raw.length,bw=Math.max(2,Math.min(12,step*.62));const closes=raw.map(z=>z.c);const e20=tlv14_emaSeries(closes,20),e50=tlv14_emaSeries(closes,50);function py(v){return pad.t+(max-v)/range*plotH}function line(vals,color){c.strokeStyle=color;c.lineWidth=1.5;c.beginPath();vals.forEach((v,i)=>{const xx=pad.l+i*step+step/2,yy=py(v);i?c.lineTo(xx,yy):c.moveTo(xx,yy)});c.stroke()}if(TLV14_chart.ema20)line(e20,'#64b5ff');if(TLV14_chart.ema50)line(e50,'#f4c95d');raw.forEach((z,i)=>{const xx=pad.l+i*step+step/2,yo=py(z.o),yc=py(z.c),yh=py(z.h),yl=py(z.l),up=z.c>=z.o;c.strokeStyle=up?'#42d19c':'#ff6f7d';c.fillStyle=c.strokeStyle;c.beginPath();c.moveTo(xx,yh);c.lineTo(xx,yl);c.stroke();const top=Math.min(yo,yc),body=Math.max(1,Math.abs(yc-yo));c.fillRect(xx-bw/2,top,bw,body)});c.fillStyle='#718897';c.font='10px system-ui';[0,.25,.5,.75,1].forEach(f=>{const i=Math.min(raw.length-1,Math.floor((raw.length-1)*f)),z=raw[i];const d=new Date(z.time);c.fillText(d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),pad.l+i*step,h-8)});const V=tlv14_resize(vc,100),v=V.c,vw=V.w,vh=V.h;v.clearRect(0,0,vw,vh);const vmax=Math.max(...raw.map(z=>z.v))||1,vstep=(vw-30)/raw.length;raw.forEach((z,i)=>{v.fillStyle=z.c>=z.o?'#42d19c':'#ff6f7d';const bh=z.v/vmax*(vh-18);v.fillRect(15+i*vstep,vh-bh,vstep*.7,bh)});const last=raw.at(-1);const tfMs={'15m':900000,'1h':3600000,'4h':14400000}[tf]||900000;const forming=(Date.now()-last.time)<tfMs;const volumeText=fmt(last.v,0)+(forming?' • FORMING':'');$('chartOHLC').innerHTML=[['OPEN',fmt(last.o)],['HIGH',fmt(last.h)],['LOW',fmt(last.l)],['CLOSE',fmt(last.c)],['VOLUME',volumeText],['TIME',new Date(last.time).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');$('chartStatus').textContent=`${$('pair').value} • ${tf} • ${raw.length} candles • ${forming?'latest candle forming':'latest candle closed'} • ${new Date(last.time).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`
-}
-function tlv14_refreshChart(){if(TLV14_chart.rs)tlv14_draw(TLV14_chart.rs,TLV14_chart.tf,TLV14_chart.count)}
-function drawMTFChart(rs){TLV14_chart.rs=rs;tlv14_draw(rs,TLV14_chart.tf,TLV14_chart.count)}
-window.addEventListener('resize',tlv14_refreshChart);
+let TLV15_chart={tf:"15m",count:100,ema20:true,ema50:true,vwap:false,bb:false,rsi:true,macd:true,rs:null};
+function tlv15_resize(canvas,h){const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1,w=Math.max(320,Math.floor(r.width));canvas.width=w*d;canvas.height=h*d;const c=canvas.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h}}
+function tlv15_grid(c,w,h,pad,min,max){c.strokeStyle='#1b3441';c.lineWidth=1;c.font='10px system-ui';c.fillStyle='#718897';for(let i=0;i<=5;i++){const y=pad.t+(h-pad.t-pad.b)*i/5;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();const val=max-(max-min)*i/5;c.fillText(fmt(val,2),5,y+3)}}
+function tlv15_line(c,vals,py,step,pad,color,width=1.5){let started=false;c.strokeStyle=color;c.lineWidth=width;c.beginPath();vals.forEach((v,i)=>{if(v==null)return;const xx=pad.l+i*step+step/2,yy=py(v);if(!started){c.moveTo(xx,yy);started=true}else c.lineTo(xx,yy)});if(started)c.stroke()}
+function tlv15_draw(rs,tf,count){const x=rs?.[tf==='15m'?0:tf==='1h'?1:2];if(!x||!x.candles)return;TLV15_chart.rs=rs;const raw=x.candles.slice(-count),cc=$('candleChart'),vc=$('volumeChart'),ic=$('indicatorChart');if(!cc||!vc||!ic)return;const A=tlv15_resize(cc,430),c=A.c,w=A.w,h=A.h,pad={l:58,r:16,t:18,b:28},max=Math.max(...raw.map(z=>z.h)),min=Math.min(...raw.map(z=>z.l)),range=max-min||1;c.clearRect(0,0,w,h);tlv15_grid(c,w,h,pad,min,max);const plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b,step=plotW/raw.length,bw=Math.max(2,Math.min(12,step*.62)),closes=raw.map(z=>z.c),offset=x.candles.length-raw.length;const e20=x.ema20Series.slice(offset),e50=x.ema50Series.slice(offset),vw=x.vwapSeries.slice(offset),bu=x.bbUp.slice(offset),bl=x.bbLow.slice(offset),bm=x.bbMid.slice(offset);function py(v){return pad.t+(max-v)/range*plotH}if(TLV15_chart.ema20)tlv15_line(c,e20,py,step,pad,'#64b5ff');if(TLV15_chart.ema50)tlv15_line(c,e50,py,step,pad,'#f4c95d');if(TLV15_chart.vwap)tlv15_line(c,vw,py,step,pad,'#8bd3ff',2);if(TLV15_chart.bb){tlv15_line(c,bu,py,step,pad,'#a78bfa');tlv15_line(c,bm,py,step,pad,'#c4b5fd');tlv15_line(c,bl,py,step,pad,'#a78bfa')}raw.forEach((z,i)=>{const xx=pad.l+i*step+step/2,yo=py(z.o),yc=py(z.c),yh=py(z.h),yl=py(z.l),up=z.c>=z.o;c.strokeStyle=up?'#42d19c':'#ff6f7d';c.fillStyle=c.strokeStyle;c.beginPath();c.moveTo(xx,yh);c.lineTo(xx,yl);c.stroke();c.fillRect(xx-bw/2,Math.min(yo,yc),bw,Math.max(1,Math.abs(yc-yo)))});c.fillStyle='#718897';c.font='10px system-ui';[0,.25,.5,.75,1].forEach(f=>{const i=Math.min(raw.length-1,Math.floor((raw.length-1)*f)),d=new Date(raw[i].time);c.fillText(d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),pad.l+i*step,h-8)});const V=tlv15_resize(vc,100),v=V.c,vWidth=V.w,vh=V.h;v.clearRect(0,0,vWidth,vh);const vmax=Math.max(...raw.map(z=>z.v))||1,vstep=(vWidth-30)/raw.length;raw.forEach((z,i)=>{v.fillStyle=z.c>=z.o?'#42d19c':'#ff6f7d';const bh=z.v/vmax*(vh-18);v.fillRect(15+i*vstep,vh-bh,vstep*.7,bh)});const I=tlv15_resize(ic,190),g=I.c,iw=I.w,ih=I.h;g.clearRect(0,0,iw,ih);g.fillStyle='#718897';g.font='10px system-ui';g.strokeStyle='#1b3441';g.lineWidth=1;const split=TLV15_chart.rsi&&TLV15_chart.macd?ih/2:ih-8;
+if(TLV15_chart.rsi){const rTop=12,rBottom=TLV15_chart.macd?split-8:ih-18,rpad={l:38,r:16,t:rTop,b:rBottom},rstep=(iw-rpad.l-rpad.r)/raw.length;function rpy(v){return rpad.t+(100-v)/100*(rpad.b-rpad.t)};g.strokeStyle='#1b3441';[30,50,70].forEach(level=>{const yy=rpy(level);g.beginPath();g.moveTo(rpad.l,yy);g.lineTo(iw-rpad.r,yy);g.stroke();g.fillText(String(level),5,yy+3)});tlv15_line(g,x.rsiSeries.slice(offset),rpy,rstep,rpad,'#42d19c',1.6);g.fillStyle='#718897';g.fillText('RSI 14',5,rTop);}
+if(TLV15_chart.macd){const mTop=TLV15_chart.rsi?split+8:12,mBottom=ih-18,mpad={l:38,r:16,t:mTop,b:mBottom},mstep=(iw-mpad.l-mpad.r)/raw.length;const vals=x.macdHist.slice(offset),ml=x.macdLine.slice(offset),ms=x.macdSignal.slice(offset),all=vals.concat(ml,ms).filter(v=>Number.isFinite(v)),mx=Math.max(...all.map(Math.abs),1e-9);function mpy(v){return mpad.t+(mx-v)/(2*mx)*(mpad.b-mpad.t)};g.strokeStyle='#1b3441';const zero=mpy(0);g.beginPath();g.moveTo(mpad.l,zero);g.lineTo(iw-mpad.r,zero);g.stroke();vals.forEach((v,i)=>{const xx=mpad.l+i*mstep+mstep/2,yy=mpy(v);g.fillStyle=v>=0?'#42d19c':'#ff6f7d';g.fillRect(xx-mstep*.3,Math.min(zero,yy),mstep*.6,Math.max(1,Math.abs(yy-zero)))});tlv15_line(g,ml,mpy,mstep,mpad,'#64b5ff',1.4);tlv15_line(g,ms,mpy,mstep,mpad,'#f4c95d',1.4);g.fillStyle='#718897';g.fillText('MACD 12/26/9',5,mTop);}
+$('chartOHLC').innerHTML=[['OPEN',fmt(raw.at(-1).o)],['HIGH',fmt(raw.at(-1).h)],['LOW',fmt(raw.at(-1).l)],['CLOSE',fmt(raw.at(-1).c)],['VOLUME',fmt(raw.at(-1).v,0)+(Date.now()-raw.at(-1).time < ({'15m':900000,'1h':3600000,'4h':14400000}[tf]||900000)?' • FORMING':'')],['ATR',fmt(x.at,2)]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');$('indicatorSummary').innerHTML=[['EMA 20',fmt(e20.at(-1))],['EMA 50',fmt(e50.at(-1))],['VWAP',fmt(vw.at(-1))],['RSI 14',fmt(x.rsiSeries.at(-1),1)],['MACD',fmt(x.macdLine.at(-1),4)],['MACD SIGNAL',fmt(x.macdSignal.at(-1),4)],['MACD HIST',fmt(x.macdHist.at(-1),4)],['ATR 14',fmt(x.at,2)],['ATR %',fmt(x.atrPct*100,2)+'%'],['BB UPPER',fmt(bu.at(-1))],['BB MID',fmt(bm.at(-1))],['BB LOWER',fmt(bl.at(-1))]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
+$('chartStatus').textContent=`${$('pair').value} • ${tf} • ${raw.length} candles • indicators: ${[TLV15_chart.ema20?'EMA20':'',TLV15_chart.ema50?'EMA50':'',TLV15_chart.vwap?'VWAP':'',TLV15_chart.bb?'Bollinger':'',TLV15_chart.rsi?'RSI':'',TLV15_chart.macd?'MACD':''].filter(Boolean).join(', ')}`}
+function tlv15_refreshChart(){if(TLV15_chart.rs)tlv15_draw(TLV15_chart.rs,TLV15_chart.tf,TLV15_chart.count)}
+function drawMTFChart(rs){TLV15_chart.rs=rs;tlv15_draw(rs,TLV15_chart.tf,TLV15_chart.count)}
+window.addEventListener('resize',tlv15_refreshChart);
 async function onePair(symbol){const rs=await Promise.all(TF.map(t=>candles(symbol,t).then(analyze)));const c=confluence(rs),q=qualify(rs,c);return {symbol,rs,c,q}}
 async function run(){
  try{
   $('status').textContent='Scanning market...';
   const selected=await onePair($('pair').value);
   render(selected.rs,selected.c,selected.q,$('detail').value);
-  window._tlv13LastRs=selected.rs; TLV14_chart.tf=$('detail').value; drawMTFChart(selected.rs);
+  window._tlv13LastRs=selected.rs; TLV15_chart.tf=$('detail').value; drawMTFChart(selected.rs);
   TLV13_render({"15m":selected.rs[0],"1h":selected.rs[1],"4h":selected.rs[2]}, $('detail').value, selected.q.status, selected.q.blockers);
   const symbols=[...$('pair').options].map(o=>o.value),out=[];
   for(const symbol of symbols)try{
@@ -296,7 +313,7 @@ async function run(){
   }catch(e){console.warn(symbol,e)}
   out.sort((a,b)=>b.strength-a.strength);
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V14 scan complete. '+out.length+' pairs analyzed.';
+  $('status').textContent='V15 scan complete. '+out.length+' pairs analyzed.';
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
 $('test').onclick=async()=>{try{await get(HOSTS[0]+'/api/v3/ping',5000);$('apiBadge').textContent='API: ONLINE';$('apiBadge').className='badge ok';$('status').textContent='Binance API reachable.'}catch(e){$('apiBadge').textContent='API: OFFLINE';$('apiBadge').className='badge bad';$('status').textContent='API test failed.'}};
@@ -413,15 +430,15 @@ function tlv11_build(tfMap,summary){
 </script>
 
 <div class="card" style="margin-top:12px">
-  <h3>V14.1 Decision Engine</h3>
+  <h3>V15 Decision Engine</h3>
   <div class="v11-grid">
     <div class="v11-panel"><div class="v11-label">Setup Quality</div><div id="v11Quality" class="v11-value">—</div></div>
     <div class="v11-panel"><div class="v11-label">Trade Readiness</div><div id="v11Readiness" class="v11-value">WAITING</div></div>
     <div class="v11-panel"><div class="v11-label">Decision Direction</div><div id="v11Direction" class="v11-value">NONE</div></div>
     <div class="v11-panel"><div class="v11-label">Weighted Confluence</div><div id="v11Confluence" class="v11-value">—</div></div>
   </div>
-  <div id="v11Gate" class="v11-lock">V14.1 trade gate has not been evaluated.</div>
-  <div id="v11Explain" class="v11-explain">Run a scan to generate the V14.1 decision explanation.</div>
+  <div id="v11Gate" class="v11-lock">V15 trade gate has not been evaluated.</div>
+  <div id="v11Explain" class="v11-explain">Run a scan to generate the V15 decision explanation.</div>
   <h4 style="margin-top:14px">Confirmation Matrix</h4>
   <table class="v11-matrix">
     <thead><tr><th>Timeframe</th><th>Direction</th><th>Trend</th><th>Momentum</th><th>Weight</th></tr></thead>
@@ -442,7 +459,7 @@ function TLV11_renderDemo(tfMap,detailTf){
   c.textContent=result.confluence.percent+"%";
   g.className=result.tradeGate.status==="READY"?"v11-ready":"v11-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ?"TRADE GATE OPEN — all V14.1 blocking conditions passed."
+    ?"TRADE GATE OPEN — all V15 blocking conditions passed."
     :"RISK PLAN LOCKED — "+result.tradeGate.blockers.join(" • ");
   if(ex){
     const dir=result.confluence.direction, pct=result.confluence.percent;
@@ -486,7 +503,7 @@ function TLV131_render(tfMap, detailTf, qualification, blockers){
 
   g.className=result.tradeGate.status==="READY"?"v11-ready":"v11-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ? "<b>TRADE GATE OPEN</b> — all V14.1 blocking conditions passed."
+    ? "<b>TRADE GATE OPEN</b> — all V15 blocking conditions passed."
     : "<b>RISK PLAN LOCKED</b> — "+(result.tradeGate.blockers.length?result.tradeGate.blockers.join(" • "):"No clean trade setup.");
 
   m.innerHTML=["15m","1h","4h"].map(tf=>{
@@ -508,12 +525,16 @@ window.TLV13_updateDashboard=function(tfMap,detailTf,qualification,blockers){
 
 <script>
 window.addEventListener('load',()=>{
- document.querySelectorAll('.tl-tf').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tl-tf').forEach(x=>x.classList.remove('active'));b.classList.add('active');TLV14_chart.tf=b.dataset.tf;$('detail').value=b.dataset.tf;tlv14_refreshChart();$('detail').dispatchEvent(new Event('change'))}); $('detail').onchange=()=>{const tf=$('detail').value;document.querySelectorAll('.tl-tf').forEach(x=>x.classList.toggle('active',x.dataset.tf===tf));TLV14_chart.tf=tf;tlv14_refreshChart()};
- document.querySelectorAll('.tl-count').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tl-count').forEach(x=>x.classList.remove('active'));b.classList.add('active');TLV14_chart.count=+b.dataset.count;tlv14_refreshChart()});
- $('toggleEMA20').onclick=()=>{TLV14_chart.ema20=!TLV14_chart.ema20;$('toggleEMA20').classList.toggle('active',TLV14_chart.ema20);tlv14_refreshChart()};
- $('toggleEMA50').onclick=()=>{TLV14_chart.ema50=!TLV14_chart.ema50;$('toggleEMA50').classList.toggle('active',TLV14_chart.ema50);tlv14_refreshChart()};
- $('refreshChart').onclick=async()=>{try{$('chartStatus').textContent='Refreshing candle data...';const rs=await Promise.all(TF.map(t=>candles($('pair').value,t).then(analyze)));window._tlv13LastRs=rs;TLV14_chart.rs=rs;tlv14_refreshChart();$('chartStatus').textContent='Candle data refreshed.'}catch(e){$('chartStatus').textContent='Chart refresh failed: '+e.message}};
- $('toggleEMA20').classList.add('active');$('toggleEMA50').classList.add('active');
+ document.querySelectorAll('.tl-tf').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tl-tf').forEach(x=>x.classList.remove('active'));b.classList.add('active');TLV15_chart.tf=b.dataset.tf;$('detail').value=b.dataset.tf;tlv15_refreshChart();$('detail').dispatchEvent(new Event('change'))}); $('detail').onchange=()=>{const tf=$('detail').value;document.querySelectorAll('.tl-tf').forEach(x=>x.classList.toggle('active',x.dataset.tf===tf));TLV15_chart.tf=tf;tlv15_refreshChart()};
+ document.querySelectorAll('.tl-count').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tl-count').forEach(x=>x.classList.remove('active'));b.classList.add('active');TLV15_chart.count=+b.dataset.count;tlv15_refreshChart()});
+ $('toggleEMA20').onclick=()=>{TLV15_chart.ema20=!TLV15_chart.ema20;$('toggleEMA20').classList.toggle('active',TLV15_chart.ema20);tlv15_refreshChart()};
+ $('toggleEMA50').onclick=()=>{TLV15_chart.ema50=!TLV15_chart.ema50;$('toggleEMA50').classList.toggle('active',TLV15_chart.ema50);tlv15_refreshChart()};
+ $('toggleVWAP').onclick=()=>{TLV15_chart.vwap=!TLV15_chart.vwap;$('toggleVWAP').classList.toggle('active',TLV15_chart.vwap);tlv15_refreshChart()};
+ $('toggleBB').onclick=()=>{TLV15_chart.bb=!TLV15_chart.bb;$('toggleBB').classList.toggle('active',TLV15_chart.bb);tlv15_refreshChart()};
+ $('toggleRSI').onclick=()=>{TLV15_chart.rsi=!TLV15_chart.rsi;$('toggleRSI').classList.toggle('active',TLV15_chart.rsi);tlv15_refreshChart()};
+ $('toggleMACD').onclick=()=>{TLV15_chart.macd=!TLV15_chart.macd;$('toggleMACD').classList.toggle('active',TLV15_chart.macd);tlv15_refreshChart()};
+ $('refreshChart').onclick=async()=>{try{$('chartStatus').textContent='Refreshing candle data...';const rs=await Promise.all(TF.map(t=>candles($('pair').value,t).then(analyze)));window._tlv13LastRs=rs;TLV15_chart.rs=rs;tlv15_refreshChart();$('chartStatus').textContent='Candle data refreshed.'}catch(e){$('chartStatus').textContent='Chart refresh failed: '+e.message}};
+ ['toggleEMA20','toggleEMA50','toggleRSI','toggleMACD'].forEach(id=>$(id).classList.add('active'));
 });
 </script>
 
@@ -535,7 +556,7 @@ window.addEventListener("load",()=>{
 </script>
 
 <div class="card" style="margin-top:12px">
-  <b>V14.1 Live Decision Layer</b>
+  <b>V15 Live Decision Layer</b>
   <p class="v11-muted">The confirmation matrix, setup quality and trade gate are linked to the scanner's current 15m / 1h / 4h analysis. They are informational safeguards and do not place orders.</p>
 </div>
 </body>
