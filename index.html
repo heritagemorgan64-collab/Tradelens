@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V10.2</title>
+<title>TradeLens V10.3</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -43,10 +43,24 @@ function TLv102_regime(c){
   return rank<=.2?"LOW VOLATILITY":rank>=.8?"HIGH VOLATILITY":"NORMAL VOLATILITY";
 }
 </script>
+
+<script>
+function TLv103_enforceDirectionIntegrity(a){
+  if(!a) return a;
+  const t=a.trend, m=a.momentum;
+  if(t==="BULLISH" && m==="POSITIVE") a.state="BULLISH";
+  else if(t==="BEARISH" && m==="NEGATIVE") a.state="BEARISH";
+  else a.state="NEUTRAL";
+  a.directionIntegrity=(a.state==="BULLISH" && t==="BULLISH" && m==="POSITIVE") ||
+                       (a.state==="BEARISH" && t==="BEARISH" && m==="NEGATIVE") ||
+                       (a.state==="NEUTRAL" && !(t==="BULLISH"&&m==="POSITIVE") && !(t==="BEARISH"&&m==="NEGATIVE"));
+  return a;
+}
+</script>
 </head>
-<body><div class="card" style="margin-top:12px"><b>V10.2 Direction Integrity:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V10.3 Direction Integrity:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V10.2</h1>
+<h1>TradeLens V10.3</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -145,7 +159,7 @@ function analyze(c){
  const liquidityScore=liq>1000000?1:0;
  const raw=trendScore+momScore+rsiScore+volScore+structureScore+volatilityScore+extensionScore+srScore+liquidityScore;
  const strength=Math.round((raw/11)*10*10)/10;
- const state=raw>=8?'BULLISH':raw<=4?'BEARISH':'NEUTRAL';
+ const state=TLv102_direction(trend,momentum,rsi);
  const now=Date.now(),ageMin=Math.max(0,(now-c.at(-1).closeTime)/60000);
  const freshness=ageMin<=30?'FRESH':ageMin<=180?'AGING':'STALE';
  return {p,e20,e50,e100,mac,r,at,atrPct,vr,liq,trend,momentum,structure,regime,rsiStatus,volume,trendScore,momScore,rsiScore,volScore,structureScore,volatilityScore,extensionStatus,extensionScore,srScore,liquidityScore,raw,strength,state,extension,support,resistance,freshness,ageMin};
@@ -194,7 +208,7 @@ function qualify(rs,c){
  return {checks,blockers,status,volumeWeak:vol<2,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
 }
 function render(rs,c,q,detail){
- $('selectedTitle').textContent=$('pair').value+' • V10.2 Analysis';
+ $('selectedTitle').textContent=$('pair').value+' • V10.3 Analysis';
  $('decisionBadge').textContent=q.status;
  $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
  $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
@@ -233,7 +247,7 @@ async function run(){
   }catch(e){console.warn(symbol,e)}
   out.sort((a,b)=>b.strength-a.strength);
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V10.2 scan complete. '+out.length+' pairs analyzed.';
+  $('status').textContent='V10.3 scan complete. '+out.length+' pairs analyzed.';
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
 $('test').onclick=async()=>{try{await get(HOSTS[0]+'/api/v3/ping',5000);$('apiBadge').textContent='API: ONLINE';$('apiBadge').className='badge ok';$('status').textContent='Binance API reachable.'}catch(e){$('apiBadge').textContent='API: OFFLINE';$('apiBadge').className='badge bad';$('status').textContent='API test failed.'}};
