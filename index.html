@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V10.3</title>
+<title>TradeLens V11</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -57,10 +57,25 @@ function TLv103_enforceDirectionIntegrity(a){
   return a;
 }
 </script>
+
+<style>
+.v11-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.v11-panel{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px}
+.v11-label{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em}
+.v11-value{font-size:18px;font-weight:700;margin-top:4px}
+.v11-muted{color:#94a3b8;font-size:12px}
+.v11-lock{border:1px solid #92400e;background:#451a03;padding:12px;border-radius:10px;margin-top:10px}
+.v11-ready{border:1px solid #166534;background:#052e16;padding:12px;border-radius:10px;margin-top:10px}
+.v11-matrix{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+.v11-matrix th,.v11-matrix td{border-bottom:1px solid #334155;padding:8px;text-align:left}
+.v11-pill{display:inline-block;padding:3px 7px;border-radius:999px;border:1px solid #475569;font-size:11px}
+.v11-smallgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(max-width:700px){.v11-grid{grid-template-columns:1fr}.v11-smallgrid{grid-template-columns:1fr}}
+</style>
 </head>
-<body><div class="card" style="margin-top:12px"><b>V10.3 Direction Integrity:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V11 Direction Integrity:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V10.3</h1>
+<h1>TradeLens V11</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -208,7 +223,7 @@ function qualify(rs,c){
  return {checks,blockers,status,volumeWeak:vol<2,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
 }
 function render(rs,c,q,detail){
- $('selectedTitle').textContent=$('pair').value+' • V10.3 Analysis';
+ $('selectedTitle').textContent=$('pair').value+' • V11 Analysis';
  $('decisionBadge').textContent=q.status;
  $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
  $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
@@ -247,12 +262,149 @@ async function run(){
   }catch(e){console.warn(symbol,e)}
   out.sort((a,b)=>b.strength-a.strength);
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V10.3 scan complete. '+out.length+' pairs analyzed.';
+  $('status').textContent='V11 scan complete. '+out.length+' pairs analyzed.';
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
 $('test').onclick=async()=>{try{await get(HOSTS[0]+'/api/v3/ping',5000);$('apiBadge').textContent='API: ONLINE';$('apiBadge').className='badge ok';$('status').textContent='Binance API reachable.'}catch(e){$('apiBadge').textContent='API: OFFLINE';$('apiBadge').className='badge bad';$('status').textContent='API test failed.'}};
 $('scan').onclick=run;
 $('pair').onchange=()=>{if($('status').textContent.includes('complete'))run()};
+</script>
+
+<script>
+/* ========================= TradeLens V11 Engine ========================= */
+const TLV11_WEIGHTS={ "15m":1, "1h":2, "4h":3 };
+
+function tlv11_num(x,d=0){ return Number.isFinite(Number(x))?Number(x):d; }
+
+function tlv11_direction(tf){
+  if(tf.trend==="BULLISH" && tf.momentum==="POSITIVE") return "BULLISH";
+  if(tf.trend==="BEARISH" && tf.momentum==="NEGATIVE") return "BEARISH";
+  return "NEUTRAL";
+}
+
+function tlv11_confluence(tf){
+  let bull=0,bear=0,total=0;
+  ["15m","1h","4h"].forEach(k=>{
+    const w=TLV11_WEIGHTS[k]; total+=w;
+    if(tf[k]?.state==="BULLISH") bull+=w;
+    if(tf[k]?.state==="BEARISH") bear+=w;
+  });
+  if(bull>bear) return {direction:"BULLISH",percent:Math.round(bull/total*100),bull,bear,total};
+  if(bear>bull) return {direction:"BEARISH",percent:Math.round(bear/total*100),bull,bear,total};
+  return {direction:"MIXED",percent:Math.round(Math.max(bull,bear)/total*100),bull,bear,total};
+}
+
+function tlv11_readiness(tf,overall){
+  const dominant=overall.direction;
+  if(dominant==="MIXED") return {status:"INVALID",reason:"No dominant timeframe direction."};
+  const ordered=["4h","1h","15m"];
+  const d=tf[dominant==="BULLISH"?"4h":"4h"]?.state;
+  const h4=tf["4h"]?.state;
+  const h1=tf["1h"]?.state;
+  const m15=tf["15m"]?.state;
+
+  const votes=[h4,h1,m15];
+  const same=votes.filter(x=>x===dominant).length;
+  const opposing=votes.filter(x=>x!==dominant && x!=="NEUTRAL").length;
+
+  if(overall.percent<67) return {status:"WATCH",reason:"Insufficient weighted MTF confluence."};
+  if(opposing>0 && h4!==dominant) return {status:"WATCH",reason:"Higher-timeframe confirmation is missing."};
+  return {status:"CANDIDATE",reason:"Directional confluence is established."};
+}
+
+function tlv11_tradeGate(a){
+  const blockers=[];
+  if(!a) return {status:"LOCKED",blockers:["No analysis available."]};
+  if(a.readiness!=="QUALIFIED"){
+    if(a.readiness==="WATCH") blockers.push(a.readinessReason||"Setup is not fully confirmed.");
+    else blockers.push("Setup is invalid.");
+  }
+  if(a.direction==="MIXED" || a.direction==="NONE") blockers.push("No clean dominant direction.");
+  if(a.confluence<67) blockers.push("Weighted MTF confluence below 67%.");
+  if(a.volumeRatio<1) blockers.push("Volume confirmation is weak.");
+  if(a.rsiCaution) blockers.push("RSI is in a caution zone.");
+  if(a.extensionRisk) blockers.push("Price is extended from the preferred entry area.");
+  if(a.liquidityLimited) blockers.push("Liquidity proxy is limited.");
+  if(a.freshness!=="FRESH") blockers.push("Market data is not fresh.");
+  return blockers.length?{status:"LOCKED",blockers}:{status:"READY",blockers:[]};
+}
+
+function tlv11_entryPlan(a){
+  if(!a || a.tradeGate?.status!=="READY") return null;
+  const p=a.price, atr=a.atr;
+  if(!Number.isFinite(p)||!Number.isFinite(atr)||atr<=0) return null;
+  const long=a.direction==="BULLISH";
+  const entry=long?p:p;
+  const stop=long?p-1.25*atr:p+1.25*atr;
+  const target=long?p+2.5*atr:p-2.5*atr;
+  const risk=Math.abs(entry-stop), reward=Math.abs(target-entry);
+  return {direction:a.direction,entry,stop,target,rr:reward/risk,atr};
+}
+
+function tlv11_build(tfMap,summary){
+  const normalized={};
+  ["15m","1h","4h"].forEach(k=>{
+    const x=tfMap[k]||{};
+    x.state=tlv11_direction(x);
+    normalized[k]=x;
+  });
+  const c=tlv11_confluence(normalized);
+  const r=tlv11_readiness(normalized,c);
+  const best=normalized[summary?.detailTf||"15m"]||normalized["15m"]||{};
+  const gate=tlv11_tradeGate({
+    readiness:r.status,
+    readinessReason:r.reason,
+    direction:c.direction,
+    confluence:c.percent,
+    volumeRatio:tlv11_num(best.volRatio,0),
+    rsiCaution:best.rsiCaution===true,
+    extensionRisk:best.extensionRisk===true,
+    liquidityLimited:best.liquidityLimited===true,
+    freshness:best.freshness||"FRESH",
+    price:best.price,atr:best.atr
+  });
+  const plan=gate.status==="READY"?tlv11_entryPlan({
+    direction:c.direction,price:best.price,atr:best.atr,tradeGate:gate
+  }):null;
+  return {timeframes:normalized,confluence:c,readiness:r,tradeGate:gate,plan};
+}
+</script>
+
+<div class="card" style="margin-top:12px">
+  <h3>V11 Decision Engine</h3>
+  <div class="v11-grid">
+    <div class="v11-panel"><div class="v11-label">Trade Readiness</div><div id="v11Readiness" class="v11-value">WAITING</div></div>
+    <div class="v11-panel"><div class="v11-label">Decision Direction</div><div id="v11Direction" class="v11-value">NONE</div></div>
+    <div class="v11-panel"><div class="v11-label">Weighted Confluence</div><div id="v11Confluence" class="v11-value">—</div></div>
+  </div>
+  <div id="v11Gate" class="v11-lock">V11 trade gate has not been evaluated.</div>
+  <h4 style="margin-top:14px">Confirmation Matrix</h4>
+  <table class="v11-matrix">
+    <thead><tr><th>Timeframe</th><th>Direction</th><th>Trend</th><th>Momentum</th><th>Weight</th></tr></thead>
+    <tbody id="v11Matrix"><tr><td colspan="5">Run a scan to populate.</td></tr></tbody>
+  </table>
+</div>
+
+<script>
+function TLV11_renderDemo(tfMap,detailTf){
+  const result=tlv11_build(tfMap,{detailTf});
+  const q=document.getElementById("v11Readiness"),d=document.getElementById("v11Direction"),
+        c=document.getElementById("v11Confluence"),g=document.getElementById("v11Gate"),
+        m=document.getElementById("v11Matrix");
+  if(!q||!d||!c||!g||!m)return result;
+  q.textContent=result.tradeGate.status==="READY"?"READY":result.readiness.status;
+  d.textContent=result.confluence.direction;
+  c.textContent=result.confluence.percent+"%";
+  g.className=result.tradeGate.status==="READY"?"v11-ready":"v11-lock";
+  g.innerHTML=result.tradeGate.status==="READY"
+    ?"TRADE GATE OPEN — all V11 blocking conditions passed."
+    :"RISK PLAN LOCKED — "+result.tradeGate.blockers.join(" • ");
+  m.innerHTML=["15m","1h","4h"].map(tf=>{
+    const x=result.timeframes[tf]||{};
+    return `<tr><td>${tf}</td><td>${x.state||"NEUTRAL"}</td><td>${x.trend||"—"}</td><td>${x.momentum||"—"}</td><td>${TLV11_WEIGHTS[tf]}x</td></tr>`;
+  }).join("");
+  return result;
+}
 </script>
 </body>
 </html>
