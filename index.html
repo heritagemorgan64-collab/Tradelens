@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V10</title>
+<title>TradeLens V10.1</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -20,7 +20,7 @@ table{width:100%;border-collapse:collapse}td,th{padding:9px 7px;border-bottom:1p
 </head>
 <body>
 <div class="wrap">
-<h1>TradeLens V10</h1>
+<h1>TradeLens V10.1</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -53,7 +53,7 @@ table{width:100%;border-collapse:collapse}td,th{padding:9px 7px;border-bottom:1p
 
 <section class="panel">
 <h2>Setup Qualification</h2>
-<div class="metric"><div class="label">SETUP STRENGTH</div><div class="big" id="strength">—</div><div class="small">Composite quality score, not a directional guarantee.</div></div>
+<div class="metric"><div class="label">SETUP STRENGTH</div><div class="big" id="strength">—</div><div class="small">Composite quality score; qualification gates can override raw strength.</div></div>
 <div id="why" class="why" style="margin-top:9px"></div>
 </section>
 </section>
@@ -135,53 +135,64 @@ function confluence(rs){
  return {bull,bear,dominant,percent,dominantIdx,confirmation,problem,avg:rs.reduce((a,x)=>a+x.strength,0)/rs.length};
 }
 function qualify(rs,c){
+ const d=c.dominant, expected=d==='BULLISH'?'POSITIVE':d==='BEARISH'?'NEGATIVE':null;
+ const trend= d==='MIXED'?0:rs.filter(x=>x.trend===d).length;
+ const mom= expected?rs.filter(x=>x.momentum===expected).length:0;
+ const vol=rs.filter(x=>x.volume==='CONFIRMED').length;
+ const fresh=rs.filter(x=>x.freshness==='FRESH').length;
+ const ext=rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length;
+ const liq=rs.filter(x=>x.liquidityScore).length;
  const checks=[
-  ['TREND',rs.filter(x=>x.trend===c.dominant).length>=2?'CONFIRMED':'NOT CONFIRMED'],
-  ['MOMENTUM',rs.filter(x=>x.momentum===(c.dominant==='BULLISH'?'POSITIVE':c.dominant==='BEARISH'?'NEGATIVE':'FLAT')).length>=2?'CONFIRMED':'NOT CONFIRMED'],
-  ['RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'HEALTHY':'CAUTION'],
-  ['VOLUME',rs.filter(x=>x.volume==='CONFIRMED').length>=2?'CONFIRMED':'WEAK'],
-  ['STRUCTURE',rs.filter(x=>x.structure.includes('BREAK')||x.structure.includes('BIAS')).length>=2?'CONFIRMED':'UNCLEAR'],
-  ['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'ACCEPTABLE':'HIGH / CAUTION'],
-  ['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'ADEQUATE':'LIMITED'],
-  ['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'ACCEPTABLE':'EXTENDED'],
-  ['FRESHNESS',rs.filter(x=>x.freshness==='FRESH').length>=2?'FRESH':'AGING / STALE']
+ ['TREND',d==='MIXED'?'NOT ESTABLISHED':trend>=2?'CONFIRMED':'NOT CONFIRMED'],
+ ['MOMENTUM',d==='MIXED'?'NOT ESTABLISHED':mom>=2?'CONFIRMED':'NOT CONFIRMED'],
+ ['RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'HEALTHY':'CAUTION'],
+ ['VOLUME',vol>=2?'CONFIRMED':'WEAK'],
+ ['STRUCTURE',rs.filter(x=>x.structure.includes('BREAK')||x.structure.includes('BIAS')).length>=2?'CONFIRMED':'UNCLEAR'],
+ ['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'ACCEPTABLE':'HIGH / CAUTION'],
+ ['LIQUIDITY',liq>=2?'ADEQUATE':'LIMITED'],
+ ['EXTENSION',ext>=2?'ACCEPTABLE':'EXTENDED'],
+ ['FRESHNESS',fresh>=2?'FRESH':'AGING / STALE']
  ];
  const blockers=[];
- if(c.dominant==='MIXED')blockers.push('No dominant timeframe direction');
- if(c.percent<67)blockers.push('Insufficient MTF confluence');
- if(checks.find(x=>x[0]==='FRESHNESS')[1]==='AGING / STALE')blockers.push('Data freshness');
- if(checks.find(x=>x[0]==='EXTENSION')[1]==='EXTENDED')blockers.push('Move may be extended');
- if(checks.find(x=>x[0]==='LIQUIDITY')[1]==='LIMITED')blockers.push('Liquidity proxy is limited');
- const volumeWeak=checks.find(x=>x[0]==='VOLUME')[1]!=='CONFIRMED';
- const strong=c.avg>=8;
+ if(d==='MIXED') blockers.push('No dominant timeframe direction');
+ if(c.percent<67) blockers.push('Insufficient MTF confluence');
+ if(d!=='MIXED'&&trend<2) blockers.push('Trend confirmation incomplete');
+ if(d!=='MIXED'&&mom<2) blockers.push('Momentum confirmation incomplete');
+ if(vol<2) blockers.push('Volume confirmation weak');
+ if(fresh<2) blockers.push('Data freshness');
+ if(ext<2) blockers.push('Move may be extended');
+ if(liq<2) blockers.push('Liquidity proxy is limited');
  let status='WATCH';
- if(c.dominant!=='MIXED'&&c.percent>=67&&strong&&blockers.length===0)status='QUALIFIED';
- if(c.dominant==='MIXED'||c.percent<34||checks.some(x=>x[1]==='AGING / STALE'))status='INVALID';
- return {checks,blockers,status,volumeWeak};
+ if(d==='MIXED'||c.percent<34||fresh===0) status='INVALID';
+ else if(c.percent>=67&&trend>=2&&mom>=2&&fresh>=2&&ext>=2&&liq>=2&&vol>=1&&c.avg>=8) status='QUALIFIED';
+ return {checks,blockers,status,volumeWeak:vol<2,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
 }
 function render(rs,c,q,detail){
- $('selectedTitle').textContent=$('pair').value+' • V10 Analysis';
+ $('selectedTitle').textContent=$('pair').value+' • V10.1 Analysis';
  $('decisionBadge').textContent=q.status;
  $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
  $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
  $('confText').textContent=c.percent+'% • '+c.dominant;
  $('confBar').style.width=c.percent+'%';
  $('diagnosis').innerHTML=c.dominant==='MIXED'
- ? '<b>CONFIRMATION PROBLEM</b><br>No dominant direction across 15m / 1h / 4h.'
+ ? '<b>CONFIRMATION PROBLEM</b><br>No dominant direction across 15m / 1h / 4h.<br><br><b>STATUS</b><br>NO TRADE — wait for directional alignment.'
  : `<b>DOMINANT SIGNAL</b><br>${TF[c.dominantIdx]} ${c.dominant}<br><br><b>CONFIRMATION PROBLEM</b><br>${c.confirmation.length?esc(c.confirmation.join(' + '))+' have not confirmed the dominant signal.':'None — all timeframes agree.'}`;
  $('strength').textContent=fmt(c.avg,1)+'/10';
  $('why').innerHTML=[['TREND',rs.filter(x=>x.trend===c.dominant).length>=2?'✓ CONFIRMED':'? MIXED'],['MOMENTUM',rs.filter(x=>x.momentum===(c.dominant==='BULLISH'?'POSITIVE':'NEGATIVE')).length>=2?'✓ CONFIRMED':'? MIXED'],['RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'✓ HEALTHY':'⚠ CAUTION'],['VOLUME',rs.filter(x=>x.volume==='CONFIRMED').length>=2?'✓ CONFIRMED':'? WEAK'],['STRUCTURE',rs.filter(x=>x.structure.includes('BREAK')||x.structure.includes('BIAS')).length>=2?'✓ CONFIRMED':'? UNCLEAR'],['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'✓ ACCEPTABLE':'⚠ HIGH'],['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'✓ ADEQUATE':'? LIMITED'],['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'✓ ACCEPTABLE':'⚠ EXTENDED']].map(x=>`<div class="metric"><b>${x[0]}</b><br>${x[1]}</div>`).join('');
  const x=rs[detail==='15m'?0:detail==='1h'?1:2];
  $('detailOut').innerHTML=[['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.structure],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
  $('checks').innerHTML=q.checks.map(x=>`<div class="metric"><b>${x[0]}</b><br><span class="${x[1].includes('CONFIRMED')||x[1]==='HEALTHY'||x[1]==='ADEQUATE'||x[1]==='ACCEPTABLE'||x[1]==='FRESH'?'bull':x[1].includes('WEAK')||x[1].includes('STALE')||x[1].includes('EXTENDED')?'neutral':''}">${x[1]}</span></div>`).join('');
- renderRisk(x,c);
+ renderRisk(x,c,q);
 }
-function renderRisk(x,c){
+function renderRisk(x,c,q){
  const acct=+$('account').value||500,risk=(+$('risk').value||1)/100,max=acct*risk;
- const dir=c.dominant==='BEARISH'?'SHORT':'LONG';
- const dist=Math.max(1.25*x.at,x.p*.005),stop=dir==='SHORT'?x.p+dist:x.p-dist,target=dir==='SHORT'?x.p-2*dist:x.p+2*dist;
- const size=max/dist,feeAllowance=max*.001;
- $('riskOut').innerHTML=[['DIRECTION',dir],['ENTRY',fmt(x.p)],['STOP',fmt(stop)],['TARGET',fmt(target)],['POSITION SIZE',fmt(size,6)],['MAX LOSS','$'+fmt(max)],['POTENTIAL PROFIT','$'+fmt(max*2)],['R:R','1 : 2'],['FEE ALLOWANCE','$'+fmt(feeAllowance)],['RISK DISTANCE',fmt(dist)]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
+ if(!q||q.status!=='QUALIFIED'||c.dominant==='MIXED'){
+  $('riskOut').innerHTML=[['STATUS','NO TRADE PLAN'],['DIRECTION','NONE'],['ENTRY','—'],['STOP','—'],['TARGET','—'],['POSITION SIZE','—'],['MAX LOSS','—'],['POTENTIAL PROFIT','—'],['R:R','—'],['FEE ALLOWANCE','—']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
+  return;
+ }
+ const dir=c.dominant==='BEARISH'?'SHORT':'LONG',dist=Math.max(1.25*x.at,x.p*.005);
+ const stop=dir==='SHORT'?x.p+dist:x.p-dist,target=dir==='SHORT'?x.p-2*dist:x.p+2*dist,size=max/dist,fee=max*.001;
+ $('riskOut').innerHTML=[['STATUS','QUALIFIED PLAN'],['DIRECTION',dir],['ENTRY',fmt(x.p)],['STOP',fmt(stop)],['TARGET',fmt(target)],['POSITION SIZE',fmt(size,6)],['MAX LOSS','$'+fmt(max)],['POTENTIAL PROFIT','$'+fmt(max*2)],['R:R','1 : 2'],['FEE ALLOWANCE','$'+fmt(fee)]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
 }
 async function onePair(symbol){const rs=await Promise.all(TF.map(t=>candles(symbol,t).then(analyze)));const c=confluence(rs),q=qualify(rs,c);return {symbol,rs,c,q}}
 async function run(){
@@ -192,11 +203,11 @@ async function run(){
   const symbols=[...$('pair').options].map(o=>o.value),out=[];
   for(const symbol of symbols)try{
    const z=await onePair(symbol);
-   out.push({symbol,price:z.rs[0].p,strength:z.c.avg,conf:z.c.percent,state:z.c.dominant,qual:z.q.status,regime:z.rs[0].regime,problem:z.c.problem});
+   out.push({symbol,price:z.rs[0].p,strength:z.c.avg,conf:z.c.percent,state:z.c.dominant,qual:z.q.status,regime:z.rs[0].regime,problem:z.q.status==='QUALIFIED'?'None':(z.q.blockers.join('; ')||z.c.problem)});
   }catch(e){console.warn(symbol,e)}
   out.sort((a,b)=>b.strength-a.strength);
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V10 scan complete. '+out.length+' pairs analyzed.';
+  $('status').textContent='V10.1 scan complete. '+out.length+' pairs analyzed.';
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
 $('test').onclick=async()=>{try{await get(HOSTS[0]+'/api/v3/ping',5000);$('apiBadge').textContent='API: ONLINE';$('apiBadge').className='badge ok';$('status').textContent='Binance API reachable.'}catch(e){$('apiBadge').textContent='API: OFFLINE';$('apiBadge').className='badge bad';$('status').textContent='API test failed.'}};
