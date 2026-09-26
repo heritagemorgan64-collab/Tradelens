@@ -1,12 +1,207 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TradeLens V9</title><style>body{margin:0;background:#071018;color:#e9f2f7;font:14px system-ui;padding:16px}.wrap{max-width:1000px;margin:auto}.panel{background:#0d1822;border:1px solid #203443;border-radius:14px;padding:14px;margin:12px 0}.controls,.cards,.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric,.card{background:#101f2c;border:1px solid #203443;border-radius:10px;padding:10px}select,input,button{width:100%;padding:10px;margin-top:5px;background:#0a141d;color:white;border:1px solid #294252;border-radius:8px}button{font-weight:700}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.bull{color:#43d19e}.bear{color:#ff6f7d}.neutral{color:#f6c85f}.score{font-size:20px;font-weight:800}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #203443;text-align:left}th{color:#8ea4b3;font-size:11px}.small{color:#8ea4b3;font-size:12px}@media(max-width:650px){.controls,.cards,.metrics{grid-template-columns:1fr}.actions{grid-template-columns:1fr}}</style></head><body><div class="wrap"><h1>TradeLens V9</h1><div class="small">ADVANCED CONFLUENCE • MARKET SCANNER • PAPER TRADING</div><section class="panel"><h2>Scanner</h2><div class="controls"><label>PAIR<select id="pair"><option>BTCUSDT</option><option>ETHUSDT</option><option>BNBUSDT</option><option>SOLUSDT</option><option>XRPUSDT</option><option>ADAUSDT</option><option>DOGEUSDT</option><option>AVAXUSDT</option><option>LINKUSDT</option><option>TRXUSDT</option></select></label><label>DETAIL<select id="detail"><option>15m</option><option>1h</option><option>4h</option></select></label><label>ACCOUNT<input id="account" type="number" value="500"></label><label>RISK %<input id="risk" type="number" value="1" step=".1"></label></div><div class="actions"><button id="test">TEST API</button><button id="scan">RUN V9 SCAN</button></div><p id="status" class="small">Ready.</p></section><section class="panel"><h2>Market Scanner</h2><div class="small">Scans supported pairs across 15m, 1h and 4h and ranks them by confluence.</div><table><thead><tr><th>PAIR</th><th>PRICE</th><th>SCORE</th><th>STATE</th><th>CONF.</th><th>REGIME</th><th>CONFLICT</th></tr></thead><tbody id="rows"><tr><td colspan="7">Run scan.</td></tr></tbody></table></section><section class="panel"><h2>Multi-Timeframe Fingerprint</h2><div id="fp" class="cards"></div><p id="overall"></p></section><section class="panel"><h2>Selected Timeframe</h2><div id="detailOut" class="metrics"></div></section><section class="panel"><h2>V9 Setup Engine</h2><div id="setup" class="score">—</div><p id="setupText" class="small">Run scan.</p><div id="why" class="metrics"></div></section><section class="panel"><h2>Risk Plan</h2><div id="riskOut" class="metrics"></div></section><p class="small">Informational/paper trading only. No real orders are placed.</p></div><script>
-const H=['https://api.binance.com','https://data-api.binance.vision','https://api1.binance.com','https://api2.binance.com','https://api3.binance.com'];const $=x=>document.getElementById(x);const f=(n,d=2)=>Number(n).toLocaleString(undefined,{maximumFractionDigits:d});
-async function get(u,t=9000){let c=new AbortController(),x=setTimeout(()=>c.abort(),t);try{let r=await fetch(u,{signal:c.signal,cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return r.json()}finally{clearTimeout(x)}}
-async function candles(s,t){let e;for(let h of H)try{let a=await get(h+'/api/v3/klines?symbol='+s+'&interval='+t+'&limit=180');if(a.length>50)return a.map(x=>({o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]}))}catch(z){e=z}throw e||Error('No data')}
-function ema(a,n){let k=2/(n+1),e=a[0];for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e}function avg(a,n){a=a.slice(-n);return a.reduce((x,y)=>x+y,0)/a.length}function rsi(a,n=14){let g=0,l=0;for(let i=1;i<=n;i++){let d=a[i]-a[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)}g/=n;l/=n;for(let i=n+1;i<a.length;i++){let d=a[i]-a[i-1];g=(g*(n-1)+Math.max(d,0))/n;l=(l*(n-1)+Math.max(-d,0))/n}return l?100-100/(1+g/l):100}function atr(c,n=14){let a=[];for(let i=1;i<c.length;i++)a.push(Math.max(c[i].h-c[i].l,Math.abs(c[i].h-c[i-1].c),Math.abs(c[i].l-c[i-1].c)));return avg(a,n)}
-function calc(c){let a=c.map(x=>x.c),v=c.map(x=>x.v),p=a.at(-1),e20=ema(a,20),e50=ema(a,50),m=ema(a,12)-ema(a,26),r=rsi(a),at=atr(c),vr=avg(v,20)/(avg(v.slice(0,-20),20)||1),s=0;if(p>e20)s+=2;if(e20>e50)s+=2;if(m>0)s+=2;if(r>=50&&r<=70)s++;if(avg(a,10)>avg(a.slice(-20,-10),10))s++;if(vr>=1)s++;if(at/p<.02)s++;let state=s>=7?'BULLISH':s<=3?'BEARISH':'NEUTRAL',trend=p>e20&&e20>e50?'BULLISH':p<e20&&e20<e50?'BEARISH':'MIXED',mom=m>0?'POSITIVE':m<0?'NEGATIVE':'FLAT',hi=Math.max(...a.slice(-21,-1)),lo=Math.min(...a.slice(-21,-1)),structure=p>hi?'BREAKOUT UP':p<lo?'BREAKDOWN':'RANGE / TREND',regime=at/p<.012?'LOW':at/p>.025?'HIGH':'NORMAL';return{p,e20,e50,m,r,at,vr,s,state,trend,mom,structure,regime}}
-function conf(rs){let b=rs.filter(x=>x.state==='BULLISH').length,d=rs.filter(x=>x.state==='BEARISH').length,o=b>=2?'BULLISH':d>=2?'BEARISH':'MIXED / WAIT',c=Math.round(Math.max(b,d)/3*100),i=rs.findIndex(x=>x.state!==(o==='MIXED / WAIT'?'':o));return{b,d,o,c,conflict:i<0?'NONE':['15m','1h','4h'][i],avg:rs.reduce((a,x)=>a+x.s,0)/3}}
-async function analyze(s,t){return calc(await candles(s,t))}
-function render(rs,c,detail){$('fp').innerHTML=rs.map((x,i)=>'<div class="card"><b>'+['15m','1h','4h'][i]+'</b><div class="score '+(x.state==='BULLISH'?'bull':x.state==='BEARISH'?'bear':'neutral')+'">'+x.state+' '+x.s+'/10</div><div class="small">'+x.trend+' / '+x.mom+'<br>RSI '+f(x.r,1)+' • Vol '+f(x.vr,2)+'x</div></div>').join('');$('overall').innerHTML='Overall: <b>'+c.o+'</b> • '+c.b+' bullish / '+c.d+' bearish • Confluence '+c.c+'%';let x=rs[detail==='15m'?0:detail==='1h'?1:2];$('detailOut').innerHTML=[['PRICE',f(x.p)],['ATR',f(x.at)],['VOL RATIO',f(x.vr,2)+'x'],['RSI',f(x.r,1)],['EMA 20 / 50',f(x.e20)+' / '+f(x.e50)],['MACD',f(x.m,4)],['TREND',x.trend],['STRUCTURE',x.structure]].map(q=>'<div class="metric"><b>'+q[0]+'</b><br>'+q[1]+'</div>').join('');$('setup').textContent=f(c.avg,1)+'/10';$('setupText').textContent=c.o==='MIXED / WAIT'?'Timeframes disagree. Wait for confirmation.':c.o+' confluence detected for paper analysis.';let vals=[['TREND',x.trend==='MIXED'?1:2],['MOMENTUM',x.mom==='FLAT'?1:2],['RSI',x.r>=50&&x.r<=70?1:0],['VOLUME',x.vr>=1?1:0],['STRUCTURE',x.structure.includes('BREAKOUT')?1:0],['VOLATILITY',x.at/x.p<.02?1:0],['MTF',c.c>=67?1:0]];$('why').innerHTML=vals.map(q=>'<div class="metric"><b>'+q[0]+'</b><br>+'+q[1]+'</div>').join('');let acct=+$('account').value||500,max=acct*((+$('risk').value||1)/100),dist=Math.max(1.25*x.at,x.p*.005),stop=c.o==='BEARISH'?x.p+dist:x.p-dist,target=c.o==='BEARISH'?x.p-2*dist:x.p+2*dist,size=max/dist;$('riskOut').innerHTML=[['ENTRY',f(x.p)],['STOP',f(stop)],['TARGET',f(target)],['MAX LOSS','$'+f(max)],['POSITION SIZE',f(size,6)],['R:R','1 : 2'],['POTENTIAL PROFIT','$'+f(max*2)],['RISK DISTANCE',f(dist)]].map(q=>'<div class="metric"><b>'+q[0]+'</b><br>'+q[1]+'</div>').join('')}
-async function run(){try{$('status').textContent='Scanning...';let s=$('pair').value,rs=await Promise.all(['15m','1h','4h'].map(t=>analyze(s,t))),c=conf(rs);render(rs,c,$('detail').value);$('status').textContent='V9 scan complete.';let ps=[...$('pair').options].map(x=>x.value),out=[];for(let p of ps)try{let q=await Promise.all(['15m','1h','4h'].map(t=>analyze(p,t))),z=conf(q);out.push({p,price:q[0].p,score:z.avg,state:z.o,conf:z.c,regime:q[0].regime,conflict:z.conflict})}catch(e){}out.sort((a,b)=>b.score-a.score);$('rows').innerHTML=out.map(r=>'<tr><td>'+r.p+'</td><td>'+f(r.price)+'</td><td>'+f(r.score,1)+'/10</td><td>'+r.state+'</td><td>'+r.conf+'%</td><td>'+r.regime+'</td><td>'+r.conflict+'</td></tr>').join('')}catch(e){$('status').textContent='Scan failed: '+e.message}}
-$('test').onclick=async()=>{try{await get(H[0]+'/api/v3/ping',5000);$('status').textContent='Binance API reachable.'}catch(e){$('status').textContent='API test failed.'}};$('scan').onclick=run;
-</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TradeLens V10</title>
+<style>
+:root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
+h1{margin:0 0 3px;font-size:28px}.sub{color:var(--muted);font-size:12px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:15px;margin:12px 0}
+.controls,.grid3,.grid4{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.grid4{grid-template-columns:repeat(4,1fr)}
+label{font-size:11px;color:var(--muted)}select,input,button{width:100%;padding:10px;margin-top:5px;background:#09151e;color:var(--text);border:1px solid #294452;border-radius:9px}button{font-weight:800;cursor:pointer}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.metric,.card{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:11px}.metric b,.label{font-size:11px;color:var(--muted)}.big{font-size:20px;font-weight:900}.bull{color:var(--green)}.bear{color:var(--red)}.neutral{color:var(--yellow)}.blue{color:var(--blue)}
+table{width:100%;border-collapse:collapse}td,th{padding:9px 7px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{font-size:10px;color:var(--muted)}
+.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 7px;font-size:10px;font-weight:800}.ok{color:var(--green);border-color:#245d4d}.warn{color:var(--yellow);border-color:#65552a}.bad{color:var(--red);border-color:#69323a}
+.bar{height:8px;background:#09131b;border-radius:99px;overflow:hidden;border:1px solid var(--line)}.fill{height:100%;background:var(--green)}
+.two{display:grid;grid-template-columns:1.25fr .75fr;gap:12px}.sectionTitle{display:flex;justify-content:space-between;align-items:center}.small{font-size:12px;color:var(--muted)}.why{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(max-width:760px){.controls,.grid3,.grid4,.two{grid-template-columns:1fr}.why{grid-template-columns:1fr}td,th{white-space:normal}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>TradeLens V10</h1>
+<div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
+
+<section class="panel">
+<div class="sectionTitle"><h2>Scanner Controls</h2><span id="apiBadge" class="badge">API: NOT TESTED</span></div>
+<div class="controls">
+<label>PAIR<select id="pair">
+<option>BTCUSDT</option><option>ETHUSDT</option><option>BNBUSDT</option><option>SOLUSDT</option><option>XRPUSDT</option><option>ADAUSDT</option><option>DOGEUSDT</option><option>AVAXUSDT</option><option>LINKUSDT</option><option>TRXUSDT</option>
+</select></label>
+<label>DETAIL TIMEFRAME<select id="detail"><option>15m</option><option>1h</option><option>4h</option></select></label>
+<label>ACCOUNT<input id="account" type="number" value="500" min="0"></label>
+<label>RISK %<input id="risk" type="number" value="1" step=".1" min=".1"></label>
+<label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED</option><option value="WATCH">WATCH</option><option value="ANY">ANY</option></select></label>
+</div>
+<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V10 SCAN</button></div>
+<p id="status" class="small">Ready.</p>
+</section>
+
+<section class="panel">
+<div class="sectionTitle"><h2>Market Scanner</h2><span class="small">Ranking uses setup strength; decision state remains separate.</span></div>
+<div style="overflow:auto"><table><thead><tr><th>PAIR</th><th>PRICE</th><th>STRENGTH</th><th>CONFLUENCE</th><th>STATE</th><th>QUALIFICATION</th><th>REGIME</th><th>PROBLEM</th></tr></thead><tbody id="rows"><tr><td colspan="8">Run scan.</td></tr></tbody></table></div>
+</section>
+
+<section class="two">
+<section class="panel">
+<div class="sectionTitle"><h2 id="selectedTitle">Selected Pair</h2><span id="decisionBadge" class="badge">—</span></div>
+<div id="fp" class="grid3"></div>
+<div class="metric" style="margin-top:9px"><div class="label">CONFLUENCE</div><div class="big" id="confText">—</div><div class="bar"><div id="confBar" class="fill" style="width:0%"></div></div></div>
+<div id="diagnosis" class="metric" style="margin-top:9px">Run scan.</div>
+</section>
+
+<section class="panel">
+<h2>Setup Qualification</h2>
+<div class="metric"><div class="label">SETUP STRENGTH</div><div class="big" id="strength">—</div><div class="small">Composite quality score, not a directional guarantee.</div></div>
+<div id="why" class="why" style="margin-top:9px"></div>
+</section>
+</section>
+
+<section class="panel"><h2>Selected Timeframe</h2><div id="detailOut" class="grid4"></div></section>
+
+<section class="panel">
+<h2>Qualification Checks</h2>
+<div id="checks" class="grid3"></div>
+</section>
+
+<section class="panel">
+<h2>Risk Plan</h2>
+<div id="riskOut" class="grid4"></div>
+</section>
+
+<p class="small">Informational / paper-trading tool. No real orders are placed. Market data is fetched from public Binance market endpoints. Scores are analytical heuristics and do not guarantee future results.</p>
+</div>
+
+<script>
+const HOSTS=['https://api.binance.com','https://data-api.binance.vision','https://api1.binance.com','https://api2.binance.com','https://api3.binance.com'];
+const TF=['15m','1h','4h']; const $=id=>document.getElementById(id);
+const fmt=(n,d=2)=>Number(n).toLocaleString(undefined,{maximumFractionDigits:d});
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function cls(state){return state==='BULLISH'?'bull':state==='BEARISH'?'bear':'neutral'}
+async function get(u,t=10000){let c=new AbortController(),x=setTimeout(()=>c.abort(),t);try{let r=await fetch(u,{signal:c.signal,cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return await r.json()}finally{clearTimeout(x)}}
+async function candles(symbol,interval){
+ let err;
+ for(const h of HOSTS)try{
+  const a=await get(h+'/api/v3/klines?symbol='+encodeURIComponent(symbol)+'&interval='+interval+'&limit=220');
+  if(a.length>80)return a.map(x=>({time:+x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5],qv:+x[7],closeTime:+x[6]}));
+ }catch(e){err=e}
+ throw err||Error('No market data');
+}
+function ema(a,n){let k=2/(n+1),e=a[0];for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e}
+function avg(a,n){a=a.slice(-n);return a.length?a.reduce((x,y)=>x+y,0)/a.length:0}
+function rsi(a,n=14){let g=0,l=0;for(let i=1;i<=n;i++){let d=a[i]-a[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)}g/=n;l/=n;for(let i=n+1;i<a.length;i++){let d=a[i]-a[i-1];g=(g*(n-1)+Math.max(d,0))/n;l=(l*(n-1)+Math.max(-d,0))/n}return l?100-100/(1+g/l):100}
+function atr(c,n=14){let a=[];for(let i=1;i<c.length;i++)a.push(Math.max(c[i].h-c[i].l,Math.abs(c[i].h-c[i-1].c),Math.abs(c[i].l-c[i-1].c)));return avg(a,n)}
+function pct(a,b){return b?Math.abs(a-b)/b:0}
+function analyze(c){
+ const a=c.map(x=>x.c),v=c.map(x=>x.v),q=c.map(x=>x.qv),p=a.at(-1);
+ const e20=ema(a,20),e50=ema(a,50),e100=ema(a,100),mac=ema(a,12)-ema(a,26),r=rsi(a),at=atr(c),atrPct=at/p;
+ const recentVol=avg(v,20),priorVol=avg(v.slice(-60,-20),40)||1,vr=recentVol/priorVol;
+ const recentQ=avg(q,20),priorQ=avg(q.slice(-60,-20),40)||1,liq=recentQ;
+ const prevHigh=Math.max(...c.slice(-21,-1).map(x=>x.h)),prevLow=Math.min(...c.slice(-21,-1).map(x=>x.l));
+ const support=Math.min(...c.slice(-50,-1).map(x=>x.l)),resistance=Math.max(...c.slice(-50,-1).map(x=>x.h));
+ const trend=p>e20&&e20>e50?'BULLISH':p<e20&&e20<e50?'BEARISH':'MIXED';
+ const momentum=mac>0?'POSITIVE':mac<0?'NEGATIVE':'FLAT';
+ const structure=p>prevHigh?'BREAKOUT UP':p<prevLow?'BREAKDOWN':(p>e50?'HIGHER-BIAS RANGE':'LOWER-BIAS RANGE');
+ const regime=atrPct<.012?'LOW VOLATILITY':atrPct>.025?'HIGH VOLATILITY':structure.includes('BREAK')?'BREAKOUT':'RANGE / TREND';
+ const rsiStatus=r>=52&&r<=68?'HEALTHY':r>70?'OVERBOUGHT':r<30?'OVERSOLD':r>=45&&r<52?'WEAK':'HOT / EXTENDED';
+ const volume=vr>=1.05?'CONFIRMED':vr>=.8?'NEUTRAL':'WEAK';
+ const trendScore=trend==='MIXED'?1:2;
+ const momScore=momentum==='FLAT'?1:2;
+ const rsiScore=(r>=50&&r<=70)?1:0;
+ const volScore=vr>=1?1:0;
+ const structureScore=(structure==='BREAKOUT UP'||structure==='BREAKDOWN')?1:(trend!=='MIXED'?1:0);
+ const volatilityScore=atrPct<.025?1:0;
+ const extension=pct(p,e20); const extensionStatus=extension<=atrPct*2?'ACCEPTABLE':'EXTENDED';
+ const extensionScore=extensionStatus==='ACCEPTABLE'?1:0;
+ const srDistBull=p<resistance?(resistance-p)/p:0, srDistBear=p>support?(p-support)/p:0;
+ const srScore=Math.max(srDistBull,srDistBear)>atrPct*1.2?1:0;
+ const liquidityScore=liq>1000000?1:0;
+ const raw=trendScore+momScore+rsiScore+volScore+structureScore+volatilityScore+extensionScore+srScore+liquidityScore;
+ const strength=Math.round((raw/11)*10*10)/10;
+ const state=raw>=8?'BULLISH':raw<=4?'BEARISH':'NEUTRAL';
+ const now=Date.now(),ageMin=Math.max(0,(now-c.at(-1).closeTime)/60000);
+ const freshness=ageMin<=30?'FRESH':ageMin<=180?'AGING':'STALE';
+ return {p,e20,e50,e100,mac,r,at,atrPct,vr,liq,trend,momentum,structure,regime,rsiStatus,volume,trendScore,momScore,rsiScore,volScore,structureScore,volatilityScore,extensionStatus,extensionScore,srScore,liquidityScore,raw,strength,state,extension,support,resistance,freshness,ageMin};
+}
+function confluence(rs){
+ const bull=rs.filter(x=>x.state==='BULLISH').length,bear=rs.filter(x=>x.state==='BEARISH').length;
+ const dominant=bull>=2?'BULLISH':bear>=2?'BEARISH':'MIXED';
+ const count=Math.max(bull,bear), percent=Math.round(count/rs.length*100);
+ const dominantIdx=dominant==='BULLISH'?rs.findIndex(x=>x.state==='BULLISH'):dominant==='BEARISH'?rs.findIndex(x=>x.state==='BEARISH'):-1;
+ const confirmation=dominant==='MIXED'?'No dominant direction':rs.map((x,i)=>x.state===dominant?null:TF[i]).filter(Boolean);
+ let problem='NONE';
+ if(dominantIdx>=0&&confirmation.length)problem=confirmation.join(' + ')+' not confirming '+TF[dominantIdx]+' '+dominant;
+ return {bull,bear,dominant,percent,dominantIdx,confirmation,problem,avg:rs.reduce((a,x)=>a+x.strength,0)/rs.length};
+}
+function qualify(rs,c){
+ const checks=[
+  ['TREND',rs.filter(x=>x.trend===c.dominant).length>=2?'CONFIRMED':'NOT CONFIRMED'],
+  ['MOMENTUM',rs.filter(x=>x.momentum===(c.dominant==='BULLISH'?'POSITIVE':c.dominant==='BEARISH'?'NEGATIVE':'FLAT')).length>=2?'CONFIRMED':'NOT CONFIRMED'],
+  ['RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'HEALTHY':'CAUTION'],
+  ['VOLUME',rs.filter(x=>x.volume==='CONFIRMED').length>=2?'CONFIRMED':'WEAK'],
+  ['STRUCTURE',rs.filter(x=>x.structure.includes('BREAK')||x.structure.includes('BIAS')).length>=2?'CONFIRMED':'UNCLEAR'],
+  ['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'ACCEPTABLE':'HIGH / CAUTION'],
+  ['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'ADEQUATE':'LIMITED'],
+  ['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'ACCEPTABLE':'EXTENDED'],
+  ['FRESHNESS',rs.filter(x=>x.freshness==='FRESH').length>=2?'FRESH':'AGING / STALE']
+ ];
+ const blockers=[];
+ if(c.dominant==='MIXED')blockers.push('No dominant timeframe direction');
+ if(c.percent<67)blockers.push('Insufficient MTF confluence');
+ if(checks.find(x=>x[0]==='FRESHNESS')[1]==='AGING / STALE')blockers.push('Data freshness');
+ if(checks.find(x=>x[0]==='EXTENSION')[1]==='EXTENDED')blockers.push('Move may be extended');
+ if(checks.find(x=>x[0]==='LIQUIDITY')[1]==='LIMITED')blockers.push('Liquidity proxy is limited');
+ const volumeWeak=checks.find(x=>x[0]==='VOLUME')[1]!=='CONFIRMED';
+ const strong=c.avg>=8;
+ let status='WATCH';
+ if(c.dominant!=='MIXED'&&c.percent>=67&&strong&&blockers.length===0)status='QUALIFIED';
+ if(c.dominant==='MIXED'||c.percent<34||checks.some(x=>x[1]==='AGING / STALE'))status='INVALID';
+ return {checks,blockers,status,volumeWeak};
+}
+function render(rs,c,q,detail){
+ $('selectedTitle').textContent=$('pair').value+' • V10 Analysis';
+ $('decisionBadge').textContent=q.status;
+ $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
+ $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
+ $('confText').textContent=c.percent+'% • '+c.dominant;
+ $('confBar').style.width=c.percent+'%';
+ $('diagnosis').innerHTML=c.dominant==='MIXED'
+ ? '<b>CONFIRMATION PROBLEM</b><br>No dominant direction across 15m / 1h / 4h.'
+ : `<b>DOMINANT SIGNAL</b><br>${TF[c.dominantIdx]} ${c.dominant}<br><br><b>CONFIRMATION PROBLEM</b><br>${c.confirmation.length?esc(c.confirmation.join(' + '))+' have not confirmed the dominant signal.':'None — all timeframes agree.'}`;
+ $('strength').textContent=fmt(c.avg,1)+'/10';
+ $('why').innerHTML=[['TREND',rs.filter(x=>x.trend===c.dominant).length>=2?'✓ CONFIRMED':'? MIXED'],['MOMENTUM',rs.filter(x=>x.momentum===(c.dominant==='BULLISH'?'POSITIVE':'NEGATIVE')).length>=2?'✓ CONFIRMED':'? MIXED'],['RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'✓ HEALTHY':'⚠ CAUTION'],['VOLUME',rs.filter(x=>x.volume==='CONFIRMED').length>=2?'✓ CONFIRMED':'? WEAK'],['STRUCTURE',rs.filter(x=>x.structure.includes('BREAK')||x.structure.includes('BIAS')).length>=2?'✓ CONFIRMED':'? UNCLEAR'],['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'✓ ACCEPTABLE':'⚠ HIGH'],['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'✓ ADEQUATE':'? LIMITED'],['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'✓ ACCEPTABLE':'⚠ EXTENDED']].map(x=>`<div class="metric"><b>${x[0]}</b><br>${x[1]}</div>`).join('');
+ const x=rs[detail==='15m'?0:detail==='1h'?1:2];
+ $('detailOut').innerHTML=[['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.structure],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
+ $('checks').innerHTML=q.checks.map(x=>`<div class="metric"><b>${x[0]}</b><br><span class="${x[1].includes('CONFIRMED')||x[1]==='HEALTHY'||x[1]==='ADEQUATE'||x[1]==='ACCEPTABLE'||x[1]==='FRESH'?'bull':x[1].includes('WEAK')||x[1].includes('STALE')||x[1].includes('EXTENDED')?'neutral':''}">${x[1]}</span></div>`).join('');
+ renderRisk(x,c);
+}
+function renderRisk(x,c){
+ const acct=+$('account').value||500,risk=(+$('risk').value||1)/100,max=acct*risk;
+ const dir=c.dominant==='BEARISH'?'SHORT':'LONG';
+ const dist=Math.max(1.25*x.at,x.p*.005),stop=dir==='SHORT'?x.p+dist:x.p-dist,target=dir==='SHORT'?x.p-2*dist:x.p+2*dist;
+ const size=max/dist,feeAllowance=max*.001;
+ $('riskOut').innerHTML=[['DIRECTION',dir],['ENTRY',fmt(x.p)],['STOP',fmt(stop)],['TARGET',fmt(target)],['POSITION SIZE',fmt(size,6)],['MAX LOSS','$'+fmt(max)],['POTENTIAL PROFIT','$'+fmt(max*2)],['R:R','1 : 2'],['FEE ALLOWANCE','$'+fmt(feeAllowance)],['RISK DISTANCE',fmt(dist)]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
+}
+async function onePair(symbol){const rs=await Promise.all(TF.map(t=>candles(symbol,t).then(analyze)));const c=confluence(rs),q=qualify(rs,c);return {symbol,rs,c,q}}
+async function run(){
+ try{
+  $('status').textContent='Scanning market...';
+  const selected=await onePair($('pair').value);
+  render(selected.rs,selected.c,selected.q,$('detail').value);
+  const symbols=[...$('pair').options].map(o=>o.value),out=[];
+  for(const symbol of symbols)try{
+   const z=await onePair(symbol);
+   out.push({symbol,price:z.rs[0].p,strength:z.c.avg,conf:z.c.percent,state:z.c.dominant,qual:z.q.status,regime:z.rs[0].regime,problem:z.c.problem});
+  }catch(e){console.warn(symbol,e)}
+  out.sort((a,b)=>b.strength-a.strength);
+  $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
+  $('status').textContent='V10 scan complete. '+out.length+' pairs analyzed.';
+ }catch(e){$('status').textContent='Scan failed: '+e.message}
+}
+$('test').onclick=async()=>{try{await get(HOSTS[0]+'/api/v3/ping',5000);$('apiBadge').textContent='API: ONLINE';$('apiBadge').className='badge ok';$('status').textContent='Binance API reachable.'}catch(e){$('apiBadge').textContent='API: OFFLINE';$('apiBadge').className='badge bad';$('status').textContent='API test failed.'}};
+$('scan').onclick=run;
+$('pair').onchange=()=>{if($('status').textContent.includes('complete'))run()};
+</script>
+</body>
+</html>
