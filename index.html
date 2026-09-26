@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V11.2</title>
+<title>TradeLens V12</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -73,9 +73,9 @@ function TLv103_enforceDirectionIntegrity(a){
 @media(max-width:700px){.v11-grid{grid-template-columns:1fr}.v11-smallgrid{grid-template-columns:1fr}}
 </style>
 </head>
-<body><div class="card" style="margin-top:12px"><b>V11.2 Direction Integrity:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V12 Decision Integrity:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V11</h1>
+<h1>TradeLens V12</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -89,7 +89,7 @@ function TLv103_enforceDirectionIntegrity(a){
 <label>RISK %<input id="risk" type="number" value="1" step=".1" min=".1"></label>
 <label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED</option><option value="WATCH">WATCH</option><option value="ANY">ANY</option></select></label>
 </div>
-<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V11.2 SCAN</button></div>
+<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V12 SCAN</button></div>
 <p id="status" class="small">Ready.</p>
 </section>
 
@@ -107,8 +107,8 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel">
-<h2>Setup Qualification</h2>
-<div class="metric"><div class="label">SETUP STRENGTH</div><div class="big" id="strength">—</div><div class="small">Composite quality score; qualification gates can override raw strength.</div></div>
+<h2>Setup Quality</h2>
+<div class="metric"><div class="label">SETUP STRENGTH</div><div class="big" id="strength">—</div><div class="small">Composite quality score; trade readiness is evaluated separately below.</div></div>
 <div id="why" class="why" style="margin-top:9px"></div>
 </section>
 </section>
@@ -223,7 +223,7 @@ function qualify(rs,c){
  return {checks,blockers,status,volumeWeak:vol<2,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
 }
 function render(rs,c,q,detail){
- $('selectedTitle').textContent=$('pair').value+' • V11 Analysis';
+ $('selectedTitle').textContent=$('pair').value+' • V12 Analysis';
  $('decisionBadge').textContent=q.status;
  $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
  $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
@@ -233,7 +233,10 @@ function render(rs,c,q,detail){
  ? '<b>CONFIRMATION PROBLEM</b><br>No dominant direction across 15m / 1h / 4h.<br><br><b>STATUS</b><br>NO TRADE — wait for directional alignment.'
  : `<b>DOMINANT SIGNAL</b><br>${TF[c.dominantIdx]} ${c.dominant}<br><br><b>CONFIRMATION PROBLEM</b><br>${c.confirmation.length?esc(c.confirmation.join(' + '))+' have not confirmed the dominant signal.':'None — all timeframes agree.'}`;
  $('strength').textContent=fmt(c.avg,1)+'/10';
- $('why').innerHTML=[['TREND',rs.filter(x=>x.trend===c.dominant).length>=2?'✓ CONFIRMED':'? MIXED'],['MOMENTUM',rs.filter(x=>x.momentum===(c.dominant==='BULLISH'?'POSITIVE':'NEGATIVE')).length>=2?'✓ CONFIRMED':'? MIXED'],['RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'✓ HEALTHY':'⚠ CAUTION'],['VOLUME',rs.filter(x=>x.volume==='CONFIRMED').length>=2?'✓ CONFIRMED':'? WEAK'],['STRUCTURE',rs.filter(x=>x.structure.includes('BREAK')||x.structure.includes('BIAS')).length>=2?'✓ CONFIRMED':'? UNCLEAR'],['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'✓ ACCEPTABLE':'⚠ HIGH'],['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'✓ ADEQUATE':'? LIMITED'],['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'✓ ACCEPTABLE':'⚠ EXTENDED']].map(x=>`<div class="metric"><b>${x[0]}</b><br>${x[1]}</div>`).join('');
+ const summaryTrend=c.dominant==='MIXED'?'NOT ESTABLISHED':rs.filter(x=>x.trend===c.dominant).length>=2?'✓ CONFIRMED':'? MIXED';
+ const expectedMomentum=c.dominant==='BULLISH'?'POSITIVE':c.dominant==='BEARISH'?'NEGATIVE':null;
+ const summaryMomentum=!expectedMomentum?'NOT ESTABLISHED':rs.filter(x=>x.momentum===expectedMomentum).length>=2?'✓ CONFIRMED':'? MIXED';
+ $('why').innerHTML=[['TREND',summaryTrend],['MOMENTUM',summaryMomentum],['RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'✓ HEALTHY':'⚠ CAUTION'],['VOLUME',rs.filter(x=>x.volume==='CONFIRMED').length>=2?'✓ CONFIRMED':'? WEAK'],['STRUCTURE',rs.filter(x=>x.structure.includes('BREAK')||x.structure.includes('BIAS')).length>=2?'✓ CONFIRMED':'? UNCLEAR'],['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'✓ ACCEPTABLE':'⚠ HIGH'],['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'✓ ADEQUATE':'? LIMITED'],['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'✓ ACCEPTABLE':'⚠ EXTENDED']].map(x=>`<div class="metric"><b>${x[0]}</b><br>${x[1]}</div>`).join('');
  const x=rs[detail==='15m'?0:detail==='1h'?1:2];
  $('detailOut').innerHTML=[['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.structure],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
  $('checks').innerHTML=q.checks.map(x=>`<div class="metric"><b>${x[0]}</b><br><span class="${x[1].includes('CONFIRMED')||x[1]==='HEALTHY'||x[1]==='ADEQUATE'||x[1]==='ACCEPTABLE'||x[1]==='FRESH'?'bull':x[1].includes('WEAK')||x[1].includes('STALE')||x[1].includes('EXTENDED')?'neutral':''}">${x[1]}</span></div>`).join('');
@@ -255,7 +258,7 @@ async function run(){
   $('status').textContent='Scanning market...';
   const selected=await onePair($('pair').value);
   render(selected.rs,selected.c,selected.q,$('detail').value);
-  TLV112_render({"15m":selected.rs[0],"1h":selected.rs[1],"4h":selected.rs[2]}, $('detail').value, selected.q.status, selected.q.blockers);
+  TLV12_render({"15m":selected.rs[0],"1h":selected.rs[1],"4h":selected.rs[2]}, $('detail').value, selected.q.status, selected.q.blockers);
   const symbols=[...$('pair').options].map(o=>o.value),out=[];
   for(const symbol of symbols)try{
    const z=await onePair(symbol);
@@ -263,7 +266,7 @@ async function run(){
   }catch(e){console.warn(symbol,e)}
   out.sort((a,b)=>b.strength-a.strength);
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V11.2 scan complete. '+out.length+' pairs analyzed.';
+  $('status').textContent='V12 scan complete. '+out.length+' pairs analyzed.';
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
 $('test').onclick=async()=>{try{await get(HOSTS[0]+'/api/v3/ping',5000);$('apiBadge').textContent='API: ONLINE';$('apiBadge').className='badge ok';$('status').textContent='Binance API reachable.'}catch(e){$('apiBadge').textContent='API: OFFLINE';$('apiBadge').className='badge bad';$('status').textContent='API test failed.'}};
@@ -384,13 +387,14 @@ function tlv11_build(tfMap,summary){
 </script>
 
 <div class="card" style="margin-top:12px">
-  <h3>V11 Decision Engine</h3>
+  <h3>V12 Decision Engine</h3>
   <div class="v11-grid">
+    <div class="v11-panel"><div class="v11-label">Setup Quality</div><div id="v11Quality" class="v11-value">—</div></div>
     <div class="v11-panel"><div class="v11-label">Trade Readiness</div><div id="v11Readiness" class="v11-value">WAITING</div></div>
     <div class="v11-panel"><div class="v11-label">Decision Direction</div><div id="v11Direction" class="v11-value">NONE</div></div>
     <div class="v11-panel"><div class="v11-label">Weighted Confluence</div><div id="v11Confluence" class="v11-value">—</div></div>
   </div>
-  <div id="v11Gate" class="v11-lock">V11 trade gate has not been evaluated.</div>
+  <div id="v11Gate" class="v11-lock">V12 trade gate has not been evaluated.</div>
   <h4 style="margin-top:14px">Confirmation Matrix</h4>
   <table class="v11-matrix">
     <thead><tr><th>Timeframe</th><th>Direction</th><th>Trend</th><th>Momentum</th><th>Weight</th></tr></thead>
@@ -401,16 +405,17 @@ function tlv11_build(tfMap,summary){
 <script>
 function TLV11_renderDemo(tfMap,detailTf){
   const result=tlv11_build(tfMap,{detailTf});
-  const q=document.getElementById("v11Readiness"),d=document.getElementById("v11Direction"),
+  const quality=document.getElementById("v11Quality"),q=document.getElementById("v11Readiness"),d=document.getElementById("v11Direction"),
         c=document.getElementById("v11Confluence"),g=document.getElementById("v11Gate"),
         m=document.getElementById("v11Matrix");
-  if(!q||!d||!c||!g||!m)return result;
+  if(!quality||!q||!d||!c||!g||!m)return result;
+  quality.textContent="—";
   q.textContent=result.tradeGate.status==="READY"?"READY":result.readiness.status;
   d.textContent=result.confluence.direction;
   c.textContent=result.confluence.percent+"%";
   g.className=result.tradeGate.status==="READY"?"v11-ready":"v11-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ?"TRADE GATE OPEN — all V11 blocking conditions passed."
+    ?"TRADE GATE OPEN — all V12 blocking conditions passed."
     :"RISK PLAN LOCKED — "+result.tradeGate.blockers.join(" • ");
   m.innerHTML=["15m","1h","4h"].map(tf=>{
     const x=result.timeframes[tf]||{};
@@ -421,29 +426,31 @@ function TLV11_renderDemo(tfMap,detailTf){
 </script>
 
 <script>
-/* V11.2 live dashboard bridge — uses the actual scanner result directly. */
-function TLV112_render(tfMap, detailTf, qualification, blockers){
+/* V12 live dashboard bridge — uses the actual scanner result directly. */
+function TLV12_render(tfMap, detailTf, qualification, blockers){
   if(!tfMap) return null;
-  return TLV111_render(tfMap, detailTf, qualification, blockers);
+  return TLV121_render(tfMap, detailTf, qualification, blockers);
 }
 
-function TLV111_render(tfMap, detailTf, qualification, blockers){
+function TLV121_render(tfMap, detailTf, qualification, blockers){
   if(!tfMap) return null;
   const result=tlv11_build(tfMap,{detailTf:detailTf||"15m",qualification:qualification||"WATCH",qualificationBlockers:blockers||[]});
-  const q=document.getElementById("v11Readiness"),
+  const quality=document.getElementById("v11Quality"),
+        q=document.getElementById("v11Readiness"),
         d=document.getElementById("v11Direction"),
         c=document.getElementById("v11Confluence"),
         g=document.getElementById("v11Gate"),
         m=document.getElementById("v11Matrix");
-  if(!q||!d||!c||!g||!m) return result;
+  if(!quality||!q||!d||!c||!g||!m) return result;
 
+  quality.textContent=qualification||"WATCH";
   q.textContent=result.tradeGate.status==="READY"?"READY":result.confluence.direction==="MIXED"?"INVALID":result.readiness.status;
   d.textContent=result.confluence.direction;
   c.textContent=result.confluence.percent+"%";
 
   g.className=result.tradeGate.status==="READY"?"v11-ready":"v11-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ? "<b>TRADE GATE OPEN</b> — all V11.2 blocking conditions passed."
+    ? "<b>TRADE GATE OPEN</b> — all V12 blocking conditions passed."
     : "<b>RISK PLAN LOCKED</b> — "+(result.tradeGate.blockers.length?result.tradeGate.blockers.join(" • "):"No clean trade setup.");
 
   m.innerHTML=["15m","1h","4h"].map(tf=>{
@@ -453,13 +460,13 @@ function TLV111_render(tfMap, detailTf, qualification, blockers){
   return result;
 }
 
-function TLV111_refreshDashboard(){
+function TLV121_refreshDashboard(){
   // Kept as a compatibility hook; the real scan now calls the renderer directly.
   return null;
 }
 
-window.TLV112_updateDashboard=function(tfMap,detailTf,qualification,blockers){
-  return TLV112_render(tfMap,detailTf,qualification,blockers);
+window.TLV12_updateDashboard=function(tfMap,detailTf,qualification,blockers){
+  return TLV12_render(tfMap,detailTf,qualification,blockers);
 };
 </script>
 
@@ -481,8 +488,8 @@ window.addEventListener("load",()=>{
 </script>
 
 <div class="card" style="margin-top:12px">
-  <b>V11.2 Live Decision Layer</b>
-  <p class="v11-muted">The confirmation matrix and trade gate are linked to the scanner's current 15m / 1h / 4h analysis. They are informational safeguards and do not place orders.</p>
+  <b>V12 Live Decision Layer</b>
+  <p class="v11-muted">The confirmation matrix, setup quality and trade gate are linked to the scanner's current 15m / 1h / 4h analysis. They are informational safeguards and do not place orders.</p>
 </div>
 </body>
 </html>
