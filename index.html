@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V11</title>
+<title>TradeLens V11.2</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -73,7 +73,7 @@ function TLv103_enforceDirectionIntegrity(a){
 @media(max-width:700px){.v11-grid{grid-template-columns:1fr}.v11-smallgrid{grid-template-columns:1fr}}
 </style>
 </head>
-<body><div class="card" style="margin-top:12px"><b>V11.1 Direction Integrity:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V11.2 Direction Integrity:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Weak volume reduces setup strength.</div>
 <div class="wrap">
 <h1>TradeLens V11</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
@@ -89,7 +89,7 @@ function TLv103_enforceDirectionIntegrity(a){
 <label>RISK %<input id="risk" type="number" value="1" step=".1" min=".1"></label>
 <label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED</option><option value="WATCH">WATCH</option><option value="ANY">ANY</option></select></label>
 </div>
-<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V11.1 SCAN</button></div>
+<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V11.2 SCAN</button></div>
 <p id="status" class="small">Ready.</p>
 </section>
 
@@ -255,6 +255,7 @@ async function run(){
   $('status').textContent='Scanning market...';
   const selected=await onePair($('pair').value);
   render(selected.rs,selected.c,selected.q,$('detail').value);
+  TLV112_render({"15m":selected.rs[0],"1h":selected.rs[1],"4h":selected.rs[2]}, $('detail').value, selected.q.status, selected.q.blockers);
   const symbols=[...$('pair').options].map(o=>o.value),out=[];
   for(const symbol of symbols)try{
    const z=await onePair(symbol);
@@ -262,7 +263,7 @@ async function run(){
   }catch(e){console.warn(symbol,e)}
   out.sort((a,b)=>b.strength-a.strength);
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V11.1 scan complete. '+out.length+' pairs analyzed.';
+  $('status').textContent='V11.2 scan complete. '+out.length+' pairs analyzed.';
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
 $('test').onclick=async()=>{try{await get(HOSTS[0]+'/api/v3/ping',5000);$('apiBadge').textContent='API: ONLINE';$('apiBadge').className='badge ok';$('status').textContent='Binance API reachable.'}catch(e){$('apiBadge').textContent='API: OFFLINE';$('apiBadge').className='badge bad';$('status').textContent='API test failed.'}};
@@ -344,23 +345,35 @@ function tlv11_entryPlan(a){
 function tlv11_build(tfMap,summary){
   const normalized={};
   ["15m","1h","4h"].forEach(k=>{
-    const x=tfMap[k]||{};
-    x.state=tlv11_direction(x);
-    normalized[k]=x;
+    const raw=Object.assign({},tfMap[k]||{});
+    // Map the scanner's native field names into the V11 decision-engine schema.
+    raw.price=Number.isFinite(Number(raw.price))?Number(raw.price):Number(raw.p);
+    raw.atr=Number.isFinite(Number(raw.atr))?Number(raw.atr):Number(raw.at);
+    raw.volRatio=Number.isFinite(Number(raw.volRatio))?Number(raw.volRatio):Number(raw.vr);
+    raw.freshness=raw.freshness||"FRESH";
+    raw.rsiCaution=raw.rsiCaution===true || raw.rsiStatus==="CAUTION";
+    raw.extensionRisk=raw.extensionRisk===true || raw.extensionStatus!=="ACCEPTABLE";
+    raw.liquidityLimited=raw.liquidityLimited===true || raw.liquidityScore===false || raw.liquidityScore===0;
+    raw.state=tlv11_direction(raw);
+    normalized[k]=raw;
   });
   const c=tlv11_confluence(normalized);
   const r=tlv11_readiness(normalized,c);
   const best=normalized[summary?.detailTf||"15m"]||normalized["15m"]||{};
+
+  // The scanner's qualification result is authoritative for setup quality.
+  // The V11 engine adds weighted MTF direction and stricter trade-gate checks.
+  const qualification=summary?.qualification||"WATCH";
   const gate=tlv11_tradeGate({
-    readiness:r.status,
-    readinessReason:r.reason,
+    readiness:qualification,
+    readinessReason:(summary?.qualificationBlockers||[]).join(" • ")||r.reason,
     direction:c.direction,
     confluence:c.percent,
-    volumeRatio:tlv11_num(best.volRatio,0),
-    rsiCaution:best.rsiCaution===true,
-    extensionRisk:best.extensionRisk===true,
-    liquidityLimited:best.liquidityLimited===true,
-    freshness:best.freshness||"FRESH",
+    volumeRatio:best.volRatio,
+    rsiCaution:best.rsiCaution,
+    extensionRisk:best.extensionRisk,
+    liquidityLimited:best.liquidityLimited,
+    freshness:best.freshness,
     price:best.price,atr:best.atr
   });
   const plan=gate.status==="READY"?tlv11_entryPlan({
@@ -408,83 +421,59 @@ function TLV11_renderDemo(tfMap,detailTf){
 </script>
 
 <script>
-/* V11.1 live dashboard bridge */
-function TLV111_extractTFMap(){
-  const map={};
-  // Look for common analyzer result stores used by TradeLens.
-  const candidates=[
-    window.lastScanResult, window.scanResult, window.currentAnalysis,
-    window.lastAnalysis, window.analysisResult, window.currentScan
-  ];
-  let src=candidates.find(x=>x && typeof x==="object");
-  if(!src) return null;
-
-  const raw=src.timeframes||src.mtf||src.frames||src;
-  ["15m","1h","4h"].forEach(tf=>{
-    const x=raw[tf]||raw[tf.replace("m","")]||null;
-    if(x) map[tf]=x;
-  });
-  return Object.keys(map).length===3?map:null;
+/* V11.2 live dashboard bridge — uses the actual scanner result directly. */
+function TLV112_render(tfMap, detailTf, qualification, blockers){
+  if(!tfMap) return null;
+  return TLV111_render(tfMap, detailTf, qualification, blockers);
 }
 
-function TLV111_render(tfMap, detailTf){
-  if(!tfMap) return;
-  const result=tlv11_build(tfMap,{detailTf:detailTf||"15m"});
+function TLV111_render(tfMap, detailTf, qualification, blockers){
+  if(!tfMap) return null;
+  const result=tlv11_build(tfMap,{detailTf:detailTf||"15m",qualification:qualification||"WATCH",qualificationBlockers:blockers||[]});
   const q=document.getElementById("v11Readiness"),
         d=document.getElementById("v11Direction"),
         c=document.getElementById("v11Confluence"),
         g=document.getElementById("v11Gate"),
         m=document.getElementById("v11Matrix");
-  if(!q||!d||!c||!g||!m) return;
+  if(!q||!d||!c||!g||!m) return result;
 
-  q.textContent=result.tradeGate.status==="READY"?"READY":result.readiness.status;
+  q.textContent=result.tradeGate.status==="READY"?"READY":result.confluence.direction==="MIXED"?"INVALID":result.readiness.status;
   d.textContent=result.confluence.direction;
   c.textContent=result.confluence.percent+"%";
 
   g.className=result.tradeGate.status==="READY"?"v11-ready":"v11-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ? "<b>TRADE GATE OPEN</b> — all V11.1 blocking conditions passed."
-    : "<b>RISK PLAN LOCKED</b> — "+result.tradeGate.blockers.join(" • ");
+    ? "<b>TRADE GATE OPEN</b> — all V11.2 blocking conditions passed."
+    : "<b>RISK PLAN LOCKED</b> — "+(result.tradeGate.blockers.length?result.tradeGate.blockers.join(" • "):"No clean trade setup.");
 
   m.innerHTML=["15m","1h","4h"].map(tf=>{
     const x=result.timeframes[tf]||{};
-    return `<tr>
-      <td>${tf}</td><td>${x.state||"NEUTRAL"}</td>
-      <td>${x.trend||"—"}</td><td>${x.momentum||"—"}</td>
-      <td>${TLV11_WEIGHTS[tf]}x</td>
-    </tr>`;
+    return `<tr><td>${tf}</td><td>${x.state||"NEUTRAL"}</td><td>${x.trend||"—"}</td><td>${x.momentum||"—"}</td><td>${TLV11_WEIGHTS[tf]}x</td></tr>`;
   }).join("");
-
   return result;
 }
 
 function TLV111_refreshDashboard(){
-  const map=TLV111_extractTFMap();
-  if(map) return TLV111_render(map, window.detailTimeframe||"15m");
+  // Kept as a compatibility hook; the real scan now calls the renderer directly.
+  return null;
 }
 
-/* Expose an explicit bridge for the existing analyzer. */
-window.TLV111_updateDashboard=function(tfMap,detailTf){
-  return TLV111_render(tfMap,detailTf);
+window.TLV112_updateDashboard=function(tfMap,detailTf,qualification,blockers){
+  return TLV112_render(tfMap,detailTf,qualification,blockers);
 };
-</script>
-
-<script>
-window.addEventListener("load",()=>setTimeout(TLV111_refreshDashboard,100));
 </script>
 
 <script>
 window.addEventListener("load",()=>{
   const names=["runScan","runV10Scan","runScanV10","scanMarket","runScanner"];
   names.forEach(name=>{
-    if(typeof window[name]==="function" && !window[name].__v111wrapped){
+    if(typeof window[name]==="function" && !window[name].__v112wrapped){
       const original=window[name];
       const wrapped=async function(...args){
         const result=await original.apply(this,args);
-        setTimeout(TLV111_refreshDashboard,50);
         return result;
       };
-      wrapped.__v111wrapped=true;
+      wrapped.__v112wrapped=true;
       window[name]=wrapped;
     }
   });
@@ -492,7 +481,7 @@ window.addEventListener("load",()=>{
 </script>
 
 <div class="card" style="margin-top:12px">
-  <b>V11.1 Live Decision Layer</b>
+  <b>V11.2 Live Decision Layer</b>
   <p class="v11-muted">The confirmation matrix and trade gate are linked to the scanner's current 15m / 1h / 4h analysis. They are informational safeguards and do not place orders.</p>
 </div>
 </body>
