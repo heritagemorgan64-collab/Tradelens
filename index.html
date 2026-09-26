@@ -1,217 +1,28 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#07101f">
-<title>TradeLens V8 — Quant Market Lab</title>
-<style>
-:root{--bg:#07101f;--card:#0d1729;--card2:#0a1323;--line:#20304a;--text:#eef5ff;--muted:#8190aa;--green:#52d6a0;--red:#ff6f82;--yellow:#f1c66b;--blue:#66a7ff}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#07101f,#091426 55%,#07101f);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-.app{max-width:1320px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:16px}.brand{font-size:31px;font-weight:900;letter-spacing:-.5px}.green{color:var(--green)}.muted{color:var(--muted)}.pill{border:1px solid var(--line);background:#0b1526;border-radius:999px;padding:7px 11px;font-size:12px;white-space:nowrap}
-.card{background:rgba(13,23,41,.96);border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:15px;box-shadow:0 10px 35px rgba(0,0,0,.12)}
-h2,h3{margin:0 0 13px}h2{font-size:18px}h3{font-size:15px}
-.controls{display:grid;grid-template-columns:1.1fr .9fr .8fr .7fr .7fr;gap:10px}.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 6px;text-transform:uppercase;letter-spacing:.5px}
-input,select,button{width:100%;border:1px solid var(--line);border-radius:11px;background:#0a1425;color:var(--text);padding:12px;font-size:14px}button{font-weight:800;cursor:pointer}button:hover{filter:brightness(1.12)}.primary{background:var(--green);color:#06130e;border-color:var(--green)}.secondary{background:#10213b}.danger{background:#301622;border-color:#5d2938}
-.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:11px}.status{margin-top:11px;padding:11px;border-radius:11px;background:#091321;border:1px solid var(--line);font-size:13px}
-.layout{display:grid;grid-template-columns:1.45fr .85fr;gap:15px}.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}.stat{padding:11px;border-radius:12px;background:var(--card2);border:1px solid var(--line)}.stat small{color:var(--muted);font-size:10px}.stat strong{display:block;margin-top:4px;font-size:17px}
-canvas{display:block;width:100%;height:370px;background:#07101d;border:1px solid var(--line);border-radius:13px}
-.chartbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.charttools{display:flex;gap:6px}.charttools button{width:auto;padding:7px 10px;font-size:11px}
-.rows{display:grid}.row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #17243a;font-size:13px}.row:last-child{border-bottom:0}
-.score{font-size:46px;font-weight:900;line-height:1}.meter{height:9px;background:#07101c;border-radius:9px;overflow:hidden;margin:9px 0}.meter div{height:100%;width:0;background:var(--green);transition:.3s}.signal{font-size:20px;font-weight:900;margin:5px 0 12px}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--yellow)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:15px}.indicator-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.box{padding:11px;background:var(--card2);border:1px solid var(--line);border-radius:12px}.box .muted{font-size:10px}.box strong{display:block;margin-top:4px}
-.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.plan .box{min-height:66px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted)}
-.notice{font-size:11px;color:var(--muted);line-height:1.55}.footer{text-align:center;color:var(--muted);font-size:11px;padding:7px 0 25px}
-@media(max-width:980px){.layout{grid-template-columns:1fr}.controls{grid-template-columns:repeat(3,1fr)}.stats{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:620px){.app{padding:11px}.top{flex-direction:column}.controls,.actions,.grid2{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.plan{grid-template-columns:1fr}.charttools{display:none}canvas{height:290px}}
-</style>
-</head>
-<body>
-<div class="app">
-<header class="top">
-<div><div class="brand">Trade<span class="green">Lens</span> V7</div><div class="muted">ADVANCED MARKET LAB • MULTI-TIMEFRAME • SETUP ENGINE • BACKTEST • PAPER JOURNAL</div></div>
-<div class="pill" id="connection">READY</div>
-</header>
-
-<section class="card">
-<h2>Market Control</h2>
-<div class="controls">
-<div class="field"><label>Pair</label><select id="pair"><option>BTCUSDT</option><option>ETHUSDT</option><option>BNBUSDT</option><option>SOLUSDT</option><option>XRPUSDT</option><option>ADAUSDT</option><option>DOGEUSDT</option><option>AVAXUSDT</option></select></div>
-<div class="field"><label>Timeframe</label><select id="tf"><option value="15m">15m</option><option value="1h">1h</option><option value="4h">4h</option><option value="1d">1d</option></select></div>
-<div class="field"><label>Account ($)</label><input id="account" type="number" value="500" min="0"></div>
-<div class="field"><label>Risk %</label><input id="risk" type="number" value="1" min=".1" step=".1"></div>
-<div class="field"><label>Refresh</label><select id="refresh"><option value="0">Manual</option><option value="30">30 sec</option><option value="60">1 min</option><option value="300">5 min</option></select></div>
-</div>
-<div class="actions">
-<button class="primary" onclick="loadMarket()">Load Live Market</button>
-<button onclick="runBacktest()">Run Backtest</button>
-<button class="secondary" onclick="testAPI()">Test Data API</button>
-</div>
-<div class="status" id="status">Ready. Load market data to begin.</div>
-</section>
-
-<div class="layout">
-<main>
-<section class="card">
-<div class="chartbar"><h2>Market Chart</h2><div class="charttools"><button onclick="setChart('price')">Price</button><button onclick="setChart('ema')">EMA</button><button onclick="setChart('levels')">Levels</button></div></div>
-<canvas id="chart"></canvas>
-</section>
-
-<section class="card">
-<h2>Market Snapshot</h2>
-<div class="stats">
-<div class="stat"><small>PRICE</small><strong id="price">—</strong></div>
-<div class="stat"><small>24H CHANGE</small><strong id="change">—</strong></div>
-<div class="stat"><small>ATR</small><strong id="atr">—</strong></div>
-<div class="stat"><small>ATR %</small><strong id="atrpct">—</strong></div>
-<div class="stat"><small>VOL RATIO</small><strong id="vol">—</strong></div>
-<div class="stat"><small>DATA</small><strong id="data">—</strong></div>
-</div>
-</section>
-
-<section class="grid2">
-<section class="card"><h2>Technical Engine</h2><div class="indicator-grid">
-<div class="box"><span class="muted">EMA 20</span><strong id="ema20">—</strong></div>
-<div class="box"><span class="muted">EMA 50</span><strong id="ema50">—</strong></div>
-<div class="box"><span class="muted">RSI 14</span><strong id="rsi">—</strong></div>
-<div class="box"><span class="muted">MACD</span><strong id="macd">—</strong></div>
-<div class="box"><span class="muted">ADX 14</span><strong id="adx">—</strong></div>
-<div class="box"><span class="muted">BB %B</span><strong id="bb">—</strong></div>
-<div class="box"><span class="muted">Trend</span><strong id="trend">—</strong></div>
-<div class="box"><span class="muted">Structure</span><strong id="structure">—</strong></div>
-</div></section>
-
-<section class="card"><h2>Market Levels</h2><div class="rows">
-<div class="row"><span>Support</span><strong id="support">—</strong></div>
-<div class="row"><span>Resistance</span><strong id="resistance">—</strong></div>
-<div class="row"><span>20-period high</span><strong id="high20">—</strong></div>
-<div class="row"><span>20-period low</span><strong id="low20">—</strong></div>
-<div class="row"><span>Volatility regime</span><strong id="volreg">—</strong></div>
-<div class="row"><span>Trend strength</span><strong id="strength">—</strong></div>
-</div></section>
-</section>
-
-<section class="card">
-<h2>Backtest Result</h2>
-<div class="stats">
-<div class="stat"><small>TRADES</small><strong id="btTrades">—</strong></div>
-<div class="stat"><small>WIN RATE</small><strong id="btWin">—</strong></div>
-<div class="stat"><small>NET R</small><strong id="btR">—</strong></div>
-<div class="stat"><small>MAX DD (R)</small><strong id="btDD">—</strong></div>
-<div class="stat"><small>AVG R</small><strong id="btAvg">—</strong></div>
-<div class="stat"><small>PERIOD</small><strong id="btPeriod">—</strong></div>
-</div>
-<p class="notice">The backtest is a simple historical simulation of the same rule set shown on this page. It is not a guarantee of future performance and does not include exchange fees, slippage, funding or order-book effects.</p>
-</section>
-</main>
-
-<aside>
-<section class="card">
-<h2>V7 Setup Engine</h2>
-<div class="score" id="score">—<span class="muted" style="font-size:14px">/10</span></div>
-<div class="meter"><div id="meter"></div></div>
-<div class="signal" id="signal">WAITING</div>
-<p class="muted" id="setup">Load market data to calculate the setup.</p>
-<div class="rows">
-<div class="row"><span>Higher-timeframe bias</span><strong id="htf">—</strong></div>
-<div class="row"><span>Momentum</span><strong id="momentum">—</strong></div>
-<div class="row"><span>RSI zone</span><strong id="rsizone">—</strong></div>
-<div class="row"><span>Volume confirmation</span><strong id="volconfirm">—</strong></div>
-<div class="row"><span>Confluence</span><strong id="confluence">—</strong></div>
-</div>
-</section>
-
-<section class="card">
-<h2>Risk Planner</h2>
-<div class="plan">
-<div class="box"><span class="muted">ENTRY</span><strong id="entry">—</strong></div>
-<div class="box"><span class="muted">STOP</span><strong id="stop">—</strong></div>
-<div class="box"><span class="muted">TARGET</span><strong id="target">—</strong></div>
-</div>
-<div class="rows" style="margin-top:9px">
-<div class="row"><span>Max loss</span><strong id="maxloss">—</strong></div>
-<div class="row"><span>Position size</span><strong id="size">—</strong></div>
-<div class="row"><span>Risk : Reward</span><strong>1 : 2</strong></div>
-</div>
-</section>
-
-<section class="card">
-<h2>Paper Journal</h2>
-<div class="actions"><button class="primary" onclick="saveTrade()">Save Snapshot</button><button onclick="exportJournal()">Export CSV</button><button class="danger" onclick="clearJournal()">Clear</button></div>
-<div class="tablewrap" style="margin-top:9px"><table><thead><tr><th>Time</th><th>Pair</th><th>TF</th><th>Signal</th><th>Score</th></tr></thead><tbody id="journal"></tbody></table></div>
-</section>
-</aside>
-</div>
-
-<section class="card">
-<h3>What V7 does</h3>
-<p class="notice">TradeLens combines EMA trend, RSI, MACD, ADX, Bollinger position, ATR volatility, recent structure and volume into a transparent rule-based score. It can retrieve public market candles, calculate a paper-trade plan, and run a basic historical simulation. It does not place real orders, manage an exchange account, or guarantee outcomes.</p>
-</section>
-
-<section class="card" id="v8panel"><h2>TradeLens V8 Advanced Layer</h2>
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
-<div class="stat"><small>MTF CONSENSUS</small><strong id="v8Consensus">—</strong></div>
-<div class="stat"><small>REGIME</small><strong id="v8Regime">—</strong></div>
-<div class="stat"><small>CONFIDENCE</small><strong id="v8Confidence">—</strong></div>
-<div class="stat"><small>RISK STATE</small><strong id="v8Risk">—</strong></div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
-<div><h3>Multi-Timeframe</h3><div id="v8MTF" class="rows"></div></div>
-<div><h3>Strategy Controls</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><label class="field">Signal threshold<input id="v8Threshold" type="number" value="68" min="40" max="95"></label><label class="field">Slippage %<input id="v8Slip" type="number" value="0.05" min="0" step="0.01"></label><label class="field">Lookback<input id="v8Lookback" type="number" value="240" min="80" max="300"></label><label class="field">Cooldown bars<input id="v8Cooldown" type="number" value="3" min="0" max="50"></label></div></div>
-</div>
-<div class="actions" style="margin-top:12px"><button onclick="v8Analyze()">Run V8 Analysis</button><button onclick="v8MTF()">Refresh Timeframes</button><button onclick="v8Backtest()">V8 Backtest</button><button onclick="v8Export()">Export Analysis</button></div>
-<div class="status" id="v8Status">V8 advanced layer ready.</div>
-<div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>TF</th><th>Trend</th><th>RSI</th><th>ADX</th><th>Vol</th><th>Score</th></tr></thead><tbody id="v8Table"></tbody></table></div>
-</section>
-<div class="footer">TradeLens V8 • Public market data • Analysis and paper trading only</div>
-</div>
-
-<script>
-const $=id=>document.getElementById(id);
-let candles=[],last=null,chartMode='price',timer=null;
-const hosts=['https://api.binance.com','https://data-api.binance.vision','https://api1.binance.com','https://api2.binance.com','https://api3.binance.com'];
-const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
-const fmt=(n,d=2)=>Number.isFinite(n)?Number(n).toLocaleString(undefined,{maximumFractionDigits:d}):'—';
-const pct=(n,d=2)=>Number.isFinite(n)?fmt(n,d)+'%':'—';
-function ema(a,p){if(!a.length)return NaN;let k=2/(p+1),e=a[0];for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e}
-function rsi(a,p=14){if(a.length<=p)return 50;let g=0,l=0;for(let i=1;i<=p;i++){let d=a[i]-a[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)}let ag=g/p,al=l/p;for(let i=p+1;i<a.length;i++){let d=a[i]-a[i-1];ag=(ag*(p-1)+Math.max(d,0))/p;al=(al*(p-1)+Math.max(-d,0))/p}return al?100-100/(1+ag/al):100}
-function atr(c,p=14){if(c.length<2)return 0;let t=[];for(let i=1;i<c.length;i++){let x=c[i],q=c[i-1];t.push(Math.max(x.h-x.l,Math.abs(x.h-q.c),Math.abs(x.l-q.c)))}return avg(t.slice(-p))}
-function macd(a){return ema(a.slice(-80),12)-ema(a.slice(-80),26)}
-function adx(c,p=14){if(c.length<p*2+1)return 20;let tr=[],dp=[],dm=[];for(let i=1;i<c.length;i++){let x=c[i],q=c[i-1];tr.push(Math.max(x.h-x.l,Math.abs(x.h-q.c),Math.abs(x.l-q.c)));let up=x.h-q.h,dn=q.l-x.l;dp.push(up>dn&&up>0?up:0);dm.push(dn>up&&dn>0?dn:0)}let n=Math.min(p,tr.length),T=avg(tr.slice(-n)),P=avg(dp.slice(-n)),M=avg(dm.slice(-n));let dx=100*Math.abs(P-M)/((P+M)||1);return Math.min(100,dx*1.15)}
-function boll(a,p=20,m=2){let x=a.slice(-p),mu=avg(x),sd=Math.sqrt(avg(x.map(v=>(v-mu)**2)));return {mid:mu,up:mu+m*sd,lo:mu-m*sd,pct:(a.at(-1)-(mu-m*sd))/((2*m*sd)||1)}}
-function structure(c){let n=c.length, recent=c.slice(-12),prior=c.slice(-24,-12);if(!prior.length)return'—';let rh=Math.max(...recent.map(x=>x.h)),rl=Math.min(...recent.map(x=>x.l)),ph=Math.max(...prior.map(x=>x.h)),pl=Math.min(...prior.map(x=>x.l));return rh>ph&&rl>pl?'HH/HL':rh<ph&&rl<pl?'LH/LL':'MIXED'}
-async function get(url,ms=12000){let ac=new AbortController(),to=setTimeout(()=>ac.abort(),ms);try{let r=await fetch(url,{cache:'no-store',signal:ac.signal});if(!r.ok)throw Error('HTTP '+r.status);return await r.json()}finally{clearTimeout(to)}}
-async function loadMarket(){const p=$('pair').value,t=$('tf').value;$('status').textContent='Loading '+p+' '+t+' candles…';$('connection').textContent='LOADING';let d=null;for(const h of hosts){try{d=await get(h+'/api/v3/klines?symbol='+encodeURIComponent(p)+'&interval='+encodeURIComponent(t)+'&limit=300');if(Array.isArray(d)&&d.length>100)break}catch(e){d=null}}if(!d){$('status').textContent='Could not load public market data. Check your internet connection or network restrictions.';$('connection').textContent='OFFLINE';return}candles=d.map(x=>({t:x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]}));analyze();$('status').textContent='Loaded '+candles.length+' candles from public market data.';$('connection').textContent='LIVE DATA';}
-async function testAPI(){try{await get('https://api.binance.com/api/v3/ping',8000);$('status').textContent='Public market-data API is reachable from this browser.';$('connection').textContent='API OK'}catch(e){$('status').textContent='API test failed on this network.';$('connection').textContent='OFFLINE'}}
-function calculate(c){let a=c.map(x=>x.c),p=a.at(-1),e20=ema(a.slice(-120),20),e50=ema(a.slice(-180),50),R=rsi(a),M=macd(a),A=atr(c),V=avg(c.slice(-20).map(x=>x.v))/(avg(c.slice(-80,-20).map(x=>x.v))||1),D=adx(c),B=boll(a),S=structure(c),h20=Math.max(...c.slice(-20).map(x=>x.h)),l20=Math.min(...c.slice(-20).map(x=>x.l));
-let points=[p>e20,p>e50,e20>e50,M>0,R>=50&&R<=70,D>=20,V>=1,S==='HH/HL'];let score=points.filter(Boolean).length*10/points.length;let bias=score>=65?'LONG BIAS':score<=35?'SHORT/WEAK BIAS':'WAIT';let dist=Math.max(A*1.25,p*.005);let max=+($('account').value||0)*(+$('risk').value||0)/100;let stop=bias==='LONG BIAS'?p-dist:bias==='SHORT/WEAK BIAS'?p+dist:p-dist;let target=bias==='LONG BIAS'?p+dist*2:bias==='SHORT/WEAK BIAS'?p-dist*2:p+dist;return{a,p,e20,e50,R,M,A,V,D,B,S,h20,l20,score,bias,dist,max,sz:max/dist,stop,target}}
-function analyze(){if(!candles.length)return;let q=calculate(candles);last=q;$('price').textContent=fmt(q.p);let prev=candles.at(-2)?.c;$('change').textContent=prev?pct((q.p-prev)/prev*100):'—';$('atr').textContent=fmt(q.A);$('atrpct').textContent=pct(q.A/q.p*100);$('vol').textContent=fmt(q.V)+'x';$('data').textContent=candles.length;
-$('ema20').textContent=fmt(q.e20);$('ema50').textContent=fmt(q.e50);$('rsi').textContent=fmt(q.R,1);$('macd').textContent=fmt(q.M,4);$('adx').textContent=fmt(q.D,1);$('bb').textContent=fmt(q.B.pct*100,1)+'%';$('trend').textContent=q.e20>q.e50?'Bullish':'Bearish';$('structure').textContent=q.S;
-$('support').textContent=fmt(q.l20);$('resistance').textContent=fmt(q.h20);$('high20').textContent=fmt(q.h20);$('low20').textContent=fmt(q.l20);$('volreg').textContent=q.A/q.p>.025?'High':'Normal';$('strength').textContent=q.D>=25?'Strong':'Moderate';
-$('score').innerHTML=Math.round(q.score)+'<span class="muted" style="font-size:14px">/10</span>';$('meter').style.width=q.score*10+'%';$('signal').textContent=q.bias;$('signal').className='signal '+(q.bias==='LONG BIAS'?'good':q.bias==='SHORT/WEAK BIAS'?'bad':'warn');$('setup').textContent=q.bias==='LONG BIAS'?'Bullish conditions meet the current rule threshold.':q.bias==='SHORT/WEAK BIAS'?'Bearish/weak conditions meet the current rule threshold.':'Signals are mixed; the engine is not assigning a directional setup.';
-$('htf').textContent=q.e20>q.e50?'Bullish':'Bearish';$('momentum').textContent=q.M>0?'Positive':'Negative';$('rsizone').textContent=q.R<30?'Oversold':q.R>70?'Overbought':'Neutral';$('volconfirm').textContent=q.V>=1?'Confirmed':'Low';$('confluence').textContent=Math.round(q.score)+'/10';
-$('entry').textContent=fmt(q.p);$('stop').textContent=fmt(q.stop);$('target').textContent=fmt(q.target);$('maxloss').textContent='$'+fmt(q.max);$('size').textContent=fmt(q.sz,6);draw()}
-function setChart(m){chartMode=m;draw()}
-function draw(){let c=$('chart'),x=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,d=devicePixelRatio||1;c.width=w*d;c.height=h*d;x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,w,h);if(!candles.length)return;let a=candles.slice(-100),hi=Math.max(...a.map(q=>q.h)),lo=Math.min(...a.map(q=>q.l));if(last){hi=Math.max(hi,last.target,last.stop);lo=Math.min(lo,last.target,last.stop)}let pad=24,xx=i=>pad+i*(w-2*pad)/(a.length-1),yy=v=>pad+(hi-v)*(h-2*pad)/(hi-lo||1);x.strokeStyle='#172640';for(let i=1;i<5;i++){let y=pad+i*(h-2*pad)/5;x.beginPath();x.moveTo(pad,y);x.lineTo(w-pad,y);x.stroke()}a.forEach((q,i)=>{x.strokeStyle=q.c>=q.o?'#52d6a0':'#ff6f82';x.fillStyle=x.strokeStyle;x.beginPath();x.moveTo(xx(i),yy(q.h));x.lineTo(xx(i),yy(q.l));x.stroke();let bw=Math.max(2,(w-48)/a.length*.62);x.fillRect(xx(i)-bw/2,yy(Math.max(q.o,q.c)),bw,Math.max(1,Math.abs(yy(q.o)-yy(q.c))))});
-if(chartMode==='ema'||chartMode==='levels'){x.strokeStyle='#66a7ff';x.beginPath();a.forEach((q,i)=>{let e=ema(a.slice(0,i+1).map(z=>z.c),20);i?x.lineTo(xx(i),yy(e)):x.moveTo(xx(i),yy(e))});x.stroke()}
-if(chartMode==='levels'&&last){for(const [v,col] of [[last.h20,'#f1c66b'],[last.l20,'#f1c66b'],[last.target,'#52d6a0'],[last.stop,'#ff6f82']]){x.strokeStyle=col;x.setLineDash([6,5]);x.beginPath();x.moveTo(pad,yy(v));x.lineTo(w-pad,yy(v));x.stroke();x.setLineDash([])}}}
-function runBacktest(){if(candles.length<100){$('status').textContent='Load market data first.';return}let start=Math.max(60,candles.length-240),trades=[],equity=0,peak=0,dd=0;for(let i=start;i<candles.length-2;i++){let sub=candles.slice(0,i+1),q=calculate(sub);if(q.bias==='WAIT')continue;let entry=candles[i].c,dir=q.bias==='LONG BIAS'?1:-1,stop=entry-dir*q.dist,target=entry+dir*q.dist*2,result=0;for(let j=i+1;j<candles.length;j++){let x=candles[j];if(dir>0){if(x.l<=stop){result=-1;break}if(x.h>=target){result=2;break}}else{if(x.h>=stop){result=-1;break}if(x.l<=target){result=2;break}}if(j===candles.length-1)result=(x.c-entry)/q.dist*dir}equity+=result;peak=Math.max(peak,equity);dd=Math.min(dd,equity-peak);trades.push(result)}let wins=trades.filter(x=>x>0).length,net=trades.reduce((a,b)=>a+b,0);$('btTrades').textContent=trades.length;$('btWin').textContent=trades.length?pct(wins/trades.length*100,1):'—';$('btR').textContent=fmt(net,2)+' R';$('btDD').textContent=fmt(Math.abs(dd),2)+' R';$('btAvg').textContent=trades.length?fmt(net/trades.length,2)+' R':'—';$('btPeriod').textContent=candles[start]?new Date(candles[start].t).toLocaleDateString()+' → now':'—';$('status').textContent='Backtest complete on the currently loaded candles.'}
-function saveTrade(){if(!last)return;$('status').textContent='Load market data before saving a snapshot.';let j=JSON.parse(localStorage.getItem('tlv7')||'[]');j.unshift({time:new Date().toLocaleString(),pair:$('pair').value,tf:$('tf').value,signal:last.bias,score:Math.round(last.score)});localStorage.setItem('tlv7',JSON.stringify(j.slice(0,100)));render()}
-function render(){let j=JSON.parse(localStorage.getItem('tlv7')||'[]');$('journal').innerHTML=j.map(x=>'<tr><td>'+x.time+'</td><td>'+x.pair+'</td><td>'+x.tf+'</td><td>'+x.signal+'</td><td>'+x.score+'/10</td></tr>').join('')||'<tr><td colspan="5" class="muted">No saved snapshots</td></tr>'}
-function clearJournal(){localStorage.removeItem('tlv7');render()}
-function exportJournal(){let j=JSON.parse(localStorage.getItem('tlv7')||'[]');if(!j.length){$('status').textContent='No journal records to export.';return}let csv='Time,Pair,Timeframe,Signal,Score\\n'+j.map(x=>[x.time,x.pair,x.tf,x.signal,x.score].map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='tradelens-v7-journal.csv';a.click();URL.revokeObjectURL(a.href)}
-function schedule(){if(timer)clearInterval(timer);let sec=+$('refresh').value;if(sec)timer=setInterval(loadMarket,sec*1000)}
-$('refresh').addEventListener('change',schedule);addEventListener('resize',draw);render();schedule();
-</script>
-<script>
-/* V8 Advanced Layer: builds on V7 without external libraries. */
-const v8State={frames:{},last:null,signals:[]};
-function v8Regime(q){const ap=q.A/q.p; if(q.D>=25&&ap<.02)return 'TREND'; if(ap>.035)return 'HIGH VOL'; if(q.B.pct<.12||q.B.pct>.88)return 'BREAKOUT'; return 'RANGE';}
-function v8Score(q,cons){let s=50;s+=q.trend==='BULL'?14:q.trend==='BEAR'?-14:0;s+=q.M>0?8:-8;s+=q.R>=50&&q.R<=70?9:q.R<30?3:q.R>70?-3:0;s+=q.D>=25?9:q.D>=18?4:0;s+=q.V>=1.15?8:q.V>=.9?4:-3;s+=q.S==='HH/HL'?7:q.S==='LH/LL'?-7:0;s+=q.ROC>0?5:-5;s+=cons==='BULL'?10:cons==='BEAR'?-10:0;return Math.max(0,Math.min(100,s));}
-async function v8MTF(){const pair=$('pair').value,frames=['15m','1h','4h','1d'];$('v8Status').textContent='Refreshing multi-timeframe data…';for(const tf of frames){try{let c=(tf===$('tf').value&&candles.length)?candles:await fetchCandles(pair,tf,220);v8State.frames[tf]=calc(c)}catch(e){v8State.frames[tf]=null}}let vals=frames.map(tf=>v8State.frames[tf]).filter(Boolean),bull=vals.filter(q=>q.trend==='BULL').length,bear=vals.filter(q=>q.trend==='BEAR').length,cons=bull>=3?'BULL':bear>=3?'BEAR':'MIXED';$('v8Consensus').textContent=cons;$('v8MTF').innerHTML=frames.map(tf=>{let q=v8State.frames[tf];return '<div class="row"><span>'+tf+'</span><strong>'+(q?q.trend:'N/A')+'</strong></div>'}).join('');$('v8Table').innerHTML=frames.map(tf=>{let q=v8State.frames[tf];if(!q)return '<tr><td>'+tf+'</td><td colspan="5">N/A</td></tr>';return '<tr><td>'+tf+'</td><td>'+q.trend+'</td><td>'+fmt(q.R,1)+'</td><td>'+fmt(q.D,1)+'</td><td>'+fmt(q.V,2)+'x</td><td>'+Math.round(v8Score(q,cons))+'/100</td></tr>'}).join('');if(last){$('v8Regime').textContent=v8Regime(last);$('v8Confidence').textContent=Math.round(v8Score(last,cons))+'/100';$('v8Risk').textContent=last.A/last.p>.04?'HIGH':'NORMAL'}$('v8Status').textContent='Multi-timeframe refresh complete.'}
-function v8Analyze(){if(!candles.length){$('v8Status').textContent='Load V7 market data first.';return}let q=calc(candles);last=q;v8State.last=q;let frames=Object.values(v8State.frames).filter(Boolean),bull=frames.filter(x=>x.trend==='BULL').length,bear=frames.filter(x=>x.trend==='BEAR').length,cons=bull>=3?'BULL':bear>=3?'BEAR':'MIXED',sc=v8Score(q,cons);$('v8Consensus').textContent=cons;$('v8Regime').textContent=v8Regime(q);$('v8Confidence').textContent=Math.round(sc)+'/100';$('v8Risk').textContent=q.A/q.p>.04?'HIGH':'NORMAL';$('v8Status').textContent='V8 analysis: '+(sc>=+$('v8Threshold').value?'qualified setup':'no qualified setup')+' • '+Math.round(sc)+'/100';}
-async function v8Backtest(){if(candles.length<100){$('v8Status').textContent='Load market data first.';return}let threshold=+$('v8Threshold').value||68,look=Math.min(+$('v8Lookback').value||240,candles.length-30),slip=(+$('v8Slip').value||0)/100,cool=+$('v8Cooldown').value||0,start=Math.max(60,candles.length-look),equity=0,peak=0,dd=0,trades=[],lastTrade=-999;for(let i=start;i<candles.length-2;i++){if(i-lastTrade<cool)continue;let q=calc(candles.slice(0,i+1)),sc=v8Score(q,'MIXED');if(sc<threshold||q.trend==='MIXED')continue;let dir=q.trend==='BULL'?1:-1,entry=candles[i].c,dist=Math.max(q.A*1.35,entry*.006),stop=entry-dir*dist,target=entry+dir*dist*2,result=null;for(let j=i+1;j<candles.length;j++){let z=candles[j];if(dir>0&&z.l<=stop){result=-1-(slip*2);break}if(dir<0&&z.h>=stop){result=-1-(slip*2);break}if(dir>0&&z.h>=target){result=2-(slip*2);break}if(dir<0&&z.l<=target){result=2-(slip*2);break}}if(result==null)continue;equity+=result;peak=Math.max(peak,equity);dd=Math.min(dd,equity-peak);trades.push(result);lastTrade=i}let wins=trades.filter(x=>x>0).length,net=trades.reduce((a,b)=>a+b,0);$('v8Status').textContent='V8 backtest: '+trades.length+' trades • '+(trades.length?Math.round(wins/trades.length*100)+'% win rate':'no trades')+' • '+fmt(net,2)+' R • max DD '+fmt(Math.abs(dd),2)+' R';}
-function v8Export(){let q=last;if(!q){$('v8Status').textContent='Run an analysis first.';return}let rows=[['Metric','Value'],['Pair',$('pair').value],['Timeframe',$('tf').value],['Price',q.p],['RSI',q.R],['ADX',q.D],['ATR',q.A],['Volume ratio',q.V],['Trend',q.trend],['Structure',q.S],['Regime',v8Regime(q)],['Confidence',v8Score(q,'MIXED')]];let csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='tradelens-v8-analysis.csv';a.click();URL.revokeObjectURL(a.href);$('v8Status').textContent='Analysis CSV exported.'}
-const oldLoadAll=typeof loadMarket==='function'?loadMarket:null;function v8Boot(){v8MTF().catch(()=>{});if(candles.length)v8Analyze()}setTimeout(v8Boot,900);
-</script></body>
-</html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TradeLens V8</title><style>
+body{margin:0;background:#080d19;color:#edf3ff;font:15px system-ui}main{max-width:1100px;margin:auto;padding:15px}.card{background:#10182b;border:1px solid #263653;border-radius:16px;padding:15px;margin:12px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.four{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}select,input,button{width:100%;padding:11px;background:#0d1527;color:white;border:1px solid #263653;border-radius:10px}button{font-weight:700}.go{background:#57d7a1;color:#07140f}.muted{color:#8290aa}.good{color:#57d7a1}.bad{color:#ff7180}.warn{color:#f2c66d}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #263653}.score{font-size:40px;font-weight:800}canvas{width:100%;height:280px;background:#09111f}@media(max-width:700px){.grid{grid-template-columns:1fr}.four{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr}}</style></head><body><main>
+<h1>Trade<span class="good">Lens</span> V8</h1><div class="muted">CONFLUENCE SCANNER • MARKET REGIME • PAPER TRADING</div>
+<div class="card"><h2>Scanner</h2><div class="four">
+<div><label>PAIR</label><select id="pair"><option>BTCUSDT</option><option>ETHUSDT</option><option>BNBUSDT</option><option>SOLUSDT</option><option>XRPUSDT</option></select></div>
+<div><label>DETAIL</label><select id="tf"><option>15m</option><option>1h</option><option>4h</option></select></div><div><label>ACCOUNT</label><input id="acct" value="500" type="number"></div><div><label>RISK %</label><input id="risk" value="1" type="number"></div></div>
+<div class="four" style="margin-top:9px"><button onclick="api()">Test API</button><button class="go" onclick="scan()">RUN V8 SCAN</button></div><p id="status" class="muted">Ready.</p></div>
+<div class="card"><h2>Multi-Timeframe Fingerprint</h2><div class="three"><div><b>15m</b><h3 id="s15">—</h3><small id="d15">Waiting</small></div><div><b>1h</b><h3 id="s1h">—</h3><small id="d1h">Waiting</small></div><div><b>4h</b><h3 id="s4h">—</h3><small id="d4h">Waiting</small></div></div><p id="overall">Overall: —</p></div>
+<div class="card"><h2>Market Regime</h2><div class="four"><div><small>REGIME</small><h3 id="regime">—</h3></div><div><small>CONFLUENCE</small><h3 id="cp">—</h3></div><div><small>VOLATILITY</small><h3 id="vr">—</h3></div><div><small>DATA</small><h3 id="dq">—</h3></div></div></div>
+<div class="grid"><section><div class="card"><h2>Price Chart</h2><canvas id="chart"></canvas></div><div class="card"><h2>Selected Timeframe</h2><div class="four"><div>PRICE<h3 id="price">—</h3></div><div>ATR<h3 id="atr">—</h3></div><div>VOL RATIO<h3 id="vol">—</h3></div><div>RSI<h3 id="rsi">—</h3></div></div><div class="row">EMA 20 / 50 <b id="ema">—</b></div><div class="row">MACD <b id="macd">—</b></div><div class="row">Trend <b id="trend">—</b></div><div class="row">Structure <b id="structure">—</b></div></div></section>
+<aside><div class="card"><h2>V8 Setup Engine</h2><div class="score" id="score">—/10</div><p id="setup" class="muted">Waiting.</p><div class="row">Bias <b id="bias">—</b></div><div class="row">Trend agreement <b id="align">—</b></div><div class="row">Momentum <b id="mom">—</b></div><div class="row">RSI zone <b id="rz">—</b></div><div class="row">Confirmation <b id="quality">—</b></div></div>
+<div class="card"><h2>Risk Plan</h2><div class="three"><div>ENTRY<b id="entry">—</b></div><div>STOP<b id="stop">—</b></div><div>TARGET<b id="target">—</b></div></div><div class="row">Max loss <b id="max">—</b></div><div class="row">Position size <b id="size">—</b></div><div class="row">Risk : Reward <b>1 : 2</b></div></div></aside></div>
+<div class="card"><b>V8 upgrade:</b> independently analyzes 15m, 1h and 4h, checks trend, momentum, RSI, volume and volatility, then produces a combined confluence state. Informational/paper trading only.</div>
+</main><script>
+const $=id=>document.getElementById(id),H=['https://api.binance.com','https://data-api.binance.vision','https://api1.binance.com','https://api2.binance.com','https://api3.binance.com'];let A={};
+const avg=a=>a.reduce((x,y)=>x+y,0)/a.length,F=(n,d=2)=>Number.isFinite(n)?Number(n).toLocaleString(undefined,{maximumFractionDigits:d}):'—';
+function ema(a,p){let k=2/(p+1),e=a[0];for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e}
+function RSI(a,p=14){let g=0,l=0;for(let i=1;i<=p;i++){let d=a[i]-a[i-1];g+=Math.max(d,0);l+=Math.max(-d,0)}let ag=g/p,al=l/p;for(let i=p+1;i<a.length;i++){let d=a[i]-a[i-1];ag=(ag*(p-1)+Math.max(d,0))/p;al=(al*(p-1)+Math.max(-d,0))/p}return al?100-100/(1+ag/al):100}
+function ATR(c){let t=[];for(let i=1;i<c.length;i++){let x=c[i],q=c[i-1];t.push(Math.max(x.h-x.l,Math.abs(x.h-q.c),Math.abs(x.l-q.c)))}return avg(t.slice(-14))}
+async function get(u){let c=new AbortController(),t=setTimeout(()=>c.abort(),9000);try{let r=await fetch(u,{cache:'no-store',signal:c.signal});if(!r.ok)throw 0;return r.json()}finally{clearTimeout(t)}}
+async function candles(tf){for(let h of H)try{let d=await get(h+'/api/v3/klines?symbol='+$('pair').value+'&interval='+tf+'&limit=180');if(d.length>60)return d.map(x=>({o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]}))}catch(e){}throw 0}
+function calc(c){let a=c.map(x=>x.c),p=a.at(-1),e20=ema(a.slice(-90),20),e50=ema(a.slice(-130),50),r=RSI(a),m=ema(a,12)-ema(a,26),t=ATR(c),v=avg(c.slice(-20).map(x=>x.v))/(avg(c.slice(-60,-20).map(x=>x.v))||1),s=(p>e20?2:0)+(e20>e50?2:0)+(m>0?2:0)+(r>=50&&r<=70?1:0)+(avg(a.slice(-10))>avg(a.slice(-20,-10))?1:0)+(v>=1?1:0)+(t/p<.02?1:0);return{c,a,p,e20,e50,r,m,t,v,trend:e20>e50?'BULLISH':'BEARISH',mom:m>0?'POSITIVE':'NEGATIVE',score:s,signal:s>=7?'BULLISH':s<=3?'BEARISH':'NEUTRAL',vol:t/p<.008?'LOW':t/p<.02?'NORMAL':'HIGH'}}
+async function scan(){ $('status').textContent='Scanning…';try{let q=await Promise.all(['15m','1h','4h'].map(candles));['15m','1h','4h'].forEach((k,i)=>A[k]=calc(q[i]));['15m','1h','4h'].forEach((k,i)=>{$('s'+(i==0?'15':i==1?'1h':'4h')).textContent=A[k].signal+' '+A[k].score+'/10';$('d'+(i==0?'15':i==1?'1h':'4h')).textContent=A[k].trend+' / '+A[k].mom});render();$('status').textContent='V8 scan complete.'}catch(e){$('status').textContent='Scan failed. Check network/API.'}}
+function render(){let x=A[$('tf').value]||A['1h'],s=['15m','1h','4h'].map(k=>A[k].signal),b=s.filter(x=>x==='BULLISH').length,be=s.filter(x=>x==='BEARISH').length,o=b>=2?'BULLISH CONFLUENCE':be>=2?'BEARISH CONFLUENCE':'MIXED / WAIT',al=b===3||be===3,sc=Math.min(10,Math.round(['15m','1h','4h'].reduce((n,k)=>n+A[k].score,0)/3)+(al?1:0)),dist=Math.max(x.t*1.25,x.p*.005),max=(+$('acct').value||0)*(+$('risk').value||0)/100,long=o[0]==='B';$('overall').textContent='Overall: '+o+' • '+b+' bullish / '+be+' bearish';$('score').textContent=sc+'/10';$('setup').textContent=o==='MIXED / WAIT'?'Timeframes disagree. Wait for confirmation.':o==='BULLISH CONFLUENCE'?'Bullish confluence detected for paper analysis.':'Bearish confluence detected for paper analysis.';$('bias').textContent=o;$('align').textContent=al?'3/3 ALIGNED':'MIXED';$('mom').textContent=x.mom;$('rz').textContent=x.r<30?'OVERSOLD':x.r>70?'OVERBOUGHT':'NEUTRAL';$('quality').textContent=sc>=7&&al?'GOOD':sc>=5?'FAIR':'WAIT';$('regime').textContent=al?(b===3?'BULL TREND':'BEAR TREND'):'MIXED';$('cp').textContent=Math.round(Math.max(b,be)/3*100)+'%';$('vr').textContent=x.vol;$('dq').textContent='GOOD';$('price').textContent=F(x.p);$('atr').textContent=F(x.t);$('vol').textContent=F(x.v)+'x';$('rsi').textContent=F(x.r,1);$('ema').textContent=F(x.e20)+' / '+F(x.e50);$('macd').textContent=F(x.m,4);$('trend').textContent=x.trend;$('structure').textContent=x.p>Math.max(...x.a.slice(-10,-1))?'BREAKOUT UP':'RANGE / TREND';let stop=long?x.p-dist:x.p+dist,target=long?x.p+2*dist:x.p-2*dist;$('entry').textContent=F(x.p);$('stop').textContent=F(stop);$('target').textContent=F(target);$('max').textContent='$'+F(max);$('size').textContent=F(max/dist,6);draw(x)}
+function draw(x){let c=$('chart'),g=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,d=devicePixelRatio||1;c.width=w*d;c.height=h*d;g.setTransform(d,0,0,d,0,0);let a=x.c.slice(-80),hi=Math.max(...a.map(q=>q.h)),lo=Math.min(...a.map(q=>q.l)),X=i=>20+i*(w-40)/(a.length-1),Y=v=>20+(hi-v)*(h-40)/(hi-lo||1);a.forEach((q,i)=>{g.strokeStyle=q.c>=q.o?'#57d7a1':'#ff7180';g.beginPath();g.moveTo(X(i),Y(q.h));g.lineTo(X(i),Y(q.l));g.stroke();g.fillRect(X(i)-2,Y(Math.max(q.o,q.c)),4,Math.max(1,Math.abs(Y(q.o)-Y(q.c))))})}
+async function api(){try{await get(H[0]+'/api/v3/ping');$('status').textContent='Binance API is reachable.'}catch(e){$('status').textContent='API test failed.'}}
+$('tf').onchange=()=>A[$('tf').value]&&render();onresize=()=>A[$('tf').value]&&draw(A[$('tf').value]);
+</script></body></html>
