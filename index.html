@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V15</title>
+<title>TradeLens V16</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -18,6 +18,8 @@ table{width:100%;border-collapse:collapse}td,th{padding:9px 7px;border-bottom:1p
 @media(max-width:760px){.controls,.grid3,.grid4,.two{grid-template-columns:1fr}.why{grid-template-columns:1fr}td,th{white-space:normal}}
 
 .tl-chart-toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:10px 0}.tl-chart-toolbar button{width:auto;margin:0;padding:7px 10px;font-size:11px}.tl-chart-toolbar button.active{border-color:#64b5ff;background:#102b40;color:#fff}.tl-chart-wrap{background:#07131d;border:1px solid #203744;border-radius:12px;overflow:hidden;position:relative}.tl-chart-canvas{width:100%;height:430px;display:block;touch-action:none}.tl-vol-canvas{width:100%;height:100px;display:block;border-top:1px solid #203744;touch-action:none}.tl-indicator-canvas{width:100%;height:190px;display:block;border-top:1px solid #203744;touch-action:none}.tl-chart-info{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:8px}.tl-chart-info .metric{padding:8px}.tl-chart-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#8ea5b4;margin-top:8px}.tl-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}.tl-green{background:#42d19c}.tl-red{background:#ff6f7d}.tl-blue{background:#64b5ff}.tl-yellow{background:#f4c95d}@media(max-width:760px){.tl-chart-info{grid-template-columns:repeat(3,1fr)}.tl-chart-canvas{height:340px}}
+
+.tl-structure-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.tl-structure-card{border:1px solid #263b49;background:#0b1721;border-radius:10px;padding:10px}.tl-structure-card .k{font-size:10px;color:#78909c}.tl-structure-card .v{font-size:14px;font-weight:700;margin-top:4px}.tl-structure-note{font-size:11px;color:#8ea5b4;margin-top:8px}.tl-structure-bull{color:#42d19c}.tl-structure-bear{color:#ff6f7d}.tl-structure-neutral{color:#cbd5e1}@media(max-width:760px){.tl-structure-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 
 <script>
@@ -61,24 +63,24 @@ function TLv103_enforceDirectionIntegrity(a){
 </script>
 
 <style>
-.v11-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
-.v11-panel{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px}
-.v11-label{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em}
-.v11-value{font-size:18px;font-weight:700;margin-top:4px}
-.v11-muted{color:#94a3b8;font-size:12px}
-.v11-lock{border:1px solid #92400e;background:#451a03;padding:12px;border-radius:10px;margin-top:10px}
-.v11-explain{border:1px solid #334155;background:#0b1620;padding:12px;border-radius:10px;margin-top:8px;color:#cbd5e1;line-height:1.5}.v11-explain b{color:#fff}
-.v11-ready{border:1px solid #166534;background:#052e16;padding:12px;border-radius:10px;margin-top:10px}
-.v11-matrix{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
-.v11-matrix th,.v11-matrix td{border-bottom:1px solid #334155;padding:8px;text-align:left}
-.v11-pill{display:inline-block;padding:3px 7px;border-radius:999px;border:1px solid #475569;font-size:11px}
-.v11-smallgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-@media(max-width:700px){.v11-grid{grid-template-columns:1fr}.v11-smallgrid{grid-template-columns:1fr}}
+.v16-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.v16-panel{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px}
+.v16-label{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em}
+.v16-value{font-size:18px;font-weight:700;margin-top:4px}
+.tl-v16-muted{color:#94a3b8;font-size:12px}
+.v16-lock{border:1px solid #92400e;background:#451a03;padding:12px;border-radius:10px;margin-top:10px}
+.v16-explain{border:1px solid #334155;background:#0b1620;padding:12px;border-radius:10px;margin-top:8px;color:#cbd5e1;line-height:1.5}.v16-explain b{color:#fff}
+.v16-ready{border:1px solid #166534;background:#052e16;padding:12px;border-radius:10px;margin-top:10px}
+.v16-matrix{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+.v16-matrix th,.v16-matrix td{border-bottom:1px solid #334155;padding:8px;text-align:left}
+.v16-pill{display:inline-block;padding:3px 7px;border-radius:999px;border:1px solid #475569;font-size:11px}
+.v16-smallgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(max-width:700px){.v16-grid{grid-template-columns:1fr}.v16-smallgrid{grid-template-columns:1fr}}
 </style>
 </head>
-<body><div class="card" style="margin-top:12px"><b>V15 Advanced Technical Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V16 Market Structure Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V15</h1>
+<h1>TradeLens V16</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -92,7 +94,7 @@ function TLv103_enforceDirectionIntegrity(a){
 <label>RISK %<input id="risk" type="number" value="1" step=".1" min=".1"></label>
 <label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED</option><option value="WATCH">WATCH</option><option value="ANY">ANY</option></select></label>
 </div>
-<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V14 SCAN</button></div>
+<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V16 SCAN</button></div>
 <p id="status" class="small">Ready.</p>
 </section>
 
@@ -109,7 +111,7 @@ function TLv103_enforceDirectionIntegrity(a){
   <button id="refreshChart">↻ Refresh</button>
   <button id="toggleEMA20">EMA 20</button><button id="toggleEMA50">EMA 50</button>
   <button id="toggleVWAP">VWAP</button><button id="toggleBB">Bollinger</button>
-  <button id="toggleRSI">RSI</button><button id="toggleMACD">MACD</button>
+  <button id="toggleRSI">RSI</button><button id="toggleMACD">MACD</button><button id="toggleStructure" class="active">Structure</button>
 </div>
 <div class="tl-chart-wrap">
   <canvas id="candleChart" class="tl-chart-canvas"></canvas>
@@ -117,13 +119,19 @@ function TLv103_enforceDirectionIntegrity(a){
   <canvas id="indicatorChart" class="tl-indicator-canvas"></canvas>
 </div>
 <div id="chartOHLC" class="tl-chart-info"></div>
-<div class="tl-chart-legend"><span><i class="tl-dot tl-green"></i>Up candle</span><span><i class="tl-dot tl-red"></i>Down candle</span><span><i class="tl-dot tl-blue"></i>EMA 20</span><span><i class="tl-dot tl-yellow"></i>EMA 50</span><span><i class="tl-dot tl-blue"></i>VWAP</span><span><i class="tl-dot tl-yellow"></i>Bollinger</span><span>RSI/MACD appear in the indicator panel • Latest candle may still be forming</span></div>
+<div class="tl-chart-legend"><span><i class="tl-dot tl-green"></i>Up candle</span><span><i class="tl-dot tl-red"></i>Down candle</span><span><i class="tl-dot tl-blue"></i>EMA 20</span><span><i class="tl-dot tl-yellow"></i>EMA 50</span><span><i class="tl-dot tl-blue"></i>VWAP</span><span><i class="tl-dot tl-yellow"></i>Bollinger</span><span>RSI/MACD appear in the indicator panel • Structure uses confirmed closed candles</span></div>
 <p id="chartStatus" class="small">Run a scan to populate the candlestick chart.</p>
 </section>
 
 <section class="panel">
-<div class="sectionTitle"><h2>V15 Technical Indicator Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
+<div class="sectionTitle"><h2>V16 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
 <div id="indicatorSummary" class="grid3"></div>
+</section>
+
+<section class="panel">
+<div class="sectionTitle"><h2>Market Structure</h2><span class="small">Swing structure, breaks and retests are calculated from confirmed candles.</span></div>
+<div id="structureSummary" class="tl-structure-grid"></div>
+<div id="structureNote" class="tl-structure-note">Run a scan to calculate market structure.</div>
 </section>
 
 <section class="two">
@@ -182,6 +190,47 @@ function macdSeries(a){const e12=emaSeries(a,12),e26=emaSeries(a,26),line=a.map(
 function bollinger(a,n=20,m=2){const mid=[],up=[],low=[];for(let i=0;i<a.length;i++){const w=a.slice(Math.max(0,i-n+1),i+1),mean=w.reduce((x,y)=>x+y,0)/w.length,sd=Math.sqrt(w.reduce((x,y)=>x+(y-mean)**2,0)/w.length);mid.push(mean);up.push(mean+m*sd);low.push(mean-m*sd)}return {mid,up,low}}
 function vwapSeries(c){let pv=0,vol=0,out=[];for(const z of c){const tp=(z.h+z.l+z.c)/3;pv+=tp*z.v;vol+=z.v;out.push(vol?pv/vol:tp)}return out}
 function atrSeries(c,n=14){let tr=[];for(let i=0;i<c.length;i++){tr.push(i?Math.max(c[i].h-c[i].l,Math.abs(c[i].h-c[i-1].c),Math.abs(c[i].l-c[i-1].c)):c[i].h-c[i].l)}let out=Array(c.length).fill(null);if(c.length<n)return out;let a=tr.slice(0,n).reduce((x,y)=>x+y,0)/n;out[n-1]=a;for(let i=n;i<c.length;i++){a=(a*(n-1)+tr[i])/n;out[i]=a}return out}
+function tlv16_isForming(z){return Date.now()<z.closeTime}
+function tlv16_structure(c,look=3){
+  const closed=c.filter(z=>!tlv16_isForming(z));
+  const src=closed.length>=20?closed:c.slice(0,-1);
+  const swingsH=[],swingsL=[];
+  for(let i=look;i<src.length-look;i++){
+    let hi=true,lo=true;
+    for(let j=1;j<=look;j++){if(src[i].h<=src[i-j].h||src[i].h<=src[i+j].h)hi=false;if(src[i].l>=src[i-j].l||src[i].l>=src[i+j].l)lo=false;}
+    if(hi)swingsH.push({i,time:src[i].time,price:src[i].h});
+    if(lo)swingsL.push({i,time:src[i].time,price:src[i].l});
+  }
+  const highs=swingsH.slice(-4), lows=swingsL.slice(-4);
+  const lastH=highs.at(-1), prevH=highs.at(-2), lastL=lows.at(-1), prevL=lows.at(-2);
+  const hhll=[];
+  if(lastH&&prevH) hhll.push(lastH.price>prevH.price?'HH':'LH');
+  if(lastL&&prevL) hhll.push(lastL.price>prevL.price?'HL':'LL');
+  const last=src.at(-1), prev=src.at(-2);
+  const atrVal=atr(src,14)||Math.abs(last.h-last.l)||1;
+  const bullBreak=!!lastH&&last.c>lastH.price && (!prev||prev.c<=lastH.price);
+  const bearBreak=!!lastL&&last.c<lastL.price && (!prev||prev.c>=lastL.price);
+  let bias='RANGE / TRANSITION',event='NONE';
+  if(bullBreak){event='BOS UP';bias='BULLISH';}
+  else if(bearBreak){event='BOS DOWN';bias='BEARISH';}
+  else if(hhll.includes('HH')&&hhll.includes('HL'))bias='BULLISH';
+  else if(hhll.includes('LH')&&hhll.includes('LL'))bias='BEARISH';
+  // CHoCH: current break against the immediately prior swing sequence.
+  const priorBear=hhll.includes('LH')&&hhll.includes('LL');
+  const priorBull=hhll.includes('HH')&&hhll.includes('HL');
+  if(bullBreak&&priorBear)event='CHoCH UP';
+  if(bearBreak&&priorBull)event='CHoCH DOWN';
+  let retest='NONE';
+  const level=bullBreak&&lastH?lastH.price:bearBreak&&lastL?lastL.price:null;
+  if(level){
+    const recent=src.slice(-Math.min(12,src.length));
+    if(bullBreak){const touched=recent.some(z=>z.l<=level+atrVal*.25&&z.l>=level-atrVal*.8);const held=last.c>=level;if(touched&&held)retest='BULLISH RETEST';}
+    if(bearBreak){const touched=recent.some(z=>z.h>=level-atrVal*.25&&z.h<=level+atrVal*.8);const held=last.c<=level;if(touched&&held)retest='BEARISH RETEST';}
+  }
+  const support=Math.min(...src.slice(-50).map(z=>z.l)),resistance=Math.max(...src.slice(-50).map(z=>z.h));
+  const structureScore=(bias==='RANGE / TRANSITION'?0:1)+(event!=='NONE'?1:0)+(retest!=='NONE'?1:0);
+  return {bias,event,retest,hh:lastH&&prevH?(lastH.price>prevH.price?'HH':'LH'):'—',hl:lastL&&prevL?(lastL.price>prevL.price?'HL':'LL'):'—',lastHigh:lastH?.price||resistance,lastLow:lastL?.price||support,support,resistance,swingsH:highs,swingsL:lows,structureScore,atr:atrVal,closedCount:src.length};
+}
 function analyze(c){
  const a=c.map(x=>x.c),v=c.map(x=>x.v),q=c.map(x=>x.qv),p=a.at(-1);
  const e20=ema(a,20),e50=ema(a,50),e100=ema(a,100),mac=ema(a,12)-ema(a,26),r=rsi(a),at=atr(c),atrPct=at/p;
@@ -211,7 +260,7 @@ function analyze(c){
  const state=TLv102_direction(trend,momentum,rsi);
  const now=Date.now(),ageMin=Math.max(0,(now-c.at(-1).closeTime)/60000);
  const freshness=ageMin<=30?'FRESH':ageMin<=180?'AGING':'STALE';
- const rsis=rsiSeries(a),mcd=macdSeries(a),bb=bollinger(a),vw=vwapSeries(c),ats=atrSeries(c); return {p,e20,e50,e100,mac,r,at,atrPct,vr,liq,trend,momentum,structure,regime,rsiStatus,volume,trendScore,momScore,rsiScore,volScore,structureScore,volatilityScore,extensionStatus,extensionScore,srScore,liquidityScore,raw,strength,state,extension,support,resistance,freshness,ageMin,candles:c,ema20Series:emaSeries(a,20),ema50Series:emaSeries(a,50),vwapSeries:vw,bbMid:bb.mid,bbUp:bb.up,bbLow:bb.low,rsiSeries:rsis,macdLine:mcd.line,macdSignal:mcd.signal,macdHist:mcd.hist,atrSeries:ats};
+ const rsis=rsiSeries(a),mcd=macdSeries(a),bb=bollinger(a),vw=vwapSeries(c),ats=atrSeries(c),ms=tlv16_structure(c); return {p,e20,e50,e100,mac,r,at,atrPct,vr,liq,trend,momentum,structure,regime,rsiStatus,volume,trendScore,momScore,rsiScore,volScore,structureScore,volatilityScore,extensionStatus,extensionScore,srScore,liquidityScore,raw,strength,state,extension,support,resistance,freshness,ageMin,candles:c,marketStructure:ms,ema20Series:emaSeries(a,20),ema50Series:emaSeries(a,50),vwapSeries:vw,bbMid:bb.mid,bbUp:bb.up,bbLow:bb.low,rsiSeries:rsis,macdLine:mcd.line,macdSignal:mcd.signal,macdHist:mcd.hist,atrSeries:ats};
 }
 function confluence(rs){
  const bull=rs.filter(x=>x.state==='BULLISH').length,bear=rs.filter(x=>x.state==='BEARISH').length;
@@ -251,13 +300,15 @@ function qualify(rs,c){
  if(fresh<2) blockers.push('Data freshness');
  if(ext<2) blockers.push('Move may be extended');
  if(liq<2) blockers.push('Liquidity proxy is limited');
+ const structureConfirmed=rs.filter(x=>x.marketStructure && x.marketStructure.bias!=='RANGE / TRANSITION').length>=2;
+ if(!structureConfirmed) blockers.push('Market structure is not aligned');
  let status='WATCH';
  if(d==='MIXED'||c.percent<34||fresh===0) status='INVALID';
- else if(c.percent>=67&&trend>=2&&mom>=2&&fresh>=2&&ext>=2&&liq>=2&&vol>=1&&c.avg>=8) status='QUALIFIED';
- return {checks,blockers,status,volumeWeak:vol<2,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
+ else if(c.percent>=67&&trend>=2&&mom>=2&&fresh>=2&&ext>=2&&liq>=2&&vol>=1&&structureConfirmed&&c.avg>=8) status='QUALIFIED';
+ return {checks,blockers,status,volumeWeak:vol<2,structureConfirmed,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
 }
 function render(rs,c,q,detail){
- $('selectedTitle').textContent=$('pair').value+' • V15 Analysis';
+ $('selectedTitle').textContent=$('pair').value+' • V16 Analysis';
  $('decisionBadge').textContent=q.status;
  $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
  $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
@@ -270,10 +321,13 @@ function render(rs,c,q,detail){
  const summaryTrend=c.dominant==='MIXED'?'NOT ESTABLISHED':rs.filter(x=>x.trend===c.dominant).length>=2?'✓ CONFIRMED':'? MIXED';
  const expectedMomentum=c.dominant==='BULLISH'?'POSITIVE':c.dominant==='BEARISH'?'NEGATIVE':null;
  const summaryMomentum=!expectedMomentum?'NOT ESTABLISHED':rs.filter(x=>x.momentum===expectedMomentum).length>=2?'✓ CONFIRMED':'? MIXED';
- $('why').innerHTML=[['TREND',summaryTrend],['MOMENTUM',summaryMomentum],['RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'✓ HEALTHY':'⚠ CAUTION'],['VOLUME',rs.filter(x=>x.volume==='CONFIRMED').length>=2?'✓ CONFIRMED':'? WEAK'],['STRUCTURE',rs.filter(x=>x.structure.includes('BREAK')||x.structure.includes('BIAS')).length>=2?'✓ CONFIRMED':'? UNCLEAR'],['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'✓ ACCEPTABLE':'⚠ HIGH'],['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'✓ ADEQUATE':'? LIMITED'],['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'✓ ACCEPTABLE':'⚠ EXTENDED']].map(x=>`<div class="metric"><b>${x[0]}</b><br>${x[1]}</div>`).join('');
+ $('why').innerHTML=[['TREND',summaryTrend],['MOMENTUM',summaryMomentum],['RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'✓ HEALTHY':'⚠ CAUTION'],['VOLUME',rs.filter(x=>x.volume==='CONFIRMED').length>=2?'✓ CONFIRMED':'? WEAK'],['STRUCTURE',q.structureConfirmed?'✓ CONFIRMED':'? UNCLEAR'],['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'✓ ACCEPTABLE':'⚠ HIGH'],['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'✓ ADEQUATE':'? LIMITED'],['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'✓ ACCEPTABLE':'⚠ EXTENDED']].map(x=>`<div class="metric"><b>${x[0]}</b><br>${x[1]}</div>`).join('');
  const x=rs[detail==='15m'?0:detail==='1h'?1:2];
- $('detailOut').innerHTML=[['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.structure],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
+ $('detailOut').innerHTML=[['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.marketStructure.bias+' • '+x.marketStructure.hh+'/'+x.marketStructure.hl],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
  $('checks').innerHTML=q.checks.map(x=>`<div class="metric"><b>${x[0]}</b><br><span class="${x[1].includes('CONFIRMED')||x[1]==='HEALTHY'||x[1]==='ADEQUATE'||x[1]==='ACCEPTABLE'||x[1]==='FRESH'?'bull':x[1].includes('WEAK')||x[1].includes('STALE')||x[1].includes('EXTENDED')?'neutral':''}">${x[1]}</span></div>`).join('');
+ const ms=x.marketStructure||{};
+ $('structureSummary').innerHTML=[['BIAS',ms.bias||'—'],['SWING HIGH',ms.hh||'—'],['SWING LOW',ms.hl||'—'],['EVENT',ms.event||'NONE'],['RETEST',ms.retest||'NONE'],['SUPPORT',fmt(ms.support)],['RESISTANCE',fmt(ms.resistance)],['CONFIRMED SWINGS',fmt((ms.swingsH?.length||0)+(ms.swingsL?.length||0),0)]].map(z=>`<div class="tl-structure-card"><div class="k">${z[0]}</div><div class="v ${z[1]==='BULLISH'||String(z[1]).includes('UP')?'tl-structure-bull':z[1]==='BEARISH'||String(z[1]).includes('DOWN')?'tl-structure-bear':'tl-structure-neutral'}">${z[1]}</div></div>`).join('');
+ $('structureNote').textContent=`${ms.bias||'Structure unavailable'} • ${ms.event||'No break'} • ${ms.retest||'No confirmed retest'}. Structure uses ${fmt(ms.closedCount||0,0)} closed candles to reduce repainting.`;
  renderRisk(x,c,q);
 }
 function renderRisk(x,c,q){
@@ -286,15 +340,15 @@ function renderRisk(x,c,q){
  const stop=dir==='SHORT'?x.p+dist:x.p-dist,target=dir==='SHORT'?x.p-2*dist:x.p+2*dist,size=max/dist,fee=max*.001;
  $('riskOut').innerHTML=[['STATUS','QUALIFIED PLAN'],['DIRECTION',dir],['ENTRY',fmt(x.p)],['STOP',fmt(stop)],['TARGET',fmt(target)],['POSITION SIZE',fmt(size,6)],['MAX LOSS','$'+fmt(max)],['POTENTIAL PROFIT','$'+fmt(max*2)],['R:R','1 : 2'],['FEE ALLOWANCE','$'+fmt(fee)]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
 }
-let TLV15_chart={tf:"15m",count:100,ema20:true,ema50:true,vwap:false,bb:false,rsi:true,macd:true,rs:null};
+let TLV15_chart={tf:"15m",count:100,ema20:true,ema50:true,vwap:false,bb:false,rsi:true,macd:true,structure:true,rs:null};
 function tlv15_resize(canvas,h){const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1,w=Math.max(320,Math.floor(r.width));canvas.width=w*d;canvas.height=h*d;const c=canvas.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h}}
 function tlv15_grid(c,w,h,pad,min,max){c.strokeStyle='#1b3441';c.lineWidth=1;c.font='10px system-ui';c.fillStyle='#718897';for(let i=0;i<=5;i++){const y=pad.t+(h-pad.t-pad.b)*i/5;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();const val=max-(max-min)*i/5;c.fillText(fmt(val,2),5,y+3)}}
 function tlv15_line(c,vals,py,step,pad,color,width=1.5){let started=false;c.strokeStyle=color;c.lineWidth=width;c.beginPath();vals.forEach((v,i)=>{if(v==null)return;const xx=pad.l+i*step+step/2,yy=py(v);if(!started){c.moveTo(xx,yy);started=true}else c.lineTo(xx,yy)});if(started)c.stroke()}
-function tlv15_draw(rs,tf,count){const x=rs?.[tf==='15m'?0:tf==='1h'?1:2];if(!x||!x.candles)return;TLV15_chart.rs=rs;const raw=x.candles.slice(-count),cc=$('candleChart'),vc=$('volumeChart'),ic=$('indicatorChart');if(!cc||!vc||!ic)return;const A=tlv15_resize(cc,430),c=A.c,w=A.w,h=A.h,pad={l:58,r:16,t:18,b:28},max=Math.max(...raw.map(z=>z.h)),min=Math.min(...raw.map(z=>z.l)),range=max-min||1;c.clearRect(0,0,w,h);tlv15_grid(c,w,h,pad,min,max);const plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b,step=plotW/raw.length,bw=Math.max(2,Math.min(12,step*.62)),closes=raw.map(z=>z.c),offset=x.candles.length-raw.length;const e20=x.ema20Series.slice(offset),e50=x.ema50Series.slice(offset),vw=x.vwapSeries.slice(offset),bu=x.bbUp.slice(offset),bl=x.bbLow.slice(offset),bm=x.bbMid.slice(offset);function py(v){return pad.t+(max-v)/range*plotH}if(TLV15_chart.ema20)tlv15_line(c,e20,py,step,pad,'#64b5ff');if(TLV15_chart.ema50)tlv15_line(c,e50,py,step,pad,'#f4c95d');if(TLV15_chart.vwap)tlv15_line(c,vw,py,step,pad,'#8bd3ff',2);if(TLV15_chart.bb){tlv15_line(c,bu,py,step,pad,'#a78bfa');tlv15_line(c,bm,py,step,pad,'#c4b5fd');tlv15_line(c,bl,py,step,pad,'#a78bfa')}raw.forEach((z,i)=>{const xx=pad.l+i*step+step/2,yo=py(z.o),yc=py(z.c),yh=py(z.h),yl=py(z.l),up=z.c>=z.o;c.strokeStyle=up?'#42d19c':'#ff6f7d';c.fillStyle=c.strokeStyle;c.beginPath();c.moveTo(xx,yh);c.lineTo(xx,yl);c.stroke();c.fillRect(xx-bw/2,Math.min(yo,yc),bw,Math.max(1,Math.abs(yc-yo)))});c.fillStyle='#718897';c.font='10px system-ui';[0,.25,.5,.75,1].forEach(f=>{const i=Math.min(raw.length-1,Math.floor((raw.length-1)*f)),d=new Date(raw[i].time);c.fillText(d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),pad.l+i*step,h-8)});const V=tlv15_resize(vc,100),v=V.c,vWidth=V.w,vh=V.h;v.clearRect(0,0,vWidth,vh);const vmax=Math.max(...raw.map(z=>z.v))||1,vstep=(vWidth-30)/raw.length;raw.forEach((z,i)=>{v.fillStyle=z.c>=z.o?'#42d19c':'#ff6f7d';const bh=z.v/vmax*(vh-18);v.fillRect(15+i*vstep,vh-bh,vstep*.7,bh)});const I=tlv15_resize(ic,190),g=I.c,iw=I.w,ih=I.h;g.clearRect(0,0,iw,ih);g.fillStyle='#718897';g.font='10px system-ui';g.strokeStyle='#1b3441';g.lineWidth=1;const split=TLV15_chart.rsi&&TLV15_chart.macd?ih/2:ih-8;
+function tlv15_draw(rs,tf,count){const x=rs?.[tf==='15m'?0:tf==='1h'?1:2];if(!x||!x.candles)return;TLV15_chart.rs=rs;const raw=x.candles.slice(-count),cc=$('candleChart'),vc=$('volumeChart'),ic=$('indicatorChart');if(!cc||!vc||!ic)return;const A=tlv15_resize(cc,430),c=A.c,w=A.w,h=A.h,pad={l:58,r:16,t:18,b:28},max=Math.max(...raw.map(z=>z.h)),min=Math.min(...raw.map(z=>z.l)),range=max-min||1;c.clearRect(0,0,w,h);tlv15_grid(c,w,h,pad,min,max);const plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b,step=plotW/raw.length,bw=Math.max(2,Math.min(12,step*.62)),closes=raw.map(z=>z.c),offset=x.candles.length-raw.length;const e20=x.ema20Series.slice(offset),e50=x.ema50Series.slice(offset),vw=x.vwapSeries.slice(offset),bu=x.bbUp.slice(offset),bl=x.bbLow.slice(offset),bm=x.bbMid.slice(offset);function py(v){return pad.t+(max-v)/range*plotH}if(TLV15_chart.ema20)tlv15_line(c,e20,py,step,pad,'#64b5ff');if(TLV15_chart.ema50)tlv15_line(c,e50,py,step,pad,'#f4c95d');if(TLV15_chart.vwap)tlv15_line(c,vw,py,step,pad,'#8bd3ff',2);if(TLV15_chart.bb){tlv15_line(c,bu,py,step,pad,'#a78bfa');tlv15_line(c,bm,py,step,pad,'#c4b5fd');tlv15_line(c,bl,py,step,pad,'#a78bfa')}raw.forEach((z,i)=>{const xx=pad.l+i*step+step/2,yo=py(z.o),yc=py(z.c),yh=py(z.h),yl=py(z.l),up=z.c>=z.o;c.strokeStyle=up?'#42d19c':'#ff6f7d';c.fillStyle=c.strokeStyle;c.beginPath();c.moveTo(xx,yh);c.lineTo(xx,yl);c.stroke();c.fillRect(xx-bw/2,Math.min(yo,yc),bw,Math.max(1,Math.abs(yc-yo)))});if(TLV15_chart.structure&&x.marketStructure){const ms=x.marketStructure;c.setLineDash([5,4]);c.lineWidth=1;c.strokeStyle='#8ea5b4';[['S',ms.support],['R',ms.resistance]].forEach(([lab,val])=>{if(Number.isFinite(val)){const yy=py(val);c.beginPath();c.moveTo(pad.l,yy);c.lineTo(w-pad.r,yy);c.stroke();c.fillStyle='#8ea5b4';c.fillText(lab+' '+fmt(val),pad.l+4,yy-3)}});c.setLineDash([]);const lastIndex=raw.length-1;const ev=ms.event||'';if(ev&&ev!=='NONE'){const yy=ev.includes('UP')?pad.t+16:h-42;c.fillStyle=ev.includes('UP')?'#42d19c':'#ff6f7d';c.font='bold 10px system-ui';c.fillText(ev,pad.l+8,yy)}}c.fillStyle='#718897';c.font='10px system-ui';[0,.25,.5,.75,1].forEach(f=>{const i=Math.min(raw.length-1,Math.floor((raw.length-1)*f)),d=new Date(raw[i].time);c.fillText(d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),pad.l+i*step,h-8)});const V=tlv15_resize(vc,100),v=V.c,vWidth=V.w,vh=V.h;v.clearRect(0,0,vWidth,vh);const vmax=Math.max(...raw.map(z=>z.v))||1,vstep=(vWidth-30)/raw.length;raw.forEach((z,i)=>{v.fillStyle=z.c>=z.o?'#42d19c':'#ff6f7d';const bh=z.v/vmax*(vh-18);v.fillRect(15+i*vstep,vh-bh,vstep*.7,bh)});const I=tlv15_resize(ic,190),g=I.c,iw=I.w,ih=I.h;g.clearRect(0,0,iw,ih);g.fillStyle='#718897';g.font='10px system-ui';g.strokeStyle='#1b3441';g.lineWidth=1;const split=TLV15_chart.rsi&&TLV15_chart.macd?ih/2:ih-8;
 if(TLV15_chart.rsi){const rTop=12,rBottom=TLV15_chart.macd?split-8:ih-18,rpad={l:38,r:16,t:rTop,b:rBottom},rstep=(iw-rpad.l-rpad.r)/raw.length;function rpy(v){return rpad.t+(100-v)/100*(rpad.b-rpad.t)};g.strokeStyle='#1b3441';[30,50,70].forEach(level=>{const yy=rpy(level);g.beginPath();g.moveTo(rpad.l,yy);g.lineTo(iw-rpad.r,yy);g.stroke();g.fillText(String(level),5,yy+3)});tlv15_line(g,x.rsiSeries.slice(offset),rpy,rstep,rpad,'#42d19c',1.6);g.fillStyle='#718897';g.fillText('RSI 14',5,rTop);}
 if(TLV15_chart.macd){const mTop=TLV15_chart.rsi?split+8:12,mBottom=ih-18,mpad={l:38,r:16,t:mTop,b:mBottom},mstep=(iw-mpad.l-mpad.r)/raw.length;const vals=x.macdHist.slice(offset),ml=x.macdLine.slice(offset),ms=x.macdSignal.slice(offset),all=vals.concat(ml,ms).filter(v=>Number.isFinite(v)),mx=Math.max(...all.map(Math.abs),1e-9);function mpy(v){return mpad.t+(mx-v)/(2*mx)*(mpad.b-mpad.t)};g.strokeStyle='#1b3441';const zero=mpy(0);g.beginPath();g.moveTo(mpad.l,zero);g.lineTo(iw-mpad.r,zero);g.stroke();vals.forEach((v,i)=>{const xx=mpad.l+i*mstep+mstep/2,yy=mpy(v);g.fillStyle=v>=0?'#42d19c':'#ff6f7d';g.fillRect(xx-mstep*.3,Math.min(zero,yy),mstep*.6,Math.max(1,Math.abs(yy-zero)))});tlv15_line(g,ml,mpy,mstep,mpad,'#64b5ff',1.4);tlv15_line(g,ms,mpy,mstep,mpad,'#f4c95d',1.4);g.fillStyle='#718897';g.fillText('MACD 12/26/9',5,mTop);}
 $('chartOHLC').innerHTML=[['OPEN',fmt(raw.at(-1).o)],['HIGH',fmt(raw.at(-1).h)],['LOW',fmt(raw.at(-1).l)],['CLOSE',fmt(raw.at(-1).c)],['VOLUME',fmt(raw.at(-1).v,0)+(Date.now()-raw.at(-1).time < ({'15m':900000,'1h':3600000,'4h':14400000}[tf]||900000)?' • FORMING':'')],['ATR',fmt(x.at,2)]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');$('indicatorSummary').innerHTML=[['EMA 20',fmt(e20.at(-1))],['EMA 50',fmt(e50.at(-1))],['VWAP',fmt(vw.at(-1))],['RSI 14',fmt(x.rsiSeries.at(-1),1)],['MACD',fmt(x.macdLine.at(-1),4)],['MACD SIGNAL',fmt(x.macdSignal.at(-1),4)],['MACD HIST',fmt(x.macdHist.at(-1),4)],['ATR 14',fmt(x.at,2)],['ATR %',fmt(x.atrPct*100,2)+'%'],['BB UPPER',fmt(bu.at(-1))],['BB MID',fmt(bm.at(-1))],['BB LOWER',fmt(bl.at(-1))]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
-$('chartStatus').textContent=`${$('pair').value} • ${tf} • ${raw.length} candles • indicators: ${[TLV15_chart.ema20?'EMA20':'',TLV15_chart.ema50?'EMA50':'',TLV15_chart.vwap?'VWAP':'',TLV15_chart.bb?'Bollinger':'',TLV15_chart.rsi?'RSI':'',TLV15_chart.macd?'MACD':''].filter(Boolean).join(', ')}`}
+$('chartStatus').textContent=`${$('pair').value} • ${tf} • ${raw.length} candles • indicators: ${[TLV15_chart.ema20?'EMA20':'',TLV15_chart.ema50?'EMA50':'',TLV15_chart.vwap?'VWAP':'',TLV15_chart.bb?'Bollinger':'',TLV15_chart.rsi?'RSI':'',TLV15_chart.macd?'MACD':'',TLV15_chart.structure?'Structure':' ' ].filter(Boolean).join(', ')}`}
 function tlv15_refreshChart(){if(TLV15_chart.rs)tlv15_draw(TLV15_chart.rs,TLV15_chart.tf,TLV15_chart.count)}
 function drawMTFChart(rs){TLV15_chart.rs=rs;tlv15_draw(rs,TLV15_chart.tf,TLV15_chart.count)}
 window.addEventListener('resize',tlv15_refreshChart);
@@ -305,7 +359,7 @@ async function run(){
   const selected=await onePair($('pair').value);
   render(selected.rs,selected.c,selected.q,$('detail').value);
   window._tlv13LastRs=selected.rs; TLV15_chart.tf=$('detail').value; drawMTFChart(selected.rs);
-  TLV13_render({"15m":selected.rs[0],"1h":selected.rs[1],"4h":selected.rs[2]}, $('detail').value, selected.q.status, selected.q.blockers);
+  TLV16_render({"15m":selected.rs[0],"1h":selected.rs[1],"4h":selected.rs[2]}, $('detail').value, selected.q.status, selected.q.blockers);
   const symbols=[...$('pair').options].map(o=>o.value),out=[];
   for(const symbol of symbols)try{
    const z=await onePair(symbol);
@@ -313,7 +367,7 @@ async function run(){
   }catch(e){console.warn(symbol,e)}
   out.sort((a,b)=>b.strength-a.strength);
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V15 scan complete. '+out.length+' pairs analyzed.';
+  $('status').textContent='V16 scan complete. '+out.length+' pairs analyzed.';
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
 $('test').onclick=async()=>{try{await get(HOSTS[0]+'/api/v3/ping',5000);$('apiBadge').textContent='API: ONLINE';$('apiBadge').className='badge ok';$('status').textContent='Binance API reachable.'}catch(e){$('apiBadge').textContent='API: OFFLINE';$('apiBadge').className='badge bad';$('status').textContent='API test failed.'}};
@@ -322,21 +376,21 @@ $('pair').onchange=()=>{if($('status').textContent.includes('complete'))run()};
 </script>
 
 <script>
-/* ========================= TradeLens V11 Engine ========================= */
-const TLV11_WEIGHTS={ "15m":1, "1h":2, "4h":3 };
+/* ========================= TradeLens V16 Decision Engine ========================= */
+const TLV16_WEIGHTS={ "15m":1, "1h":2, "4h":3 };
 
-function tlv11_num(x,d=0){ return Number.isFinite(Number(x))?Number(x):d; }
+function tlv16_num(x,d=0){ return Number.isFinite(Number(x))?Number(x):d; }
 
-function tlv11_direction(tf){
+function tlv16_direction(tf){
   if(tf.trend==="BULLISH" && tf.momentum==="POSITIVE") return "BULLISH";
   if(tf.trend==="BEARISH" && tf.momentum==="NEGATIVE") return "BEARISH";
   return "NEUTRAL";
 }
 
-function tlv11_confluence(tf){
+function tlv16_confluence(tf){
   let bull=0,bear=0,total=0;
   ["15m","1h","4h"].forEach(k=>{
-    const w=TLV11_WEIGHTS[k]; total+=w;
+    const w=TLV16_WEIGHTS[k]; total+=w;
     if(tf[k]?.state==="BULLISH") bull+=w;
     if(tf[k]?.state==="BEARISH") bear+=w;
   });
@@ -345,8 +399,8 @@ function tlv11_confluence(tf){
   return {direction:"MIXED",percent:Math.round(Math.max(bull,bear)/total*100),bull,bear,total};
 }
 
-function tlv11_readiness(tf,overall){
-  // V13: a directional decision only exists when weighted confluence reaches the gate.
+function tlv16_readiness(tf,overall){
+  // V16: a directional decision only exists when weighted confluence reaches the gate.
   if(overall.direction==='MIXED' || overall.percent<67){
     return {status:"INVALID",reason:overall.direction==='MIXED'?"No clean dominant direction.":"Weighted MTF confluence below 67%."};
   }
@@ -359,7 +413,7 @@ function tlv11_readiness(tf,overall){
   return {status:"CANDIDATE",reason:"Directional confluence is established."};
 }
 
-function tlv11_tradeGate(a){
+function tlv16_tradeGate(a){
   const blockers=[];
   if(!a) return {status:"LOCKED",blockers:["No analysis available."]};
   if(a.readiness!=="QUALIFIED"){
@@ -376,7 +430,7 @@ function tlv11_tradeGate(a){
   return blockers.length?{status:"LOCKED",blockers}:{status:"READY",blockers:[]};
 }
 
-function tlv11_entryPlan(a){
+function tlv16_entryPlan(a){
   if(!a || a.tradeGate?.status!=="READY") return null;
   const p=a.price, atr=a.atr;
   if(!Number.isFinite(p)||!Number.isFinite(atr)||atr<=0) return null;
@@ -388,11 +442,11 @@ function tlv11_entryPlan(a){
   return {direction:a.direction,entry,stop,target,rr:reward/risk,atr};
 }
 
-function tlv11_build(tfMap,summary){
+function tlv16_build(tfMap,summary){
   const normalized={};
   ["15m","1h","4h"].forEach(k=>{
     const raw=Object.assign({},tfMap[k]||{});
-    // Map the scanner's native field names into the V11 decision-engine schema.
+    // Map the scanner's native field names into the V16 decision-engine schema.
     raw.price=Number.isFinite(Number(raw.price))?Number(raw.price):Number(raw.p);
     raw.atr=Number.isFinite(Number(raw.atr))?Number(raw.atr):Number(raw.at);
     raw.volRatio=Number.isFinite(Number(raw.volRatio))?Number(raw.volRatio):Number(raw.vr);
@@ -400,17 +454,17 @@ function tlv11_build(tfMap,summary){
     raw.rsiCaution=raw.rsiCaution===true || raw.rsiStatus==="CAUTION";
     raw.extensionRisk=raw.extensionRisk===true || raw.extensionStatus!=="ACCEPTABLE";
     raw.liquidityLimited=raw.liquidityLimited===true || raw.liquidityScore===false || raw.liquidityScore===0;
-    raw.state=tlv11_direction(raw);
+    raw.state=tlv16_direction(raw);
     normalized[k]=raw;
   });
-  const c=tlv11_confluence(normalized);
-  const r=tlv11_readiness(normalized,c);
+  const c=tlv16_confluence(normalized);
+  const r=tlv16_readiness(normalized,c);
   const best=normalized[summary?.detailTf||"15m"]||normalized["15m"]||{};
 
   // The scanner's qualification result is authoritative for setup quality.
-  // The V11 engine adds weighted MTF direction and stricter trade-gate checks.
+  // The V16 engine adds weighted MTF direction and stricter trade-gate checks.
   const qualification=summary?.qualification||"WATCH";
-  const gate=tlv11_tradeGate({
+  const gate=tlv16_tradeGate({
     readiness:qualification,
     readinessReason:(summary?.qualificationBlockers||[]).join(" • ")||r.reason,
     direction:c.direction,
@@ -422,7 +476,7 @@ function tlv11_build(tfMap,summary){
     freshness:best.freshness,
     price:best.price,atr:best.atr
   });
-  const plan=gate.status==="READY"?tlv11_entryPlan({
+  const plan=gate.status==="READY"?tlv16_entryPlan({
     direction:c.direction,price:best.price,atr:best.atr,tradeGate:gate
   }):null;
   return {timeframes:normalized,confluence:c,readiness:r,tradeGate:gate,plan};
@@ -430,68 +484,69 @@ function tlv11_build(tfMap,summary){
 </script>
 
 <div class="card" style="margin-top:12px">
-  <h3>V15 Decision Engine</h3>
-  <div class="v11-grid">
-    <div class="v11-panel"><div class="v11-label">Setup Quality</div><div id="v11Quality" class="v11-value">—</div></div>
-    <div class="v11-panel"><div class="v11-label">Trade Readiness</div><div id="v11Readiness" class="v11-value">WAITING</div></div>
-    <div class="v11-panel"><div class="v11-label">Decision Direction</div><div id="v11Direction" class="v11-value">NONE</div></div>
-    <div class="v11-panel"><div class="v11-label">Weighted Confluence</div><div id="v11Confluence" class="v11-value">—</div></div>
+  <h3>V16 Decision Engine</h3>
+  <div class="v16-grid">
+    <div class="v16-panel"><div class="v16-label">Setup Quality</div><div id="v16Quality" class="v16-value">—</div></div>
+    <div class="v16-panel"><div class="v16-label">Trade Readiness</div><div id="v16Readiness" class="v16-value">WAITING</div></div>
+    <div class="v16-panel"><div class="v16-label">Decision Direction</div><div id="v16Direction" class="v16-value">NONE</div></div>
+    <div class="v16-panel"><div class="v16-label">Weighted Confluence</div><div id="v16Confluence" class="v16-value">—</div></div>
   </div>
-  <div id="v11Gate" class="v11-lock">V15 trade gate has not been evaluated.</div>
-  <div id="v11Explain" class="v11-explain">Run a scan to generate the V15 decision explanation.</div>
+  <div id="v16Gate" class="v16-lock">V16 trade gate has not been evaluated.</div>
+  <div id="v16Explain" class="v16-explain">Run a scan to generate the V16 decision explanation.</div>
   <h4 style="margin-top:14px">Confirmation Matrix</h4>
-  <table class="v11-matrix">
+  <table class="v16-matrix">
     <thead><tr><th>Timeframe</th><th>Direction</th><th>Trend</th><th>Momentum</th><th>Weight</th></tr></thead>
-    <tbody id="v11Matrix"><tr><td colspan="5">Run a scan to populate.</td></tr></tbody>
+    <tbody id="v16Matrix"><tr><td colspan="5">Run a scan to populate.</td></tr></tbody>
   </table>
 </div>
 
 <script>
-function TLV11_renderDemo(tfMap,detailTf){
-  const result=tlv11_build(tfMap,{detailTf});
-  const quality=document.getElementById("v11Quality"),q=document.getElementById("v11Readiness"),d=document.getElementById("v11Direction"),
-        c=document.getElementById("v11Confluence"),g=document.getElementById("v11Gate"),
-        m=document.getElementById("v11Matrix"),ex=document.getElementById("v11Explain");
+function TLV16_renderDemo(tfMap,detailTf){
+  const result=tlv16_build(tfMap,{detailTf});
+  const quality=document.getElementById("v16Quality"),q=document.getElementById("v16Readiness"),d=document.getElementById("v16Direction"),
+        c=document.getElementById("v16Confluence"),g=document.getElementById("v16Gate"),
+        m=document.getElementById("v16Matrix"),ex=document.getElementById("v16Explain");
   if(!quality||!q||!d||!c||!g||!m)return result;
   quality.textContent=(result.confluence.avg!=null?fmt(result.confluence.avg,1)+"/10": "—");
   q.textContent=result.tradeGate.status==="READY"?"READY":result.readiness.status;
   d.textContent=result.confluence.direction;
   c.textContent=result.confluence.percent+"%";
-  g.className=result.tradeGate.status==="READY"?"v11-ready":"v11-lock";
+  g.className=result.tradeGate.status==="READY"?"v16-ready":"v16-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ?"TRADE GATE OPEN — all V15 blocking conditions passed."
+    ?"TRADE GATE OPEN — all V16 blocking conditions passed."
     :"RISK PLAN LOCKED — "+result.tradeGate.blockers.join(" • ");
   if(ex){
     const dir=result.confluence.direction, pct=result.confluence.percent;
-    const matrix=["15m","1h","4h"].map(tf=>{const x=result.timeframes[tf]||{};return tf+" "+(x.state||"NEUTRAL")+" ("+(TLV11_WEIGHTS[tf]||1)+"x)"}).join(" • ");
+    const matrix=["15m","1h","4h"].map(tf=>{const x=result.timeframes[tf]||{};return tf+" "+(x.state||"NEUTRAL")+" ("+(TLV16_WEIGHTS[tf]||1)+"x)"}).join(" • ");
     ex.innerHTML=result.tradeGate.status==="READY"
       ? `<b>DECISION EXPLANATION</b><br>${esc("Directional alignment is confirmed. "+matrix+". Weighted confluence is "+pct+"% and the trade gate passed the blocking checks.")}`
       : `<b>DECISION EXPLANATION</b><br>${esc("Decision: "+(dir||"NONE")+". "+matrix+". Weighted confluence is "+pct+"%. "+(result.tradeGate.blockers.length?"Trade remains locked because "+result.tradeGate.blockers.join("; "):"The trade gate did not open."))}`;
   }
   m.innerHTML=["15m","1h","4h"].map(tf=>{
     const x=result.timeframes[tf]||{};
-    return `<tr><td>${tf}</td><td>${x.state||"NEUTRAL"}</td><td>${x.trend||"—"}</td><td>${x.momentum||"—"}</td><td>${TLV11_WEIGHTS[tf]}x</td></tr>`;
+    return `<tr><td>${tf}</td><td>${x.state||"NEUTRAL"}</td><td>${x.trend||"—"}</td><td>${x.momentum||"—"}</td><td>${TLV16_WEIGHTS[tf]}x</td></tr>`;
   }).join("");
   return result;
 }
 </script>
 
 <script>
-/* V13 live dashboard bridge — uses the actual scanner result directly. */
-function TLV13_render(tfMap, detailTf, qualification, blockers){
+/* V16 live dashboard bridge — uses the actual scanner result directly. */
+function TLV16_render(tfMap, detailTf, qualification, blockers){
   if(!tfMap) return null;
-  return TLV131_render(tfMap, detailTf, qualification, blockers);
+  return TLV161_render(tfMap, detailTf, qualification, blockers);
 }
 
-function TLV131_render(tfMap, detailTf, qualification, blockers){
+function TLV161_render(tfMap, detailTf, qualification, blockers){
   if(!tfMap) return null;
-  const result=tlv11_build(tfMap,{detailTf:detailTf||"15m",qualification:qualification||"WATCH",qualificationBlockers:blockers||[]});
-  const quality=document.getElementById("v11Quality"),
-        q=document.getElementById("v11Readiness"),
-        d=document.getElementById("v11Direction"),
-        c=document.getElementById("v11Confluence"),
-        g=document.getElementById("v11Gate"),
-        m=document.getElementById("v11Matrix");
+  const result=tlv16_build(tfMap,{detailTf:detailTf||"15m",qualification:qualification||"WATCH",qualificationBlockers:blockers||[]});
+  const quality=document.getElementById("v16Quality"),
+        q=document.getElementById("v16Readiness"),
+        d=document.getElementById("v16Direction"),
+        c=document.getElementById("v16Confluence"),
+        g=document.getElementById("v16Gate"),
+        m=document.getElementById("v16Matrix"),
+        ex=document.getElementById("v16Explain");
   if(!quality||!q||!d||!c||!g||!m) return result;
 
   const setupInvalid=(qualification||"WATCH")==="INVALID";
@@ -501,25 +556,31 @@ function TLV131_render(tfMap, detailTf, qualification, blockers){
   d.textContent=cleanDirection?result.confluence.direction:"NONE";
   c.textContent=result.confluence.percent+"%";
 
-  g.className=result.tradeGate.status==="READY"?"v11-ready":"v11-lock";
+  g.className=result.tradeGate.status==="READY"?"v16-ready":"v16-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ? "<b>TRADE GATE OPEN</b> — all V15 blocking conditions passed."
+    ? "<b>TRADE GATE OPEN</b> — all V16 blocking conditions passed."
     : "<b>RISK PLAN LOCKED</b> — "+(result.tradeGate.blockers.length?result.tradeGate.blockers.join(" • "):"No clean trade setup.");
+  if(ex){
+    const matrix=["15m","1h","4h"].map(tf=>{const x=result.timeframes[tf]||{};return tf+" "+(x.state||"NEUTRAL")+" ("+(TLV16_WEIGHTS[tf]||1)+"x)"}).join(" • ");
+    ex.innerHTML=result.tradeGate.status==="READY"
+      ? `<b>DECISION EXPLANATION</b><br>Directional confluence is established. ${esc(matrix)}. Weighted confluence is ${result.confluence.percent}%. Market-structure and other V16 blocking checks passed.`
+      : `<b>DECISION EXPLANATION</b><br>Decision: ${esc(cleanDirection?result.confluence.direction:"NONE")}. ${esc(matrix)}. Weighted confluence is ${result.confluence.percent}%. ${result.tradeGate.blockers.length?"Trade remains locked because "+esc(result.tradeGate.blockers.join("; ")):"The trade gate did not open."}`;
+  }
 
   m.innerHTML=["15m","1h","4h"].map(tf=>{
     const x=result.timeframes[tf]||{};
-    return `<tr><td>${tf}</td><td>${x.state||"NEUTRAL"}</td><td>${x.trend||"—"}</td><td>${x.momentum||"—"}</td><td>${TLV11_WEIGHTS[tf]}x</td></tr>`;
+    return `<tr><td>${tf}</td><td>${x.state||"NEUTRAL"}</td><td>${x.trend||"—"}</td><td>${x.momentum||"—"}</td><td>${TLV16_WEIGHTS[tf]}x</td></tr>`;
   }).join("");
   return result;
 }
 
-function TLV131_refreshDashboard(){
+function TLV161_refreshDashboard(){
   // Kept as a compatibility hook; the real scan now calls the renderer directly.
   return null;
 }
 
-window.TLV13_updateDashboard=function(tfMap,detailTf,qualification,blockers){
-  return TLV13_render(tfMap,detailTf,qualification,blockers);
+window.TLV16_updateDashboard=function(tfMap,detailTf,qualification,blockers){
+  return TLV16_render(tfMap,detailTf,qualification,blockers);
 };
 </script>
 
@@ -532,9 +593,9 @@ window.addEventListener('load',()=>{
  $('toggleVWAP').onclick=()=>{TLV15_chart.vwap=!TLV15_chart.vwap;$('toggleVWAP').classList.toggle('active',TLV15_chart.vwap);tlv15_refreshChart()};
  $('toggleBB').onclick=()=>{TLV15_chart.bb=!TLV15_chart.bb;$('toggleBB').classList.toggle('active',TLV15_chart.bb);tlv15_refreshChart()};
  $('toggleRSI').onclick=()=>{TLV15_chart.rsi=!TLV15_chart.rsi;$('toggleRSI').classList.toggle('active',TLV15_chart.rsi);tlv15_refreshChart()};
- $('toggleMACD').onclick=()=>{TLV15_chart.macd=!TLV15_chart.macd;$('toggleMACD').classList.toggle('active',TLV15_chart.macd);tlv15_refreshChart()};
+ $('toggleMACD').onclick=()=>{TLV15_chart.macd=!TLV15_chart.macd;$('toggleMACD').classList.toggle('active',TLV15_chart.macd);tlv15_refreshChart()}; $('toggleStructure').onclick=()=>{TLV15_chart.structure=!TLV15_chart.structure;$('toggleStructure').classList.toggle('active',TLV15_chart.structure);tlv15_refreshChart()};
  $('refreshChart').onclick=async()=>{try{$('chartStatus').textContent='Refreshing candle data...';const rs=await Promise.all(TF.map(t=>candles($('pair').value,t).then(analyze)));window._tlv13LastRs=rs;TLV15_chart.rs=rs;tlv15_refreshChart();$('chartStatus').textContent='Candle data refreshed.'}catch(e){$('chartStatus').textContent='Chart refresh failed: '+e.message}};
- ['toggleEMA20','toggleEMA50','toggleRSI','toggleMACD'].forEach(id=>$(id).classList.add('active'));
+ ['toggleEMA20','toggleEMA50','toggleRSI','toggleMACD','toggleStructure'].forEach(id=>$(id).classList.add('active'));
 });
 </script>
 
@@ -542,13 +603,13 @@ window.addEventListener('load',()=>{
 window.addEventListener("load",()=>{
   const names=["runScan","runV10Scan","runScanV10","scanMarket","runScanner"];
   names.forEach(name=>{
-    if(typeof window[name]==="function" && !window[name].__v112wrapped){
+    if(typeof window[name]==="function" && !window[name].__tradeLensWrapped){
       const original=window[name];
       const wrapped=async function(...args){
         const result=await original.apply(this,args);
         return result;
       };
-      wrapped.__v112wrapped=true;
+      wrapped.__tradeLensWrapped=true;
       window[name]=wrapped;
     }
   });
@@ -556,8 +617,8 @@ window.addEventListener("load",()=>{
 </script>
 
 <div class="card" style="margin-top:12px">
-  <b>V15 Live Decision Layer</b>
-  <p class="v11-muted">The confirmation matrix, setup quality and trade gate are linked to the scanner's current 15m / 1h / 4h analysis. They are informational safeguards and do not place orders.</p>
+  <b>V16 Live Decision Layer</b>
+  <p class="tl-v16-muted">The confirmation matrix, setup quality, market structure and trade gate are linked to the scanner's current 15m / 1h / 4h analysis. They are informational safeguards and do not place orders.</p>
 </div>
 </body>
 </html>
