@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V17</title>
+<title>TradeLens V18.2</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -63,24 +63,26 @@ function TLv103_enforceDirectionIntegrity(a){
 </script>
 
 <style>
-.v17-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
-.v17-panel{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px}
-.v17-label{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em}
-.v17-value{font-size:18px;font-weight:700;margin-top:4px}
-.tl-v17-muted{color:#94a3b8;font-size:12px}
-.v17-lock{border:1px solid #92400e;background:#451a03;padding:12px;border-radius:10px;margin-top:10px}
-.v17-explain{border:1px solid #334155;background:#0b1620;padding:12px;border-radius:10px;margin-top:8px;color:#cbd5e1;line-height:1.5}.v17-explain b{color:#fff}
-.v17-ready{border:1px solid #166534;background:#052e16;padding:12px;border-radius:10px;margin-top:10px}
-.v17-matrix{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
-.v17-matrix th,.v17-matrix td{border-bottom:1px solid #334155;padding:8px;text-align:left}
-.v17-pill{display:inline-block;padding:3px 7px;border-radius:999px;border:1px solid #475569;font-size:11px}
-.v17-smallgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-@media(max-width:700px){.v17-grid{grid-template-columns:1fr}.v17-smallgrid{grid-template-columns:1fr}}
+.v18-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.v18-panel{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px}
+.v18-label{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em}
+.v18-value{font-size:18px;font-weight:700;margin-top:4px}
+.tl-v18-muted{color:#94a3b8;font-size:12px}
+.v18-lock{border:1px solid #92400e;background:#451a03;padding:12px;border-radius:10px;margin-top:10px}
+.v18-explain{border:1px solid #334155;background:#0b1620;padding:12px;border-radius:10px;margin-top:8px;color:#cbd5e1;line-height:1.5}.v18-explain b{color:#fff}
+.v18-ready{border:1px solid #166534;background:#052e16;padding:12px;border-radius:10px;margin-top:10px}
+.v18-matrix{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+.v18-matrix th,.v18-matrix td{border-bottom:1px solid #334155;padding:8px;text-align:left}
+.v18-pill{display:inline-block;padding:3px 7px;border-radius:999px;border:1px solid #475569;font-size:11px}
+.v18-smallgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(max-width:700px){.v18-grid{grid-template-columns:1fr}.v18-smallgrid{grid-template-columns:1fr}}
 </style>
+
+
 </head>
-<body><div class="card" style="margin-top:12px"><b>V17 Decision & Structure Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V18 Decision & Structure Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V17</h1>
+<h1>TradeLens V18</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -94,13 +96,12 @@ function TLv103_enforceDirectionIntegrity(a){
 <label>RISK %<input id="risk" type="number" value="1" step=".1" min=".1"></label>
 <label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED</option><option value="WATCH">WATCH</option><option value="ANY">ANY</option></select></label>
 </div>
-<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V17 SCAN</button></div>
+<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V18 SCAN</button></div>
 <p id="status" class="small">Ready.</p>
 </section>
 
 <section class="panel">
-<div class="sectionTitle"><h2>Market Scanner</h2><span class="small">Ranking uses qualification first, then confirmation and setup strength.</span></div>
-<div id="scannerCounts" class="small" style="margin-bottom:8px">No scan yet.</div>
+<div class="sectionTitle"><h2>Market Scanner</h2><span class="small">Ranking uses setup strength; decision state remains separate.</span></div>
 <div style="overflow:auto"><table><thead><tr><th>PAIR</th><th>PRICE</th><th>STRENGTH</th><th>CONFLUENCE</th><th>STATE</th><th>QUALIFICATION</th><th>REGIME</th><th>PROBLEM</th></tr></thead><tbody id="rows"><tr><td colspan="8">Run scan.</td></tr></tbody></table></div>
 </section>
 
@@ -125,7 +126,7 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel">
-<div class="sectionTitle"><h2>V17 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
+<div class="sectionTitle"><h2>V18 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
 <div id="indicatorSummary" class="grid3"></div>
 </section>
 
@@ -145,23 +146,11 @@ function TLv103_enforceDirectionIntegrity(a){
 
 <section class="panel">
 <h2>Setup Quality</h2>
-<div class="metric"><div class="label">RAW SETUP STRENGTH</div><div class="big" id="strength">—</div><div class="small">Composite quality score; trade readiness is evaluated separately below.</div></div>
+<div class="metric"><div class="label">SETUP STRENGTH</div><div class="big" id="strength">—</div><div class="small">Composite quality score; trade readiness is evaluated separately below.</div></div>
 <div id="why" class="why" style="margin-top:9px"></div>
 </section>
 </section>
 
-<section class="panel">
-<h2>V18 Decision Engine</h2>
-<div class="grid4">
-<div class="metric"><div class="label">MTF BIAS</div><div class="big" id="v18Bias">—</div></div>
-<div class="metric"><div class="label">DIRECTIONAL WEIGHT</div><div class="big" id="v18Weight">—</div></div>
-<div class="metric"><div class="label">TRUE CONFIRMATION</div><div class="big" id="v18True">—</div></div>
-<div class="metric"><div class="label">TRADE READINESS</div><div class="big" id="v18Ready">WAITING</div></div>
-</div>
-<div id="v18Decision" class="metric" style="margin-top:9px">Run a scan to generate the V18 decision.</div>
-<h3 style="margin-top:14px">Confirmation Matrix</h3>
-<div style="overflow:auto"><table class="v17-matrix"><thead><tr><th>TIMEFRAME</th><th>STATE</th><th>TREND</th><th>MOMENTUM</th><th>VOLUME</th><th>RSI</th><th>STRUCTURE</th><th>FRESHNESS</th><th>WEIGHT</th></tr></thead><tbody id="v18Matrix"><tr><td colspan="9">Run a scan to populate.</td></tr></tbody></table></div>
-</section>
 <section class="panel"><h2>Selected Timeframe</h2><div id="detailOut" class="grid4"></div></section>
 
 <section class="panel">
@@ -203,9 +192,9 @@ function macdSeries(a){const e12=emaSeries(a,12),e26=emaSeries(a,26),line=a.map(
 function bollinger(a,n=20,m=2){const mid=[],up=[],low=[];for(let i=0;i<a.length;i++){const w=a.slice(Math.max(0,i-n+1),i+1),mean=w.reduce((x,y)=>x+y,0)/w.length,sd=Math.sqrt(w.reduce((x,y)=>x+(y-mean)**2,0)/w.length);mid.push(mean);up.push(mean+m*sd);low.push(mean-m*sd)}return {mid,up,low}}
 function vwapSeries(c){let pv=0,vol=0,out=[];for(const z of c){const tp=(z.h+z.l+z.c)/3;pv+=tp*z.v;vol+=z.v;out.push(vol?pv/vol:tp)}return out}
 function atrSeries(c,n=14){let tr=[];for(let i=0;i<c.length;i++){tr.push(i?Math.max(c[i].h-c[i].l,Math.abs(c[i].h-c[i-1].c),Math.abs(c[i].l-c[i-1].c)):c[i].h-c[i].l)}let out=Array(c.length).fill(null);if(c.length<n)return out;let a=tr.slice(0,n).reduce((x,y)=>x+y,0)/n;out[n-1]=a;for(let i=n;i<c.length;i++){a=(a*(n-1)+tr[i])/n;out[i]=a}return out}
-function tlv17_isForming(z){return Date.now()<z.closeTime}
-function tlv17_structure(c,look=3){
-  const closed=c.filter(z=>!tlv17_isForming(z));
+function tlv18_isForming(z){return Date.now()<z.closeTime}
+function tlv18_structure(c,look=3){
+  const closed=c.filter(z=>!tlv18_isForming(z));
   const src=closed.length>=20?closed:c.slice(0,-1);
   const swingsH=[],swingsL=[];
   for(let i=look;i<src.length-look;i++){
@@ -273,7 +262,7 @@ function analyze(c){
  const state=TLv102_direction(trend,momentum,rsi);
  const now=Date.now(),ageMin=Math.max(0,(now-c.at(-1).closeTime)/60000);
  const freshness=ageMin<=30?'FRESH':ageMin<=180?'AGING':'STALE';
- const rsis=rsiSeries(a),mcd=macdSeries(a),bb=bollinger(a),vw=vwapSeries(c),ats=atrSeries(c),ms=tlv17_structure(c); return {p,e20,e50,e100,mac,r,at,atrPct,vr,liq,trend,momentum,structure,regime,rsiStatus,volume,trendScore,momScore,rsiScore,volScore,structureScore,volatilityScore,extensionStatus,extensionScore,srScore,liquidityScore,raw,strength,state,extension,support,resistance,freshness,ageMin,candles:c,marketStructure:ms,ema20Series:emaSeries(a,20),ema50Series:emaSeries(a,50),vwapSeries:vw,bbMid:bb.mid,bbUp:bb.up,bbLow:bb.low,rsiSeries:rsis,macdLine:mcd.line,macdSignal:mcd.signal,macdHist:mcd.hist,atrSeries:ats};
+ const rsis=rsiSeries(a),mcd=macdSeries(a),bb=bollinger(a),vw=vwapSeries(c),ats=atrSeries(c),ms=tlv18_structure(c); return {p,e20,e50,e100,mac,r,at,atrPct,vr,liq,trend,momentum,structure,regime,rsiStatus,volume,trendScore,momScore,rsiScore,volScore,structureScore,volatilityScore,extensionStatus,extensionScore,srScore,liquidityScore,raw,strength,state,extension,support,resistance,freshness,ageMin,candles:c,marketStructure:ms,ema20Series:emaSeries(a,20),ema50Series:emaSeries(a,50),vwapSeries:vw,bbMid:bb.mid,bbUp:bb.up,bbLow:bb.low,rsiSeries:rsis,macdLine:mcd.line,macdSignal:mcd.signal,macdHist:mcd.hist,atrSeries:ats};
 }
 function confluence(rs){
  const bull=rs.filter(x=>x.state==='BULLISH').length,bear=rs.filter(x=>x.state==='BEARISH').length;
@@ -321,8 +310,8 @@ function qualify(rs,c){
  return {checks,blockers,status,volumeWeak:vol<2,structureConfirmed,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
 }
 function render(rs,c,q,detail){
- $('selectedTitle').textContent=$('pair').value+' • V17 Analysis';
- $('decisionBadge').textContent=q.status==='WATCH'?'WAIT':q.status;
+ $('selectedTitle').textContent=$('pair').value+' • V18 Analysis';
+ $('decisionBadge').textContent=q.status;
  $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
  $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
  $('confText').textContent=c.percent+'% • '+c.dominant;
@@ -339,7 +328,7 @@ function render(rs,c,q,detail){
  const mtfStructure=q.structureConfirmed?'✓ CONFIRMED':'? NOT ALIGNED';
  $('why').innerHTML=[['MTF TREND',mtfTrend],['MTF MOMENTUM',mtfMomentum],['MTF RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'✓ HEALTHY':'⚠ CAUTION'],['MTF VOLUME',mtfVolume],['MTF STRUCTURE',mtfStructure],['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'✓ ACCEPTABLE':'⚠ HIGH'],['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'✓ ADEQUATE':'? LIMITED'],['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'✓ ACCEPTABLE':'⚠ EXTENDED']].map(x=>`<div class="metric"><b>${x[0]}</b><br>${x[1]}</div>`).join('');
  const x=rs[detail==='15m'?0:detail==='1h'?1:2];
- $('detailOut').innerHTML=[['DIRECTION',x.state],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volume],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.marketStructure.bias+' • '+x.marketStructure.hh+'/'+x.marketStructure.hl],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['FRESHNESS',x.freshness+' • '+fmt(x.ageMin,0)+'m old']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
+ $('detailOut').innerHTML=[['DIRECTION',x.state],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volume],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.marketStructure.bias+' • '+x.marketStructure.hh+'/'+x.marketStructure.hl],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
  $('checks').innerHTML=q.checks.map(x=>`<div class="metric"><b>${x[0]}</b><br><span class="${x[1].includes('CONFIRMED')||x[1]==='HEALTHY'||x[1]==='ADEQUATE'||x[1]==='ACCEPTABLE'||x[1]==='FRESH'?'bull':x[1].includes('WEAK')||x[1].includes('STALE')||x[1].includes('EXTENDED')?'neutral':''}">${x[1]}</span></div>`).join('');
  const ms=x.marketStructure||{};
  $('structureSummary').innerHTML=[['BIAS',ms.bias||'—'],['SWING HIGH',ms.hh||'—'],['SWING LOW',ms.hl||'—'],['EVENT',ms.event||'NONE'],['RETEST',ms.retest||'NONE'],['SUPPORT',fmt(ms.support)],['RESISTANCE',fmt(ms.resistance)],['CONFIRMED SWINGS',fmt((ms.swingsH?.length||0)+(ms.swingsL?.length||0),0)]].map(z=>`<div class="tl-structure-card"><div class="k">${z[0]}</div><div class="v ${z[1]==='BULLISH'||String(z[1]).includes('UP')?'tl-structure-bull':z[1]==='BEARISH'||String(z[1]).includes('DOWN')?'tl-structure-bear':'tl-structure-neutral'}">${z[1]}</div></div>`).join('');
@@ -357,24 +346,24 @@ function renderRisk(x,c,q){
  $('riskOut').innerHTML=[['STATUS','QUALIFIED PLAN'],['DIRECTION',dir],['ENTRY',fmt(x.p)],['STOP',fmt(stop)],['TARGET',fmt(target)],['POSITION SIZE',fmt(size,6)],['MAX LOSS','$'+fmt(max)],['POTENTIAL PROFIT','$'+fmt(max*2)],['R:R','1 : 2'],['FEE ALLOWANCE','$'+fmt(fee)]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
 }
 let TLV17_chart={tf:"15m",count:100,ema20:true,ema50:true,vwap:false,bb:false,rsi:true,macd:true,structure:true,rs:null};
-function tlv17_resize(canvas,h){const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1,w=Math.max(320,Math.floor(r.width));canvas.width=w*d;canvas.height=h*d;const c=canvas.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h}}
-function tlv17_grid(c,w,h,pad,min,max){c.strokeStyle='#1b3441';c.lineWidth=1;c.font='10px system-ui';c.fillStyle='#718897';for(let i=0;i<=5;i++){const y=pad.t+(h-pad.t-pad.b)*i/5;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();const val=max-(max-min)*i/5;c.fillText(fmt(val,2),5,y+3)}}
-function tlv17_line(c,vals,py,step,pad,color,width=1.5){let started=false;c.strokeStyle=color;c.lineWidth=width;c.beginPath();vals.forEach((v,i)=>{if(v==null)return;const xx=pad.l+i*step+step/2,yy=py(v);if(!started){c.moveTo(xx,yy);started=true}else c.lineTo(xx,yy)});if(started)c.stroke()}
-function tlv17_draw(rs,tf,count){const x=rs?.[tf==='15m'?0:tf==='1h'?1:2];if(!x||!x.candles)return;TLV17_chart.rs=rs;const raw=x.candles.slice(-count),cc=$('candleChart'),vc=$('volumeChart'),ic=$('indicatorChart');if(!cc||!vc||!ic)return;const A=tlv17_resize(cc,430),c=A.c,w=A.w,h=A.h,pad={l:58,r:16,t:18,b:28},max=Math.max(...raw.map(z=>z.h)),min=Math.min(...raw.map(z=>z.l)),range=max-min||1;c.clearRect(0,0,w,h);tlv17_grid(c,w,h,pad,min,max);const plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b,step=plotW/raw.length,bw=Math.max(2,Math.min(12,step*.62)),closes=raw.map(z=>z.c),offset=x.candles.length-raw.length;const e20=x.ema20Series.slice(offset),e50=x.ema50Series.slice(offset),vw=x.vwapSeries.slice(offset),bu=x.bbUp.slice(offset),bl=x.bbLow.slice(offset),bm=x.bbMid.slice(offset);function py(v){return pad.t+(max-v)/range*plotH}if(TLV17_chart.ema20)tlv17_line(c,e20,py,step,pad,'#64b5ff');if(TLV17_chart.ema50)tlv17_line(c,e50,py,step,pad,'#f4c95d');if(TLV17_chart.vwap)tlv17_line(c,vw,py,step,pad,'#8bd3ff',2);if(TLV17_chart.bb){tlv17_line(c,bu,py,step,pad,'#a78bfa');tlv17_line(c,bm,py,step,pad,'#c4b5fd');tlv17_line(c,bl,py,step,pad,'#a78bfa')}raw.forEach((z,i)=>{const xx=pad.l+i*step+step/2,yo=py(z.o),yc=py(z.c),yh=py(z.h),yl=py(z.l),up=z.c>=z.o;c.strokeStyle=up?'#42d19c':'#ff6f7d';c.fillStyle=c.strokeStyle;c.beginPath();c.moveTo(xx,yh);c.lineTo(xx,yl);c.stroke();c.fillRect(xx-bw/2,Math.min(yo,yc),bw,Math.max(1,Math.abs(yc-yo)))});if(TLV17_chart.structure&&x.marketStructure){const ms=x.marketStructure;c.setLineDash([5,4]);c.lineWidth=1;c.strokeStyle='#8ea5b4';[['S',ms.support],['R',ms.resistance]].forEach(([lab,val])=>{if(Number.isFinite(val)){const yy=py(val);c.beginPath();c.moveTo(pad.l,yy);c.lineTo(w-pad.r,yy);c.stroke();c.fillStyle='#8ea5b4';c.fillText(lab+' '+fmt(val),pad.l+4,yy-3)}});c.setLineDash([]);const lastIndex=raw.length-1;const ev=ms.event||'';if(ev&&ev!=='NONE'){const yy=ev.includes('UP')?pad.t+16:h-42;c.fillStyle=ev.includes('UP')?'#42d19c':'#ff6f7d';c.font='bold 10px system-ui';c.fillText(ev,pad.l+8,yy)}}c.fillStyle='#718897';c.font='10px system-ui';[0,.25,.5,.75,1].forEach(f=>{const i=Math.min(raw.length-1,Math.floor((raw.length-1)*f)),d=new Date(raw[i].time);c.fillText(d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),pad.l+i*step,h-8)});const V=tlv17_resize(vc,100),v=V.c,vWidth=V.w,vh=V.h;v.clearRect(0,0,vWidth,vh);const vmax=Math.max(...raw.map(z=>z.v))||1,vstep=(vWidth-30)/raw.length;raw.forEach((z,i)=>{v.fillStyle=z.c>=z.o?'#42d19c':'#ff6f7d';const bh=z.v/vmax*(vh-18);v.fillRect(15+i*vstep,vh-bh,vstep*.7,bh)});const I=tlv17_resize(ic,190),g=I.c,iw=I.w,ih=I.h;g.clearRect(0,0,iw,ih);g.fillStyle='#718897';g.font='10px system-ui';g.strokeStyle='#1b3441';g.lineWidth=1;const split=TLV17_chart.rsi&&TLV17_chart.macd?ih/2:ih-8;
-if(TLV17_chart.rsi){const rTop=12,rBottom=TLV17_chart.macd?split-8:ih-18,rpad={l:38,r:16,t:rTop,b:rBottom},rstep=(iw-rpad.l-rpad.r)/raw.length;function rpy(v){return rpad.t+(100-v)/100*(rpad.b-rpad.t)};g.strokeStyle='#1b3441';[30,50,70].forEach(level=>{const yy=rpy(level);g.beginPath();g.moveTo(rpad.l,yy);g.lineTo(iw-rpad.r,yy);g.stroke();g.fillText(String(level),5,yy+3)});tlv17_line(g,x.rsiSeries.slice(offset),rpy,rstep,rpad,'#42d19c',1.6);g.fillStyle='#718897';g.fillText('RSI 14',5,rTop);}
-if(TLV17_chart.macd){const mTop=TLV17_chart.rsi?split+8:12,mBottom=ih-18,mpad={l:38,r:16,t:mTop,b:mBottom},mstep=(iw-mpad.l-mpad.r)/raw.length;const vals=x.macdHist.slice(offset),ml=x.macdLine.slice(offset),ms=x.macdSignal.slice(offset),all=vals.concat(ml,ms).filter(v=>Number.isFinite(v)),mx=Math.max(...all.map(Math.abs),1e-9);function mpy(v){return mpad.t+(mx-v)/(2*mx)*(mpad.b-mpad.t)};g.strokeStyle='#1b3441';const zero=mpy(0);g.beginPath();g.moveTo(mpad.l,zero);g.lineTo(iw-mpad.r,zero);g.stroke();vals.forEach((v,i)=>{const xx=mpad.l+i*mstep+mstep/2,yy=mpy(v);g.fillStyle=v>=0?'#42d19c':'#ff6f7d';g.fillRect(xx-mstep*.3,Math.min(zero,yy),mstep*.6,Math.max(1,Math.abs(yy-zero)))});tlv17_line(g,ml,mpy,mstep,mpad,'#64b5ff',1.4);tlv17_line(g,ms,mpy,mstep,mpad,'#f4c95d',1.4);g.fillStyle='#718897';g.fillText('MACD 12/26/9',5,mTop);}
+function tlv18_resize(canvas,h){const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1,w=Math.max(320,Math.floor(r.width));canvas.width=w*d;canvas.height=h*d;const c=canvas.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h}}
+function tlv18_grid(c,w,h,pad,min,max){c.strokeStyle='#1b3441';c.lineWidth=1;c.font='10px system-ui';c.fillStyle='#718897';for(let i=0;i<=5;i++){const y=pad.t+(h-pad.t-pad.b)*i/5;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();const val=max-(max-min)*i/5;c.fillText(fmt(val,2),5,y+3)}}
+function tlv18_line(c,vals,py,step,pad,color,width=1.5){let started=false;c.strokeStyle=color;c.lineWidth=width;c.beginPath();vals.forEach((v,i)=>{if(v==null)return;const xx=pad.l+i*step+step/2,yy=py(v);if(!started){c.moveTo(xx,yy);started=true}else c.lineTo(xx,yy)});if(started)c.stroke()}
+function tlv18_draw(rs,tf,count){const x=rs?.[tf==='15m'?0:tf==='1h'?1:2];if(!x||!x.candles)return;TLV17_chart.rs=rs;const raw=x.candles.slice(-count),cc=$('candleChart'),vc=$('volumeChart'),ic=$('indicatorChart');if(!cc||!vc||!ic)return;const A=tlv18_resize(cc,430),c=A.c,w=A.w,h=A.h,pad={l:58,r:16,t:18,b:28},max=Math.max(...raw.map(z=>z.h)),min=Math.min(...raw.map(z=>z.l)),range=max-min||1;c.clearRect(0,0,w,h);tlv18_grid(c,w,h,pad,min,max);const plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b,step=plotW/raw.length,bw=Math.max(2,Math.min(12,step*.62)),closes=raw.map(z=>z.c),offset=x.candles.length-raw.length;const e20=x.ema20Series.slice(offset),e50=x.ema50Series.slice(offset),vw=x.vwapSeries.slice(offset),bu=x.bbUp.slice(offset),bl=x.bbLow.slice(offset),bm=x.bbMid.slice(offset);function py(v){return pad.t+(max-v)/range*plotH}if(TLV17_chart.ema20)tlv18_line(c,e20,py,step,pad,'#64b5ff');if(TLV17_chart.ema50)tlv18_line(c,e50,py,step,pad,'#f4c95d');if(TLV17_chart.vwap)tlv18_line(c,vw,py,step,pad,'#8bd3ff',2);if(TLV17_chart.bb){tlv18_line(c,bu,py,step,pad,'#a78bfa');tlv18_line(c,bm,py,step,pad,'#c4b5fd');tlv18_line(c,bl,py,step,pad,'#a78bfa')}raw.forEach((z,i)=>{const xx=pad.l+i*step+step/2,yo=py(z.o),yc=py(z.c),yh=py(z.h),yl=py(z.l),up=z.c>=z.o;c.strokeStyle=up?'#42d19c':'#ff6f7d';c.fillStyle=c.strokeStyle;c.beginPath();c.moveTo(xx,yh);c.lineTo(xx,yl);c.stroke();c.fillRect(xx-bw/2,Math.min(yo,yc),bw,Math.max(1,Math.abs(yc-yo)))});if(TLV17_chart.structure&&x.marketStructure){const ms=x.marketStructure;c.setLineDash([5,4]);c.lineWidth=1;c.strokeStyle='#8ea5b4';[['S',ms.support],['R',ms.resistance]].forEach(([lab,val])=>{if(Number.isFinite(val)){const yy=py(val);c.beginPath();c.moveTo(pad.l,yy);c.lineTo(w-pad.r,yy);c.stroke();c.fillStyle='#8ea5b4';c.fillText(lab+' '+fmt(val),pad.l+4,yy-3)}});c.setLineDash([]);const lastIndex=raw.length-1;const ev=ms.event||'';if(ev&&ev!=='NONE'){const yy=ev.includes('UP')?pad.t+16:h-42;c.fillStyle=ev.includes('UP')?'#42d19c':'#ff6f7d';c.font='bold 10px system-ui';c.fillText(ev,pad.l+8,yy)}}c.fillStyle='#718897';c.font='10px system-ui';[0,.25,.5,.75,1].forEach(f=>{const i=Math.min(raw.length-1,Math.floor((raw.length-1)*f)),d=new Date(raw[i].time);c.fillText(d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),pad.l+i*step,h-8)});const V=tlv18_resize(vc,100),v=V.c,vWidth=V.w,vh=V.h;v.clearRect(0,0,vWidth,vh);const vmax=Math.max(...raw.map(z=>z.v))||1,vstep=(vWidth-30)/raw.length;raw.forEach((z,i)=>{v.fillStyle=z.c>=z.o?'#42d19c':'#ff6f7d';const bh=z.v/vmax*(vh-18);v.fillRect(15+i*vstep,vh-bh,vstep*.7,bh)});const I=tlv18_resize(ic,190),g=I.c,iw=I.w,ih=I.h;g.clearRect(0,0,iw,ih);g.fillStyle='#718897';g.font='10px system-ui';g.strokeStyle='#1b3441';g.lineWidth=1;const split=TLV17_chart.rsi&&TLV17_chart.macd?ih/2:ih-8;
+if(TLV17_chart.rsi){const rTop=12,rBottom=TLV17_chart.macd?split-8:ih-18,rpad={l:38,r:16,t:rTop,b:rBottom},rstep=(iw-rpad.l-rpad.r)/raw.length;function rpy(v){return rpad.t+(100-v)/100*(rpad.b-rpad.t)};g.strokeStyle='#1b3441';[30,50,70].forEach(level=>{const yy=rpy(level);g.beginPath();g.moveTo(rpad.l,yy);g.lineTo(iw-rpad.r,yy);g.stroke();g.fillText(String(level),5,yy+3)});tlv18_line(g,x.rsiSeries.slice(offset),rpy,rstep,rpad,'#42d19c',1.6);g.fillStyle='#718897';g.fillText('RSI 14',5,rTop);}
+if(TLV17_chart.macd){const mTop=TLV17_chart.rsi?split+8:12,mBottom=ih-18,mpad={l:38,r:16,t:mTop,b:mBottom},mstep=(iw-mpad.l-mpad.r)/raw.length;const vals=x.macdHist.slice(offset),ml=x.macdLine.slice(offset),ms=x.macdSignal.slice(offset),all=vals.concat(ml,ms).filter(v=>Number.isFinite(v)),mx=Math.max(...all.map(Math.abs),1e-9);function mpy(v){return mpad.t+(mx-v)/(2*mx)*(mpad.b-mpad.t)};g.strokeStyle='#1b3441';const zero=mpy(0);g.beginPath();g.moveTo(mpad.l,zero);g.lineTo(iw-mpad.r,zero);g.stroke();vals.forEach((v,i)=>{const xx=mpad.l+i*mstep+mstep/2,yy=mpy(v);g.fillStyle=v>=0?'#42d19c':'#ff6f7d';g.fillRect(xx-mstep*.3,Math.min(zero,yy),mstep*.6,Math.max(1,Math.abs(yy-zero)))});tlv18_line(g,ml,mpy,mstep,mpad,'#64b5ff',1.4);tlv18_line(g,ms,mpy,mstep,mpad,'#f4c95d',1.4);g.fillStyle='#718897';g.fillText('MACD 12/26/9',5,mTop);}
 $('chartOHLC').innerHTML=[['OPEN',fmt(raw.at(-1).o)],['HIGH',fmt(raw.at(-1).h)],['LOW',fmt(raw.at(-1).l)],['CLOSE',fmt(raw.at(-1).c)],['VOLUME',fmt(raw.at(-1).v,0)+(Date.now()-raw.at(-1).time < ({'15m':900000,'1h':3600000,'4h':14400000}[tf]||900000)?' • FORMING':'')],['ATR',fmt(x.at,2)]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');$('indicatorSummary').innerHTML=[['EMA 20',fmt(e20.at(-1))],['EMA 50',fmt(e50.at(-1))],['VWAP',fmt(vw.at(-1))],['RSI 14',fmt(x.rsiSeries.at(-1),1)],['MACD',fmt(x.macdLine.at(-1),4)],['MACD SIGNAL',fmt(x.macdSignal.at(-1),4)],['MACD HIST',fmt(x.macdHist.at(-1),4)],['ATR 14',fmt(x.at,2)],['ATR %',fmt(x.atrPct*100,2)+'%'],['BB UPPER',fmt(bu.at(-1))],['BB MID',fmt(bm.at(-1))],['BB LOWER',fmt(bl.at(-1))]].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
 $('chartStatus').textContent=`${$('pair').value} • ${tf} • ${raw.length} candles • indicators: ${[TLV17_chart.ema20?'EMA20':'',TLV17_chart.ema50?'EMA50':'',TLV17_chart.vwap?'VWAP':'',TLV17_chart.bb?'Bollinger':'',TLV17_chart.rsi?'RSI':'',TLV17_chart.macd?'MACD':'',TLV17_chart.structure?'Structure':' ' ].filter(Boolean).join(', ')}`}
-function tlv17_refreshChart(){if(TLV17_chart.rs)tlv17_draw(TLV17_chart.rs,TLV17_chart.tf,TLV17_chart.count)}
-function drawMTFChart(rs){TLV17_chart.rs=rs;tlv17_draw(rs,TLV17_chart.tf,TLV17_chart.count)}
-window.addEventListener('resize',tlv17_refreshChart);
+function tlv18_refreshChart(){if(TLV17_chart.rs)tlv18_draw(TLV17_chart.rs,TLV17_chart.tf,TLV17_chart.count)}
+function drawMTFChart(rs){TLV17_chart.rs=rs;tlv18_draw(rs,TLV17_chart.tf,TLV17_chart.count)}
+window.addEventListener('resize',tlv18_refreshChart);
 async function onePair(symbol){const rs=await Promise.all(TF.map(t=>candles(symbol,t).then(analyze)));const c=confluence(rs),q=qualify(rs,c);return {symbol,rs,c,q}}
 async function run(){
  try{
   $('status').textContent='Scanning market...';
   const selected=await onePair($('pair').value);
   render(selected.rs,selected.c,selected.q,$('detail').value);
-  window._tlv17LastRs=selected.rs; TLV17_chart.tf=$('detail').value; drawMTFChart(selected.rs);
+  window._tlv18LastRs=selected.rs; TLV17_chart.tf=$('detail').value; drawMTFChart(selected.rs);
   TLV17_render({"15m":selected.rs[0],"1h":selected.rs[1],"4h":selected.rs[2]}, $('detail').value, selected.q.status, selected.q.blockers);
   const symbols=[...$('pair').options].map(o=>o.value),out=[];
   for(const symbol of symbols)try{
@@ -383,7 +372,7 @@ async function run(){
   }catch(e){console.warn(symbol,e)}
   out.sort((a,b)=>b.strength-a.strength);
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V18 scan complete. '+out.length+' pairs analyzed.';
+  $('status').textContent='V17 scan complete. '+out.length+' pairs analyzed.';
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
 $('test').onclick=async()=>{try{await get(HOSTS[0]+'/api/v3/ping',5000);$('apiBadge').textContent='API: ONLINE';$('apiBadge').className='badge ok';$('status').textContent='Binance API reachable.'}catch(e){$('apiBadge').textContent='API: OFFLINE';$('apiBadge').className='badge bad';$('status').textContent='API test failed.'}};
@@ -392,16 +381,36 @@ $('pair').onchange=()=>{if($('status').textContent.includes('complete'))run()};
 </script>
 
 <script>
+/* ========================= TradeLens V18 Decision Engine ========================= */
+const TLV18_WEIGHTS={"15m":1,"1h":2,"4h":3};
+function tlv18_state(x){
+  if(x.trend==='BULLISH'&&x.momentum==='POSITIVE')return 'BULLISH';
+  if(x.trend==='BEARISH'&&x.momentum==='NEGATIVE')return 'BEARISH';
+  return 'NEUTRAL';
+}
+function tlv18_ageLabel(x){
+  const age=Number(x?.ageMin);
+  if(!Number.isFinite(age))return 'UNKNOWN';
+  return age<=30?'FRESH':age<=180?'AGING':'STALE';
+}
+function tlv18_confluence(rs){
+  let bull=0,bear=0;
+  TF.forEach((tf,i)=>{const st=tlv18_state(rs[i]);if(st==='BULLISH')bull+=TLV18_WEIGHTS[tf];if(st==='BEARISH')bear+=TLV18_WEIGHTS[tf];});
+  const dominant=bull>bear?'BULLISH':bear>bull?'BEARISH':'MIXED';
+  const weight=Math.round(Math.max(bull,bear)/6*100);
+  const aligned=dominant==='MIXED'?0:rs.filter(x=>tlv18_state(x)===dominant).length;
+  return {direction:dominant,directionalWeight:weight,trueConfirmation:Math.round(aligned/3*100),aligned,bull,bear,dominantIdx:dominant==='MIXED'?-1:rs.findIndex(x=>tlv18_state(x)===dominant),confirmation:dominant==='MIXED'?TF:TF.filter((tf,i)=>tlv18_state(rs[i])!==dominant),avg:rs.reduce((a,x)=>a+x.strength,0)/rs.length};
+}
 window.addEventListener('load',()=>{
- document.querySelectorAll('.tl-tf').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tl-tf').forEach(x=>x.classList.remove('active'));b.classList.add('active');TLV17_chart.tf=b.dataset.tf;$('detail').value=b.dataset.tf;tlv17_refreshChart();$('detail').dispatchEvent(new Event('change'))}); $('detail').onchange=()=>{const tf=$('detail').value;document.querySelectorAll('.tl-tf').forEach(x=>x.classList.toggle('active',x.dataset.tf===tf));TLV17_chart.tf=tf;tlv17_refreshChart()};
- document.querySelectorAll('.tl-count').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tl-count').forEach(x=>x.classList.remove('active'));b.classList.add('active');TLV17_chart.count=+b.dataset.count;tlv17_refreshChart()});
- $('toggleEMA20').onclick=()=>{TLV17_chart.ema20=!TLV17_chart.ema20;$('toggleEMA20').classList.toggle('active',TLV17_chart.ema20);tlv17_refreshChart()};
- $('toggleEMA50').onclick=()=>{TLV17_chart.ema50=!TLV17_chart.ema50;$('toggleEMA50').classList.toggle('active',TLV17_chart.ema50);tlv17_refreshChart()};
- $('toggleVWAP').onclick=()=>{TLV17_chart.vwap=!TLV17_chart.vwap;$('toggleVWAP').classList.toggle('active',TLV17_chart.vwap);tlv17_refreshChart()};
- $('toggleBB').onclick=()=>{TLV17_chart.bb=!TLV17_chart.bb;$('toggleBB').classList.toggle('active',TLV17_chart.bb);tlv17_refreshChart()};
- $('toggleRSI').onclick=()=>{TLV17_chart.rsi=!TLV17_chart.rsi;$('toggleRSI').classList.toggle('active',TLV17_chart.rsi);tlv17_refreshChart()};
- $('toggleMACD').onclick=()=>{TLV17_chart.macd=!TLV17_chart.macd;$('toggleMACD').classList.toggle('active',TLV17_chart.macd);tlv17_refreshChart()}; $('toggleStructure').onclick=()=>{TLV17_chart.structure=!TLV17_chart.structure;$('toggleStructure').classList.toggle('active',TLV17_chart.structure);tlv17_refreshChart()};
- $('refreshChart').onclick=async()=>{try{$('chartStatus').textContent='Refreshing candle data...';const rs=await Promise.all(TF.map(t=>candles($('pair').value,t).then(analyze)));window._tlv17LastRs=rs;TLV17_chart.rs=rs;tlv17_refreshChart();$('chartStatus').textContent='Candle data refreshed.'}catch(e){$('chartStatus').textContent='Chart refresh failed: '+e.message}};
+ document.querySelectorAll('.tl-tf').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tl-tf').forEach(x=>x.classList.remove('active'));b.classList.add('active');TLV17_chart.tf=b.dataset.tf;$('detail').value=b.dataset.tf;tlv18_refreshChart();$('detail').dispatchEvent(new Event('change'))}); $('detail').onchange=()=>{const tf=$('detail').value;document.querySelectorAll('.tl-tf').forEach(x=>x.classList.toggle('active',x.dataset.tf===tf));TLV17_chart.tf=tf;tlv18_refreshChart()};
+ document.querySelectorAll('.tl-count').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tl-count').forEach(x=>x.classList.remove('active'));b.classList.add('active');TLV17_chart.count=+b.dataset.count;tlv18_refreshChart()});
+ $('toggleEMA20').onclick=()=>{TLV17_chart.ema20=!TLV17_chart.ema20;$('toggleEMA20').classList.toggle('active',TLV17_chart.ema20);tlv18_refreshChart()};
+ $('toggleEMA50').onclick=()=>{TLV17_chart.ema50=!TLV17_chart.ema50;$('toggleEMA50').classList.toggle('active',TLV17_chart.ema50);tlv18_refreshChart()};
+ $('toggleVWAP').onclick=()=>{TLV17_chart.vwap=!TLV17_chart.vwap;$('toggleVWAP').classList.toggle('active',TLV17_chart.vwap);tlv18_refreshChart()};
+ $('toggleBB').onclick=()=>{TLV17_chart.bb=!TLV17_chart.bb;$('toggleBB').classList.toggle('active',TLV17_chart.bb);tlv18_refreshChart()};
+ $('toggleRSI').onclick=()=>{TLV17_chart.rsi=!TLV17_chart.rsi;$('toggleRSI').classList.toggle('active',TLV17_chart.rsi);tlv18_refreshChart()};
+ $('toggleMACD').onclick=()=>{TLV17_chart.macd=!TLV17_chart.macd;$('toggleMACD').classList.toggle('active',TLV17_chart.macd);tlv18_refreshChart()}; $('toggleStructure').onclick=()=>{TLV17_chart.structure=!TLV17_chart.structure;$('toggleStructure').classList.toggle('active',TLV17_chart.structure);tlv18_refreshChart()};
+ $('refreshChart').onclick=async()=>{try{$('chartStatus').textContent='Refreshing candle data...';const rs=await Promise.all(TF.map(t=>candles($('pair').value,t).then(analyze)));window._tlv18LastRs=rs;TLV17_chart.rs=rs;tlv18_refreshChart();$('chartStatus').textContent='Candle data refreshed.'}catch(e){$('chartStatus').textContent='Chart refresh failed: '+e.message}};
  ['toggleEMA20','toggleEMA50','toggleRSI','toggleMACD','toggleStructure'].forEach(id=>$(id).classList.add('active'));
 });
 </script>
@@ -424,199 +433,250 @@ window.addEventListener("load",()=>{
 </script>
 
 <script>
-// V18 public state helper: the main dashboard renderer lives outside the correction IIFE.
-function tlv171_trueState(x){
-  if(x && x.trend==='BULLISH' && x.momentum==='POSITIVE') return 'BULLISH';
-  if(x && x.trend==='BEARISH' && x.momentum==='NEGATIVE') return 'BEARISH';
+/* ================= TradeLens V18.2 Decision Engine =================
+   Full correction pass for V18.1:
+   - timeframe-aware freshness
+   - graded volume instead of binary weak/confirmed
+   - explicit highest-weight vs strongest-score timeframe
+   - consistent S/R context
+   - precise order-book spread display
+   - neutral RSI wording for 45-52
+   - synced chart/status state
+   - no stale V17 labels
+*/
+(function(){
+const TLV182_WEIGHTS={"15m":1,"1h":2,"4h":3};
+const TLV182_INTERVAL_MIN={"15m":15,"1h":60,"4h":240};
+
+function tlv182_trueState(x){
+  if(x?.trend==='BULLISH'&&x?.momentum==='POSITIVE')return 'BULLISH';
+  if(x?.trend==='BEARISH'&&x?.momentum==='NEGATIVE')return 'BEARISH';
   return 'NEUTRAL';
 }
-</script>
-<script>
-/* ================= TradeLens V18 correction layer =================
-   Fixes: closed-candle analysis, directional-vs-confirmation split, structure conflicts,
-   SR proximity, selected-vs-MTF volume wording, scanner filtering/ranking, chart state,
-   freshness, and selected-pair order-book liquidity proxy. */
-(function(){
-const TL171_BASE_ANALYZE=analyze;
-const TL171_BASE_ONEPAIR=onePair;
-
-function tl171_closed(c){const now=Date.now();const z=c.filter(x=>Number(x.closeTime)<=now);return z.length>=80?z:c.slice(0,-1);}
-function tl171_analyze(c){return TL171_BASE_ANALYZE(tl171_closed(c));}
-analyze=tl171_analyze;
-
-function tl171_trueState(x){
- if(x.trend==='BULLISH'&&x.momentum==='POSITIVE')return 'BULLISH';
- if(x.trend==='BEARISH'&&x.momentum==='NEGATIVE')return 'BEARISH';
- return 'NEUTRAL';
+function tlv182_freshStatus(tf,ageMin){
+  const n=Number(ageMin), iv=TLV182_INTERVAL_MIN[tf]||60;
+  if(!Number.isFinite(n))return 'UNKNOWN';
+  if(n<=iv+15)return 'CURRENT';
+  if(n<=iv*2+15)return 'AGING';
+  return 'STALE';
 }
-function tl171_confluence(rs){
- const w={"15m":1,"1h":2,"4h":3};let bull=0,bear=0,total=6;
- TF.forEach((tf,i)=>{const s=tl171_trueState(rs[i]);if(s==='BULLISH')bull+=w[tf];if(s==='BEARISH')bear+=w[tf];});
- const direction=bull>bear?'BULLISH':bear>bull?'BEARISH':'MIXED';
- const dominantWeight=Math.max(bull,bear);
- const directionalWeight=Math.round(dominantWeight/total*100);
- const aligned=direction==='MIXED'?0:rs.filter(x=>tl171_trueState(x)===direction).length;
- const trueConfirmation=Math.round(aligned/3*100);
- const confirmationLabel=direction==='MIXED'?'NO DOMINANT DIRECTION':aligned+'/3 TIMEFRAMES';
- const first=direction==='BULLISH'?rs.findIndex(x=>tl171_trueState(x)==='BULLISH'):direction==='BEARISH'?rs.findIndex(x=>tl171_trueState(x)==='BEARISH'):-1;
- const missing=direction==='MIXED'?TF:TF.filter((tf,i)=>tl171_trueState(rs[i])!==direction);
- return {direction,dominant:direction,percent:directionalWeight,directionalWeight,trueConfirmation,aligned,confirmationLabel,bull,bear,total,dominantIdx:first,confirmation:missing,avg:rs.reduce((a,x)=>a+x.strength,0)/rs.length};
+function tlv182_volumeStatus(vr){
+  const x=Number(vr);
+  if(!Number.isFinite(x))return 'UNKNOWN';
+  if(x>=1.2)return 'STRONG';
+  if(x>=1.0)return 'CONFIRMED';
+  if(x>=0.8)return 'NORMAL';
+  return 'WEAK';
 }
-confluence=tl171_confluence;
-
-function tl171_srContext(x){
- const p=x.p,s=x.support,r=x.resistance;
- const ds=Number.isFinite(s)?Math.abs(p-s)/p:null,dr=Number.isFinite(r)?Math.abs(r-p)/p:null;
- const threshold=Math.max(x.atrPct*0.75,0.0035);
- const nearS=ds!=null&&ds<=threshold,nearR=dr!=null&&dr<=threshold;
- let state='CLEAR'; if(nearS&&nearR)state='TIGHT RANGE / BETWEEN LEVELS'; else if(nearR)state='NEAR RESISTANCE'; else if(nearS)state='NEAR SUPPORT';
- return {nearSupport:nearS,nearResistance:nearR,supportDist:ds,resistanceDist:dr,state,threshold};
+function tlv182_srContext(x){
+  const p=Number(x?.p),s=Number(x?.support),r=Number(x?.resistance),atrp=Number(x?.atrPct)||0;
+  if(!Number.isFinite(p)||!Number.isFinite(s)||!Number.isFinite(r))return {state:'UNKNOWN',nearSupport:false,nearResistance:false,supportDist:null,resistanceDist:null,threshold:null};
+  const ds=Math.abs(p-s)/p,dr=Math.abs(r-p)/p;
+  const threshold=Math.max(atrp*0.75,0.0035);
+  const nearS=ds<=threshold,nearR=dr<=threshold;
+  return {nearSupport:nearS,nearResistance:nearR,supportDist:ds,resistanceDist:dr,threshold,state:nearS&&nearR?'BETWEEN NEAR SUPPORT & RESISTANCE':nearS?'NEAR SUPPORT':nearR?'NEAR RESISTANCE':'CLEAR'};
 }
-
-function tl171_structureAlignment(rs,d){
- if(d==='MIXED')return {aligned:0,total:3,states:[]};
- const states=rs.map(x=>x.marketStructure?.bias||'RANGE / TRANSITION');
- const aligned=states.filter(s=>s===d).length;
- return {aligned,total:3,states};
+function tlv182_spread(v){
+  const n=Number(v);
+  if(!Number.isFinite(n))return '—';
+  if(n===0)return '0.00%';
+  if(Math.abs(n)<0.01)return n.toFixed(5)+'%';
+  return n.toFixed(3)+'%';
 }
+function tlv182_srLabel(x){return tlv182_srContext(x).state;}
 
-function tl171_qualify(rs,c){
- const d=c.direction;
- const states=rs.map(tlv=>tl171_trueState(tlv));
- const trend=d==='MIXED'?0:rs.filter(x=>x.trend===d).length;
- const mom=d==='MIXED'?0:rs.filter(x=>x.momentum===(d==='BULLISH'?'POSITIVE':'NEGATIVE')).length;
- const vol=rs.filter(x=>x.volume==='CONFIRMED').length;
- const healthyRsi=rs.filter(x=>x.rsiStatus==='HEALTHY').length;
- const fresh=rs.filter(x=>x.freshness==='FRESH').length;
- const ext=rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length;
- const structure=tl171_structureAlignment(rs,d);
- const sr=rs.map(tl171_srContext);
- const srConflict=sr.some(z=>z.nearResistance&&z.nearSupport);
- const srCaution=sr.some(z=>z.nearResistance||z.nearSupport);
- const overallSr=srConflict?'TIGHT RANGE / BETWEEN LEVELS':srCaution?'NEAR SUPPORT / RESISTANCE':'CLEAR';
- const h4State=states[2];
- const blockers=[];
- if(d==='MIXED')blockers.push('No dominant MTF direction');
- if(c.trueConfirmation<67)blockers.push('Only '+c.aligned+'/3 timeframes confirm the direction');
- if(d!=='MIXED'&&h4State!==d)blockers.push('4H does not confirm '+d);
- if(trend<2)blockers.push('Trend confirmation incomplete ('+trend+'/3)');
- if(mom<2)blockers.push('Momentum confirmation incomplete ('+mom+'/3)');
- if(vol<2)blockers.push('MTF volume confirmation weak ('+vol+'/3)');
- if(healthyRsi<2)blockers.push('RSI health not confirmed across 2/3 timeframes');
- if(structure.aligned<2)blockers.push('Market structure not aligned ('+structure.aligned+'/3)');
- if(fresh<3)blockers.push('Not all timeframe data is fresh ('+fresh+'/3)');
- if(ext<2)blockers.push('Move may be extended ('+ext+'/3 acceptable)');
- if(srConflict)blockers.push('Price is between nearby support and resistance');
- const status=(d!=='MIXED'&&c.trueConfirmation>=67&&h4State===d&&trend>=2&&mom>=2&&vol>=2&&healthyRsi>=2&&structure.aligned>=2&&fresh>=2&&ext>=2&&!srConflict&&c.avg>=7.5)?'QUALIFIED':(d==='MIXED'?'INVALID':'WATCH');
- const checks=[
-  ['TREND',trend>=2?'CONFIRMED '+trend+'/3':'WAIT '+trend+'/3'],
-  ['MOMENTUM',mom>=2?'CONFIRMED '+mom+'/3':'WAIT '+mom+'/3'],
-  ['RSI',healthyRsi>=2?'HEALTHY '+healthyRsi+'/3':'CAUTION '+healthyRsi+'/3'],
-  ['VOLUME',vol>=2?'CONFIRMED '+vol+'/3':'WEAK '+vol+'/3'],
-  ['STRUCTURE',structure.aligned>=2?'ALIGNED '+structure.aligned+'/3':'WAIT '+structure.aligned+'/3'],
-  ['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'ACCEPTABLE':'HIGH / CAUTION'],
-  ['EXTENSION',ext>=2?'ACCEPTABLE':'EXTENDED / CAUTION'],
-  ['FRESHNESS',fresh>=2?'FRESH '+fresh+'/3':'AGING / STALE'],
-  ['S/R CONTEXT',overallSr]
- ];
- return {status,checks,blockers,volumeWeak:vol<2,structureConfirmed:structure.aligned>=2,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':c.aligned+'/3 TIMEFRAMES',trendCount:trend,momentumCount:mom,volumeCount:vol,rsiCount:healthyRsi,freshCount:fresh,extensionCount:ext,srConflict,srCaution,overallSr};
+/* Keep analysis on completed candles only. */
+const TLV182_BASE_ANALYZE=analyze;
+function tlv182_closed(c){
+  const now=Date.now();
+  const closed=c.filter(x=>Number(x.closeTime)<=now);
+  return closed.length>=80?closed:(c.length>1?c.slice(0,-1):c);
 }
-qualify=tl171_qualify;
+function tlv182_analyze(c){
+  const a=TLV182_BASE_ANALYZE(tlv182_closed(c));
+  const tf=(window.__tlv182CurrentTF||'15m');
+  a.tf=tf;
+  a.trueState=tlv182_trueState(a);
+  a.freshness=tlv182_freshStatus(tf,a.ageMin);
+  a.volumeStatus=tlv182_volumeStatus(a.vr);
+  /* Treat 45-52 RSI as neutral rather than weak; extreme readings remain explicit. */
+  if(a.r>=45&&a.r<=52)a.rsiStatus='NEUTRAL';
+  return a;
+}
+analyze=tlv182_analyze;
 
-async function tl171_orderbook(symbol){
- let last;
- for(const h of HOSTS)try{
-  const d=await get(h+'/api/v3/depth?symbol='+encodeURIComponent(symbol)+'&limit=20',7000);
-  const bids=(d.bids||[]).map(x=>[+x[0],+x[1]]),asks=(d.asks||[]).map(x=>[+x[0],+x[1]]);
-  if(!bids.length||!asks.length)throw Error('Empty order book');
-  const bid=bids[0][0],ask=asks[0][0],mid=(bid+ask)/2,spread=(ask-bid)/mid;
-  const bidNotional=bids.reduce((s,x)=>s+x[0]*x[1],0),askNotional=asks.reduce((s,x)=>s+x[0]*x[1],0);
-  const imb=(bidNotional-askNotional)/(bidNotional+askNotional||1);
-  return {bid,ask,mid,spread,spreadPct:spread*100,bidNotional,askNotional,imbalance:imb,quality:spread<=.001?'GOOD':spread<=.003?'FAIR':'THIN',source:'Binance depth • 20 levels'};
- }catch(e){last=e}
- return {quality:'UNAVAILABLE',spread:null,imbalance:null,source:'Order book unavailable',error:last?.message||'unknown'};
+async function tlv182_candles(symbol,tf){
+  window.__tlv182CurrentTF=tf;
+  const c=await candles(symbol,tf);
+  const a=tlv182_analyze(c);
+  a.tf=tf;
+  return a;
 }
 
-function tl171_render(rs,c,q,detail,ob){
- const x=rs[detail==='15m'?0:detail==='1h'?1:2], sr=tl171_srContext(x),sa=tl171_structureAlignment(rs,c.direction);
- $('selectedTitle').textContent=$('pair').value+' • V18 Analysis';
- $('decisionBadge').textContent=q.status==='WATCH'?'WAIT':q.status;$('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
- $('fp').innerHTML=rs.map((z,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(tlv171_trueState(z))}">${tlv171_trueState(z)}</div><div class="small">Strength ${fmt(z.strength,1)}/10<br>Trend ${z.trend} • ${z.momentum}<br>RSI ${fmt(z.r,1)} • Vol ${fmt(z.vr,2)}x<br>Structure ${z.marketStructure?.bias||'—'}</div></div>`).join('');
- $('confText').textContent='Directional weight '+c.directionalWeight+'% • True confirmation '+c.trueConfirmation+'% • '+c.confirmationLabel;
- $('confBar').style.width=c.trueConfirmation+'%';
- const dominantTf=c.dominantIdx>=0?TF[c.dominantIdx]:'—';
- $('diagnosis').innerHTML=`<b>${c.trueConfirmation>=67?'MTF DIRECTION':'MTF BIAS'}:</b> ${c.direction}<br><b>DIRECTIONAL WEIGHT:</b> ${c.directionalWeight}%<br><b>TRUE MTF CONFIRMATION:</b> ${c.trueConfirmation}% (${c.confirmationLabel})<br><b>DOMINANT TIMEFRAME:</b> ${dominantTf}<br><b>CONFIRMATION PROBLEM:</b> ${c.confirmation.length?esc(c.confirmation.join(' + ')+' not confirming '+c.direction):'None — all timeframes agree.'}<br><br><b>TRADE GATE:</b> ${q.status==='QUALIFIED'?'OPEN':'LOCKED'}${q.blockers.length?'<br><b>BLOCKERS:</b> '+esc(q.blockers.join(' • ')):''}`;
- $('strength').textContent=fmt(c.avg,1)+'/10';
- const mtfTrend=c.direction==='MIXED'?'NOT ESTABLISHED':q.trendCount>=2?'✓ '+q.trendCount+'/3 CONFIRMED':'? '+q.trendCount+'/3';
- const mtfMomentum=c.direction==='MIXED'?'NOT ESTABLISHED':q.momentumCount>=2?'✓ '+q.momentumCount+'/3 CONFIRMED':'? '+q.momentumCount+'/3';
- $('why').innerHTML=[['DIRECTIONAL WEIGHT',c.directionalWeight+'%'],['TRUE CONFIRMATION',c.trueConfirmation+'%'],['MTF TREND',mtfTrend],['MTF MOMENTUM',mtfMomentum],['MTF RSI',q.rsiCount>=2?'✓ '+q.rsiCount+'/3 HEALTHY':'⚠ '+q.rsiCount+'/3'],['MTF VOLUME',q.volumeCount>=2?'✓ '+q.volumeCount+'/3 CONFIRMED':'? '+q.volumeCount+'/3 — WEAK'],['MTF STRUCTURE',q.structureConfirmed?'✓ '+sa.aligned+'/3 ALIGNED':'? '+sa.aligned+'/3'],['S/R CONTEXT',sr.state],['FRESHNESS',q.freshCount+'/3 FRESH • see matrix for age']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
- $('detailOut').innerHTML=[['DIRECTION',tlv171_trueState(x)],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volume+' • SELECTED TF'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.marketStructure.bias+' • '+x.marketStructure.event],['REGIME',x.regime+' • '+detail],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['S/R CONTEXT',sr.state],['FRESHNESS',x.freshness+' • '+fmt(x.ageMin,0)+'m old']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
- $('checks').innerHTML=q.checks.map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
- const ms=x.marketStructure||{};$('structureSummary').innerHTML=[['BIAS',ms.bias||'—'],['SWING HIGH',ms.hh||'—'],['SWING LOW',ms.hl||'—'],['EVENT',ms.event||'NONE'],['RETEST',ms.retest||'NONE'],['SUPPORT',fmt(ms.support)],['RESISTANCE',fmt(ms.resistance)],['S/R CONTEXT',sr.state],['ALIGNED MTF STRUCTURE',sa.aligned+'/3'],['CONFIRMED SWINGS',fmt((ms.swingsH?.length||0)+(ms.swingsL?.length||0),0)]].map(z=>`<div class="tl-structure-card"><div class="k">${z[0]}</div><div class="v">${z[1]}</div></div>`).join('');
- $('structureNote').textContent=`Structure uses ${fmt(ms.closedCount||0,0)} confirmed closed candles. ${sr.state}. Support distance ${sr.supportDist==null?'—':fmt(sr.supportDist*100,2)+'%'} • resistance distance ${sr.resistanceDist==null?'—':fmt(sr.resistanceDist*100,2)+'%'}.`;
- if(ob){$('structureNote').textContent+=' Order book: '+ob.quality+(ob.spreadPct!=null?' • spread '+(ob.spreadPct<0.01?ob.spreadPct.toFixed(4):ob.spreadPct.toFixed(3))+'%':'')+(ob.bid!=null&&ob.ask!=null?' • bid '+fmt(ob.bid,8)+' / ask '+fmt(ob.ask,8):'')+(ob.imbalance!=null?' • bid/ask imbalance '+fmt(ob.imbalance*100,1)+'%':'')+'.';}
- renderRisk(x,c,q);
- if($('chartStatus'))$('chartStatus').textContent=`${$('pair').value} • ${detail} • ${x.candles?.length||0} closed candles • chart synced to completed scan`;
+function tlv182_confluence(rs){
+  let bull=0,bear=0;
+  TF.forEach((tf,i)=>{const st=tlv182_trueState(rs[i]);if(st==='BULLISH')bull+=TLV182_WEIGHTS[tf];if(st==='BEARISH')bear+=TLV182_WEIGHTS[tf];});
+  const total=6,direction=bull>bear?'BULLISH':bear>bull?'BEARISH':'MIXED';
+  const dominantWeight=Math.max(bull,bear);
+  const directionalWeight=Math.round(dominantWeight/total*100);
+  const aligned=direction==='MIXED'?0:rs.filter(x=>tlv182_trueState(x)===direction).length;
+  const trueConfirmation=Math.round(aligned/3*100);
+  const missing=direction==='MIXED'?TF:TF.filter((tf,i)=>tlv182_trueState(rs[i])!==direction);
+  const highestWeightTF=direction==='MIXED'?'—':TF.slice().reverse().find((tf,i)=>{
+    const idx=TF.indexOf(tf);return tlv182_trueState(rs[idx])===direction;
+  })||'—';
+  const strongestIdx=rs.reduce((best,x,i)=>x.strength>rs[best].strength?i:best,0);
+  const strongestScoreTF=TF[strongestIdx]||'—';
+  return {direction,dominant:direction,percent:directionalWeight,directionalWeight,trueConfirmation,aligned,confirmationLabel:direction==='MIXED'?'NO DOMINANT DIRECTION':aligned+'/3 TIMEFRAMES',bull,bear,total,missing,confirmation:missing,highestWeightTF,strongestScoreTF,dominantIdx:direction==='MIXED'?-1:TF.indexOf(highestWeightTF),avg:rs.reduce((a,x)=>a+x.strength,0)/rs.length};
 }
-render=tl171_render;
+confluence=tlv182_confluence;
+
+function tlv182_structureAlignment(rs,d){
+  if(d==='MIXED')return {aligned:0,total:3,states:rs.map(()=> 'RANGE / TRANSITION')};
+  const states=rs.map(x=>x.marketStructure?.bias||'RANGE / TRANSITION');
+  return {aligned:states.filter(s=>s===d).length,total:3,states};
+}
+function tlv182_volumeSummary(rs){
+  const statuses=rs.map(x=>x.volumeStatus||tlv182_volumeStatus(x.vr));
+  const avg=rs.reduce((a,x)=>a+(Number(x.vr)||0),0)/rs.length;
+  const strong=statuses.filter(x=>x==='STRONG').length;
+  const confirmed=statuses.filter(x=>x==='CONFIRMED'||x==='STRONG').length;
+  const weak=statuses.filter(x=>x==='WEAK').length;
+  let state='NORMAL';
+  if(weak>=2||avg<0.8)state='WEAK';
+  else if(confirmed>=2||avg>=1.0)state='CONFIRMED';
+  else if(strong>=1)state='IMPROVING';
+  return {state,avg,strong,confirmed,weak,statuses};
+}
+function tlv182_qualify(rs,c){
+  const d=c.direction;
+  const expected=d==='BULLISH'?'POSITIVE':d==='BEARISH'?'NEGATIVE':null;
+  const states=rs.map(tlv182_trueState);
+  const trend=d==='MIXED'?0:rs.filter(x=>x.trend===d).length;
+  const mom=expected?rs.filter(x=>x.momentum===expected).length:0;
+  const vol=tlv182_volumeSummary(rs);
+  const healthyRsi=rs.filter(x=>x.rsiStatus==='HEALTHY').length;
+  const current=rs.filter(x=>x.freshness==='CURRENT').length;
+  const ext=rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length;
+  const liq=rs.filter(x=>x.liquidityScore).length;
+  const structure=tlv182_structureAlignment(rs,d);
+  const sr=rs.map(tlv182_srContext);
+  const srConflict=sr.some(z=>z.nearSupport&&z.nearResistance);
+  const blockers=[];
+  if(d==='MIXED')blockers.push('No dominant MTF direction');
+  if(c.trueConfirmation<67)blockers.push('Only '+c.aligned+'/3 timeframes confirm the direction');
+  if(d!=='MIXED'&&states[2]!==d)blockers.push('4H does not confirm '+d);
+  if(trend<2)blockers.push('Trend confirmation incomplete ('+trend+'/3)');
+  if(mom<2)blockers.push('Momentum confirmation incomplete ('+mom+'/3)');
+  if(vol.state==='WEAK')blockers.push('MTF volume is weak (avg '+fmt(vol.avg,2)+'x)');
+  if(healthyRsi<2)blockers.push('RSI health not confirmed across 2/3 timeframes');
+  if(structure.aligned<2)blockers.push('Market structure not aligned ('+structure.aligned+'/3)');
+  if(current<2)blockers.push('Timeframe data is not current ('+current+'/3)');
+  if(ext<2)blockers.push('Move may be extended ('+ext+'/3 acceptable)');
+  if(liq<2)blockers.push('Liquidity proxy is limited');
+  if(srConflict)blockers.push('Price is between nearby support and resistance');
+  const status=(d!=='MIXED'&&c.trueConfirmation>=67&&states[2]===d&&trend>=2&&mom>=2&&vol.state!=='WEAK'&&vol.confirmed>=1&&healthyRsi>=2&&structure.aligned>=2&&current>=2&&ext>=2&&!srConflict&&c.avg>=7.5)?'QUALIFIED':(d==='MIXED'?'INVALID':'WATCH');
+  const checks=[
+    ['TREND',trend>=2?'CONFIRMED '+trend+'/3':'WAIT '+trend+'/3'],
+    ['MOMENTUM',mom>=2?'CONFIRMED '+mom+'/3':'WAIT '+mom+'/3'],
+    ['RSI',healthyRsi>=2?'HEALTHY '+healthyRsi+'/3':(rs.some(x=>x.rsiStatus==='NEUTRAL')?'NEUTRAL / CAUTION':'CAUTION '+healthyRsi+'/3')],
+    ['VOLUME',vol.state+' • '+fmt(vol.avg,2)+'x avg'],
+    ['STRUCTURE',structure.aligned>=2?'ALIGNED '+structure.aligned+'/3':'WAIT '+structure.aligned+'/3'],
+    ['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'ACCEPTABLE':'HIGH / CAUTION'],
+    ['EXTENSION',ext>=2?'ACCEPTABLE':'EXTENDED / CAUTION'],
+    ['FRESHNESS',current>=2?'CURRENT '+current+'/3':current+' /3 CURRENT'],
+    ['S/R CONTEXT',srConflict?'BETWEEN NEAR LEVELS':(sr.every(x=>x.state==='CLEAR')?'CLEAR':'NEAR LEVEL')]
+  ];
+  return {status,checks,blockers,volumeWeak:vol.state==='WEAK',structureConfirmed:structure.aligned>=2,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':c.aligned+'/3 TIMEFRAMES',trendCount:trend,momentumCount:mom,volumeCount:vol.confirmed,rsiCount:healthyRsi,freshCount:current,extensionCount:ext,srConflict,volumeSummary:vol};
+}
+qualify=tlv182_qualify;
+
+async function tlv182_orderbook(symbol){
+  let last;
+  for(const h of HOSTS)try{
+    const d=await get(h+'/api/v3/depth?symbol='+encodeURIComponent(symbol)+'&limit=20',7000);
+    const bids=(d.bids||[]).map(x=>[+x[0],+x[1]]),asks=(d.asks||[]).map(x=>[+x[0],+x[1]]);
+    if(!bids.length||!asks.length)throw Error('Empty order book');
+    const bid=bids[0][0],ask=asks[0][0],mid=(bid+ask)/2,spread=(ask-bid)/mid;
+    const bidNotional=bids.reduce((s,x)=>s+x[0]*x[1],0),askNotional=asks.reduce((s,x)=>s+x[0]*x[1],0);
+    const imbalance=(bidNotional-askNotional)/(bidNotional+askNotional||1);
+    const quality=spread<=.001?'GOOD':spread<=.003?'FAIR':'THIN';
+    return {bid,ask,mid,spread,spreadPct:spread*100,bidNotional,askNotional,imbalance,quality,source:'Binance depth • 20 levels'};
+  }catch(e){last=e}
+  return {quality:'UNAVAILABLE',spread:null,imbalance:null,source:'Order book unavailable',error:last?.message||'unknown'};
+}
+
+function tlv182_render(rs,c,q,detail,ob){
+  const idx=detail==='15m'?0:detail==='1h'?1:2,x=rs[idx],sr=tlv182_srContext(x),sa=tlv182_structureAlignment(rs,c.direction),vs=q.volumeSummary;
+  $('selectedTitle').textContent=$('pair').value+' • V18.2 Analysis';
+  $('decisionBadge').textContent=q.status;$('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
+  $('fp').innerHTML=rs.map((z,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(tlv182_trueState(z))}">${tlv182_trueState(z)}</div><div class="small">Strength ${fmt(z.strength,1)}/10<br>Trend ${z.trend} • ${z.momentum}<br>RSI ${fmt(z.r,1)} • Vol ${fmt(z.vr,2)}x • ${z.volumeStatus}<br>Structure ${z.marketStructure?.bias||'—'}<br>Data ${z.freshness} (${fmt(z.ageMin,0)}m)</div></div>`).join('');
+  $('confText').textContent='Directional weight '+c.directionalWeight+'% • True confirmation '+c.trueConfirmation+'% • '+c.confirmationLabel;
+  $('confBar').style.width=c.trueConfirmation+'%';
+  const strongest=c.strongestScoreTF,weighted=c.highestWeightTF;
+  $('diagnosis').innerHTML=`<b>MTF BIAS:</b> ${c.direction}<br><b>DIRECTIONAL WEIGHT:</b> ${c.directionalWeight}%<br><b>TRUE MTF CONFIRMATION:</b> ${c.trueConfirmation}% (${c.confirmationLabel})<br><b>HIGHEST-WEIGHT CONFIRMATION:</b> ${weighted}<br><b>STRONGEST RAW SETUP SCORE:</b> ${strongest}<br><b>CONFIRMATION PROBLEM:</b> ${c.confirmation.length?esc(c.confirmation.join(' + ')+' not confirming '+c.direction):'None — all timeframes agree.'}<br><br><b>TRADE GATE:</b> ${q.status==='QUALIFIED'?'OPEN':'LOCKED'}${q.blockers.length?'<br><b>BLOCKERS:</b> '+esc(q.blockers.join(' • ')):''}`;
+  $('strength').textContent=fmt(c.avg,1)+'/10';
+  const mtfTrend=c.direction==='MIXED'?'NOT ESTABLISHED':q.trendCount>=2?'✓ '+q.trendCount+'/3 CONFIRMED':'? '+q.trendCount+'/3';
+  const mtfMomentum=c.direction==='MIXED'?'NOT ESTABLISHED':q.momentumCount>=2?'✓ '+q.momentumCount+'/3 CONFIRMED':'? '+q.momentumCount+'/3';
+  const mtfVol=vs.state+' • avg '+fmt(vs.avg,2)+'x';
+  $('why').innerHTML=[['DIRECTIONAL WEIGHT',c.directionalWeight+'%'],['TRUE CONFIRMATION',c.trueConfirmation+'%'],['MTF TREND',mtfTrend],['MTF MOMENTUM',mtfMomentum],['MTF RSI',q.rsiCount>=2?'✓ '+q.rsiCount+'/3 HEALTHY':'⚠ '+q.rsiCount+'/3'],['MTF VOLUME',mtfVol],['MTF STRUCTURE',q.structureConfirmed?'✓ '+sa.aligned+'/3 ALIGNED':'? '+sa.aligned+'/3'],['S/R CONTEXT',sr.state],['FRESHNESS',q.freshCount+'/3 CURRENT']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
+  $('detailOut').innerHTML=[['DIRECTION',tlv182_trueState(x)],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)+' • '+x.rsiStatus],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volumeStatus+' • SELECTED TF'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',(x.marketStructure?.bias||'—')+' • '+(x.marketStructure?.event||'NONE')],['REGIME',x.regime+' • '+detail],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['S/R CONTEXT',sr.state],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
+  $('checks').innerHTML=q.checks.map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
+  const ms=x.marketStructure||{};
+  $('structureSummary').innerHTML=[['BIAS',ms.bias||'—'],['SWING HIGH',ms.hh||'—'],['SWING LOW',ms.hl||'—'],['EVENT',ms.event||'NONE'],['RETEST',ms.retest||'NONE'],['SUPPORT',fmt(ms.support)],['RESISTANCE',fmt(ms.resistance)],['S/R CONTEXT',sr.state],['ALIGNED MTF STRUCTURE',sa.aligned+'/3'],['CONFIRMED SWINGS',fmt((ms.swingsH?.length||0)+(ms.swingsL?.length||0),0)]].map(z=>`<div class="tl-structure-card"><div class="k">${z[0]}</div><div class="v">${z[1]}</div></div>`).join('');
+  $('structureNote').textContent=`Structure uses ${fmt(ms.closedCount||0,0)} confirmed closed candles. ${sr.state}. Support distance ${sr.supportDist==null?'—':fmt(sr.supportDist*100,2)+'%'} • resistance distance ${sr.resistanceDist==null?'—':fmt(sr.resistanceDist*100,2)+'%'}.`;
+  if(ob){$('structureNote').textContent+=' Order-book liquidity: '+ob.quality+(ob.spreadPct!=null?' • spread '+tlv182_spread(ob.spreadPct):'')+(ob.imbalance!=null?' • bid/ask imbalance '+fmt(ob.imbalance*100,1)+'%':'')+'.';}
+  renderRisk(x,c,q);
+  if($('chartStatus'))$('chartStatus').textContent=`${$('pair').value} • ${detail} • ${x.candles?.length||0} closed candles • synced to completed scan`;
+}
+render=tlv182_render;
 
 function renderRisk(x,c,q){
- const acct=+$('account').value||500,risk=(+$('risk').value||1)/100,max=acct*risk;
- if(!q||q.status!=='QUALIFIED'||c.direction==='MIXED'){
-  $('riskOut').innerHTML=[['STATUS','RISK PLAN LOCKED'],['REASON',q?.blockers?.[0]||'No qualified direction'],['DIRECTION','NONE'],['ENTRY','—'],['STOP','—'],['TARGET','—'],['POSITION SIZE','—'],['MAX LOSS','—'],['POTENTIAL PROFIT','—'],['R:R','—']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');return;
- }
- const dist=Math.max(1.25*x.at,x.p*.005),short=c.direction==='BEARISH',stop=short?x.p+dist:x.p-dist,target=short?x.p-2*dist:x.p+2*dist,size=max/dist;
- $('riskOut').innerHTML=[['STATUS','QUALIFIED PAPER PLAN'],['DIRECTION',short?'SHORT':'LONG'],['ENTRY',fmt(x.p)],['STOP',fmt(stop)],['TARGET',fmt(target)],['POSITION SIZE',fmt(size,6)],['MAX LOSS','$'+fmt(max)],['POTENTIAL PROFIT','$'+fmt(max*2)],['R:R','1 : 2']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
+  const acct=+$('account').value||500,risk=(+$('risk').value||1)/100,max=acct*risk;
+  if(!q||q.status!=='QUALIFIED'||c.direction==='MIXED'){
+    $('riskOut').innerHTML=[['STATUS','RISK PLAN LOCKED'],['REASON',q?.blockers?.[0]||'No qualified direction'],['DIRECTION','NONE'],['ENTRY','—'],['STOP','—'],['TARGET','—'],['POSITION SIZE','—'],['MAX LOSS','—'],['POTENTIAL PROFIT','—'],['R:R','—']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');return;
+  }
+  const dist=Math.max(1.25*x.at,x.p*.005),short=c.direction==='BEARISH',stop=short?x.p+dist:x.p-dist,target=short?x.p-2*dist:x.p+2*dist,size=max/dist;
+  $('riskOut').innerHTML=[['STATUS','QUALIFIED PAPER PLAN'],['DIRECTION',short?'SHORT':'LONG'],['ENTRY',fmt(x.p)],['STOP',fmt(stop)],['TARGET',fmt(target)],['POSITION SIZE',fmt(size,6)],['MAX LOSS','$'+fmt(max)],['POTENTIAL PROFIT','$'+fmt(max*2)],['R:R','1 : 2']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
 }
 
-function tlv18_renderDecision(rs,c,q,detail){
- const bias=c.direction;
- const ready=q.status==='QUALIFIED'?'QUALIFIED':q.status==='WATCH'?'WAIT':'INVALID';
- $('v18Bias').textContent=bias==='MIXED'?'MIXED':bias+' BIAS';
- $('v18Weight').textContent=c.directionalWeight+'%';
- $('v18True').textContent=c.trueConfirmation+'% • '+c.aligned+'/3';
- $('v18Ready').textContent=ready;
- const dom=c.dominantIdx>=0?TF[c.dominantIdx]:'NONE';
- const why=q.blockers.length?q.blockers.join(' • '):'All qualification conditions passed.';
- $('v18Decision').innerHTML='<b>DECISION:</b> '+(ready==='QUALIFIED'?'TRADE GATE OPEN':ready==='WAIT'?'WAIT — INSUFFICIENT CONFIRMATION':'INVALID SETUP')+'<br><b>MTF BIAS:</b> '+esc(bias)+'<br><b>DOMINANT TIMEFRAME:</b> '+esc(dom)+'<br><b>WHY:</b> '+esc(why);
- $('v18Matrix').innerHTML=TF.map((tf,i)=>{const z=rs[i],st=tlv171_trueState(z);return '<tr><td>'+tf+'</td><td class="'+cls(st)+'">'+st+'</td><td>'+z.trend+'</td><td>'+z.momentum+'</td><td>'+z.volume+'</td><td>'+z.rsiStatus+'</td><td>'+((z.marketStructure&&z.marketStructure.bias)||'—')+'</td><td>'+z.freshness+' • '+fmt(z.ageMin,0)+'m</td><td>'+({"15m":1,"1h":2,"4h":3}[tf])+'x</td></tr>';}).join('');
+async function tlv182_onePair(symbol){
+  const rs=[];
+  for(const tf of TF)rs.push(await tlv182_candles(symbol,tf));
+  const c=confluence(rs),q=qualify(rs,c);return {symbol,rs,c,q};
 }
-
-async function tl171_onePair(symbol){const rs=await Promise.all(TF.map(t=>candles(symbol,t).then(analyze)));const c=confluence(rs),q=qualify(rs,c);return {symbol,rs,c,q};}
 
 async function run(){
  try{
-  $('status').textContent='V18 scanning market with closed-candle analysis...';
-  const selected=await tl171_onePair($('pair').value);
-  const ob=await tl171_orderbook($('pair').value);
+  $('status').textContent='V18.2 scanning market with closed-candle analysis...';
+  const selected=await tlv182_onePair($('pair').value);
+  const ob=await tlv182_orderbook($('pair').value);
   render(selected.rs,selected.c,selected.q,$('detail').value,ob);
-  tlv18_renderDecision(selected.rs,selected.c,selected.q,$('detail').value);
-  window._tlv17LastRs=selected.rs;TLV17_chart.tf=$('detail').value;drawMTFChart(selected.rs);
-  const symbols=[...$('pair').options].map(o=>o.value);
-  const all=await Promise.all(symbols.map(s=>tl171_onePair(s).catch(e=>({symbol:s,error:e}))));
-  const allResults=all.filter(z=>!z.error).map(z=>({symbol:z.symbol,price:z.rs[0].p,strength:z.c.avg,conf:z.c.directionalWeight,trueConf:z.c.trueConfirmation,aligned:z.c.aligned,state:z.c.direction,qual:z.q.status,regime:z.rs[2].regime,problem:z.q.status==='QUALIFIED'?'None':(z.q.blockers.join('; ')||'No qualified setup')}));
-  const counts={QUALIFIED:allResults.filter(r=>r.qual==='QUALIFIED').length,WATCH:allResults.filter(r=>r.qual==='WATCH').length,INVALID:allResults.filter(r=>r.qual==='INVALID').length};
-  $('scannerCounts').textContent='Analyzed '+allResults.length+' • QUALIFIED '+counts.QUALIFIED+' • WATCH '+counts.WATCH+' • INVALID '+counts.INVALID;
-  let out=allResults.slice();
-  const min=$('minQual').value;
-  const rank={QUALIFIED:3,WATCH:2,INVALID:1};
+  window._tlv18LastRs=selected.rs;TLV17_chart.tf=$('detail').value;drawMTFChart(selected.rs);
+  const symbols=[...$('pair').options].map(o=>o.value),all=[];
+  for(const symbol of symbols){try{all.push(await tlv182_onePair(symbol));}catch(e){console.warn(symbol,e);}}
+  let out=all.map(z=>({symbol:z.symbol,price:z.rs[0].p,strength:z.c.avg,conf:z.c.directionalWeight,trueConf:z.c.trueConfirmation,aligned:z.c.aligned,state:z.c.direction,qual:z.q.status,regime:z.rs[2].regime,problem:z.q.status==='QUALIFIED'?'None':(z.q.blockers.join('; ')||'No qualified setup')}));
+  const min=$('minQual').value,rank={QUALIFIED:3,WATCH:2,INVALID:1};
   if(min!=='ANY')out=out.filter(r=>min==='QUALIFIED'?r.qual==='QUALIFIED':r.qual!=='INVALID');
   out.sort((a,b)=>(rank[b.qual]-rank[a.qual])||(b.trueConf-a.trueConf)||(b.strength-a.strength));
-  $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.state} bias • ${r.conf}% weight<br>${r.trueConf}% true • ${r.aligned}/3 TF</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual==='WATCH'?'WAIT':r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem)}</td></tr>`).join('')||'<tr><td colspan="8">No pairs meet the selected minimum status. Set MIN QUALIFICATION to ANY to inspect all analyzed pairs.</td></tr>';
-  $('status').textContent='V18 scan complete • '+out.length+' pairs shown • closed candles only • selected-pair order book checked.';
- }catch(e){$('status').textContent='V18 scan failed: '+e.message}
+  $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}% weight<br>${r.trueConf}% true</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span><br><span class="small">${r.aligned}/3 TF</span></td><td>${r.regime}</td><td class="small">${esc(r.problem)}</td></tr>`).join('')||'<tr><td colspan="8">No pairs meet the selected minimum status.</td></tr>';
+  const counts={QUALIFIED:0,WATCH:0,INVALID:0}; all.forEach(z=>counts[z.q.status]=(counts[z.q.status]||0)+1);
+  $('status').textContent='V18.2 scan complete • '+out.length+' pairs shown • analyzed '+all.length+' • QUALIFIED '+counts.QUALIFIED+' • WATCH '+counts.WATCH+' • INVALID '+counts.INVALID+' • closed candles only • selected-pair order book checked.';
+ }catch(e){$('status').textContent='V18.2 scan failed: '+e.message;console.error(e)}
 }
 
-/* V18 table header + controls */
 const th=document.querySelector('#rows')?.parentElement?.querySelector('thead tr');
-if(th)th.innerHTML='<th>PAIR</th><th>PRICE</th><th>STRENGTH</th><th>BIAS / CONFIRMATION</th><th>STATE</th><th>QUALIFICATION</th><th>4H REGIME</th><th>PROBLEM</th>';
-const scanBtn=$('scan');if(scanBtn)scanBtn.textContent='RUN V18 SCAN';
-const title=document.querySelector('h1');if(title)title.textContent='TradeLens V18';
-const sub=document.querySelector('.sub');if(sub)sub.textContent='DECISION ENGINE • CLOSED-CANDLE MTF CONFIRMATION • MARKET STRUCTURE • PAPER TRADING';
+if(th)th.innerHTML='<th>PAIR</th><th>PRICE</th><th>STRENGTH</th><th>CONFLUENCE</th><th>STATE</th><th>QUALIFICATION</th><th>4H REGIME</th><th>PROBLEM</th>';
+const title=document.querySelector('h1');if(title)title.textContent='TradeLens V18.2';
+const sub=document.querySelector('.sub');if(sub)sub.textContent='CORRECTED DECISION ENGINE • CLOSED-CANDLE MTF CONFIRMATION • MARKET STRUCTURE • PAPER TRADING';
+const intro=document.querySelector('body>.card b');if(intro)intro.textContent='V18.2 Decision & Structure Engine:';
+const scanBtn=$('scan');if(scanBtn)scanBtn.textContent='RUN V18.2 SCAN';
 $('scan').onclick=run;
-$('pair').onchange=()=>{if(window._tlv17LastRs)run()};
-$('minQual').onchange=()=>{if(window._tlv17LastRs)run()};
+$('pair').onchange=()=>{if(window._tlv18LastRs)run()};
+$('minQual').onchange=()=>{if(window._tlv18LastRs)run()};
+if($('refreshChart'))$('refreshChart').onclick=async()=>{try{const tf=$('detail').value;$('chartStatus').textContent='Refreshing completed candle data...';const rs=[];for(const t of TF)rs.push(await tlv182_candles($('pair').value,t));window._tlv18LastRs=rs;TLV17_chart.rs=rs;TLV17_chart.tf=tf;tlv18_refreshChart();$('chartStatus').textContent=`${$('pair').value} • ${tf} • chart synced to completed candles`;}catch(e){$('chartStatus').textContent='Chart refresh failed: '+e.message}};
 })();
+
 </script>
 
 </body>
