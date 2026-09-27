@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V18.2</title>
+<title>TradeLens V18.3</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -80,9 +80,9 @@ function TLv103_enforceDirectionIntegrity(a){
 
 
 </head>
-<body><div class="card" style="margin-top:12px"><b>V18.2 Decision & Structure Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V18.3 Decision & Structure Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Volume is graded by participation; weak volume lowers readiness but is shown separately from directional confirmation.</div>
 <div class="wrap">
-<h1>TradeLens V18.2</h1>
+<h1>TradeLens V18.3</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -94,14 +94,14 @@ function TLv103_enforceDirectionIntegrity(a){
 <label>DETAIL TIMEFRAME<select id="detail"><option>15m</option><option>1h</option><option>4h</option></select></label>
 <label>ACCOUNT<input id="account" type="number" value="500" min="0"></label>
 <label>RISK %<input id="risk" type="number" value="1" step=".1" min=".1"></label>
-<label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED</option><option value="WATCH">WATCH</option><option value="ANY">ANY</option></select></label>
+<label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED ONLY</option><option value="WATCH">QUALIFIED + WATCH</option><option value="ANY">ALL</option></select></label>
 </div>
 <div class="actions"><button id="test">TEST API</button><button id="scan">RUN V18 SCAN</button></div>
 <p id="status" class="small">Ready.</p>
 </section>
 
 <section class="panel">
-<div class="sectionTitle"><h2>Market Scanner</h2><span class="small">Ranking uses setup strength; decision state remains separate.</span></div>
+<div class="sectionTitle"><h2>Market Scanner</h2><span class="small">Ranking uses resolution-based setup strength; direction, confirmation and trade readiness remain separate.</span></div>
 <div style="overflow:auto"><table><thead><tr><th>PAIR</th><th>PRICE</th><th>STRENGTH</th><th>MTF CONFLUENCE</th><th>STATE</th><th>QUALIFICATION</th><th>REGIME</th><th>PROBLEM</th></tr></thead><tbody id="rows"><tr><td colspan="8">Run scan.</td></tr></tbody></table></div>
 </section>
 
@@ -126,7 +126,7 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel">
-<div class="sectionTitle"><h2>V18.2 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
+<div class="sectionTitle"><h2>V18.3 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
 <div id="indicatorSummary" class="grid3"></div>
 </section>
 
@@ -248,17 +248,17 @@ function analyze(c){
  const volume=vr>=1.05?'CONFIRMED':vr>=.8?'NEUTRAL':'WEAK';
  const trendScore=trend==='MIXED'?1:2;
  const momScore=momentum==='FLAT'?1:2;
- const rsiScore=(r>=50&&r<=70)?1:0;
- const volScore=vr>=1.05?1:vr>=0.80?0:-1;
- const structureScore=(structure==='BREAKOUT UP'||structure==='BREAKDOWN')?1:(trend!=='MIXED'?1:0);
- const volatilityScore=atrPct<.025?1:0;
+ const rsiScore=r>=55&&r<=65?1:r>=50&&r<=70?.7:r>=45&&r<=75?.4:0;
+ const volScore=vr>=1.2?1:vr>=1.0?.85:vr>=.8?.65:vr>=.6?.35:0;
+ const structureScore=structure==='BREAKOUT UP'||structure==='BREAKDOWN'?1:trend!=='MIXED'?.65:.3;
+ const volatilityScore=atrPct<.012?1:atrPct<.025?.75:.25;
  const extension=pct(p,e20); const extensionStatus=extension<=atrPct*2?'ACCEPTABLE':'EXTENDED';
  const extensionScore=extensionStatus==='ACCEPTABLE'?1:0;
  const srDistBull=p<resistance?(resistance-p)/p:0, srDistBear=p>support?(p-support)/p:0;
- const srScore=Math.max(srDistBull,srDistBear)>atrPct*1.2?1:0;
- const liquidityScore=liq>1000000?1:0;
+ const srScore=Math.max(srDistBull,srDistBear)>atrPct*1.2?1:.35;
+ const liquidityScore=liq>1000000?1:liq>500000?.5:0;
  const raw=trendScore+momScore+rsiScore+volScore+structureScore+volatilityScore+extensionScore+srScore+liquidityScore;
- const strength=Math.round((raw/11)*10*10)/10;
+ const strength=Math.max(0,Math.min(10,Math.round((raw/11)*100)/10));
  const state=TLv102_direction(trend,momentum,rsi);
  const now=Date.now(),ageMin=Math.max(0,(now-c.at(-1).closeTime)/60000);
  const freshness=ageMin<=30?'FRESH':ageMin<=180?'AGING':'STALE';
@@ -328,7 +328,7 @@ function render(rs,c,q,detail){
  const mtfStructure=q.structureConfirmed?'✓ CONFIRMED':'? NOT ALIGNED';
  $('why').innerHTML=[['MTF TREND',mtfTrend],['MTF MOMENTUM',mtfMomentum],['MTF RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'✓ HEALTHY':'⚠ CAUTION'],['MTF VOLUME',mtfVolume],['MTF STRUCTURE',mtfStructure],['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'✓ ACCEPTABLE':'⚠ HIGH'],['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'✓ ADEQUATE':'? LIMITED'],['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'✓ ACCEPTABLE':'⚠ EXTENDED']].map(x=>`<div class="metric"><b>${x[0]}</b><br>${x[1]}</div>`).join('');
  const x=rs[detail==='15m'?0:detail==='1h'?1:2];
- $('detailOut').innerHTML=[['DIRECTION',x.state],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volume],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.marketStructure.bias+' • '+x.marketStructure.hh+'/'+x.marketStructure.hl],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
+ $('detailOut').innerHTML=[['DIRECTION',x.state],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volume],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.marketStructure.bias+' • '+x.marketStructure.hh+'/'+x.marketStructure.hl],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['CANDLE AGE',x.freshness+' ('+fmt(x.ageMin,0)+'m)'],['API FETCH AGE',fmt(x.apiFetchAgeMin||0,1)+'m']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
  $('checks').innerHTML=q.checks.map(x=>`<div class="metric"><b>${x[0]}</b><br><span class="${x[1].includes('CONFIRMED')||x[1]==='HEALTHY'||x[1]==='ADEQUATE'||x[1]==='ACCEPTABLE'||x[1]==='FRESH'?'bull':x[1].includes('WEAK')||x[1].includes('STALE')||x[1].includes('EXTENDED')?'neutral':''}">${x[1]}</span></div>`).join('');
  const ms=x.marketStructure||{};
  $('structureSummary').innerHTML=[['BIAS',ms.bias||'—'],['SWING HIGH',ms.hh||'—'],['SWING LOW',ms.hl||'—'],['EVENT',ms.event||'NONE'],['RETEST',ms.retest||'NONE'],['SUPPORT',fmt(ms.support)],['RESISTANCE',fmt(ms.resistance)],['CONFIRMED SWINGS',fmt((ms.swingsH?.length||0)+(ms.swingsL?.length||0),0)]].map(z=>`<div class="tl-structure-card"><div class="k">${z[0]}</div><div class="v ${z[1]==='BULLISH'||String(z[1]).includes('UP')?'tl-structure-bull':z[1]==='BEARISH'||String(z[1]).includes('DOWN')?'tl-structure-bear':'tl-structure-neutral'}">${z[1]}</div></div>`).join('');
@@ -433,8 +433,8 @@ window.addEventListener("load",()=>{
 </script>
 
 <script>
-/* ================= TradeLens V18.2 Decision Engine =================
-   Full correction pass for V18.1:
+/* ================= TradeLens V18.3 Decision Engine =================
+   V18.3 transparency + scoring pass:
    - timeframe-aware freshness
    - graded volume instead of binary weak/confirmed
    - explicit highest-weight vs strongest-score timeframe
@@ -507,9 +507,12 @@ analyze=tlv182_analyze;
 
 async function tlv182_candles(symbol,tf){
   window.__tlv182CurrentTF=tf;
+  const fetchedAt=Date.now();
   const c=await candles(symbol,tf);
   const a=tlv182_analyze(c);
   a.tf=tf;
+  a.apiFetchedAt=fetchedAt;
+  a.apiFetchAgeMin=Math.max(0,(Date.now()-fetchedAt)/60000);
   return a;
 }
 
@@ -608,19 +611,19 @@ async function tlv182_orderbook(symbol){
 
 function tlv182_render(rs,c,q,detail,ob){
   const idx=detail==='15m'?0:detail==='1h'?1:2,x=rs[idx],sr=tlv182_srContext(x),sa=tlv182_structureAlignment(rs,c.direction),vs=q.volumeSummary;
-  $('selectedTitle').textContent=$('pair').value+' • V18.2 Analysis';
+  $('selectedTitle').textContent=$('pair').value+' • V18.3 Analysis';
   $('decisionBadge').textContent=q.status;$('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
-  $('fp').innerHTML=rs.map((z,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(tlv182_trueState(z))}">${tlv182_trueState(z)}</div><div class="small">Strength ${fmt(z.strength,1)}/10<br>Trend ${z.trend} • ${z.momentum}<br>RSI ${fmt(z.r,1)} • Vol ${fmt(z.vr,2)}x • ${z.volumeStatus}<br>Structure ${z.marketStructure?.bias||'—'}<br>Data ${z.freshness} (${fmt(z.ageMin,0)}m)</div></div>`).join('');
+  $('fp').innerHTML=rs.map((z,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(tlv182_trueState(z))}">${tlv182_trueState(z)}</div><div class="small">Strength ${fmt(z.strength,1)}/10<br>Trend ${z.trend} • ${z.momentum}<br>RSI ${fmt(z.r,1)} • Vol ${fmt(z.vr,2)}x • ${z.volumeStatus}<br>Structure ${z.marketStructure?.bias||'—'}<br>Candle ${z.freshness} (${fmt(z.ageMin,0)}m)<br>Fetch age ${fmt(z.apiFetchAgeMin||0,1)}m</div></div>`).join('');
   $('confText').textContent='Directional weight '+c.directionalWeight+'% • True alignment '+c.trueConfirmation+'% • '+c.confirmationLabel;
   $('confBar').style.width=c.trueConfirmation+'%';
   const strongest=c.strongestScoreTF,weighted=c.highestWeightTF;
-  $('diagnosis').innerHTML=`<b>MTF BIAS:</b> ${c.direction}<br><b>DIRECTIONAL WEIGHT:</b> ${c.directionalWeight}%<br><b>TRUE MTF CONFIRMATION:</b> ${c.trueConfirmation}% (${c.confirmationLabel})<br><b>HIGHEST-WEIGHT CONFIRMATION:</b> ${weighted}<br><b>STRONGEST RAW SETUP SCORE:</b> ${strongest}<br><b>CONFIRMATION PROBLEM:</b> ${c.confirmation.length?esc(c.confirmation.join(' + ')+' not confirming '+c.direction):'None — all timeframes agree.'}<br><br><b>TRADE GATE:</b> ${q.status==='QUALIFIED'?'OPEN':'LOCKED'}${q.blockers.length?'<br><b>BLOCKERS:</b> '+esc(q.blockers.join(' • ')):''}`;
+  $('diagnosis').innerHTML=`<b>MTF BIAS:</b> ${c.direction}<br><b>DIRECTIONAL WEIGHT:</b> ${c.directionalWeight}%<br><b>TRUE MTF CONFIRMATION:</b> ${c.trueConfirmation}% (${c.confirmationLabel})<br><b>HIGHEST-WEIGHT CONFIRMATION:</b> ${weighted}<br><b>STRONGEST RAW SETUP SCORE:</b> ${strongest}<br><b>CONFIRMATION PROBLEM:</b> ${c.confirmation.length?esc(c.confirmation.join(' + ')+' not confirming '+c.direction):'None — all timeframes agree.'}<br><br><b>READINESS:</b> ${q.status}<br><b>TRADE GATE:</b> ${q.status==='QUALIFIED'?'OPEN':'LOCKED'}${q.blockers.length?'<br><b>BLOCKERS:</b> '+esc(q.blockers.join(' • ')):''}`;
   $('strength').textContent=fmt(c.avg,1)+'/10';
   const mtfTrend=c.direction==='MIXED'?'NOT ESTABLISHED':q.trendCount>=2?'✓ '+q.trendCount+'/3 CONFIRMED':'? '+q.trendCount+'/3';
   const mtfMomentum=c.direction==='MIXED'?'NOT ESTABLISHED':q.momentumCount>=2?'✓ '+q.momentumCount+'/3 CONFIRMED':'? '+q.momentumCount+'/3';
   const mtfVol=vs.state+' • avg '+fmt(vs.avg,2)+'x';
   $('why').innerHTML=[['DIRECTIONAL WEIGHT',c.directionalWeight+'%'],['TRUE CONFIRMATION',c.trueConfirmation+'%'],['MTF TREND',mtfTrend],['MTF MOMENTUM',mtfMomentum],['MTF RSI',q.rsiCount>=2?'✓ '+q.rsiCount+'/3 HEALTHY':'⚠ '+q.rsiCount+'/3'],['MTF VOLUME',mtfVol],['MTF STRUCTURE',q.structureConfirmed?'✓ '+sa.aligned+'/3 ALIGNED':'? '+sa.aligned+'/3'],['S/R CONTEXT',sr.state],['FRESHNESS',q.freshCount+'/3 CURRENT']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
-  $('detailOut').innerHTML=[['DIRECTION',tlv182_trueState(x)],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)+' • '+x.rsiStatus],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volumeStatus+' • SELECTED TF'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',(x.marketStructure?.bias||'—')+' • '+(x.marketStructure?.event||'NONE')],['REGIME',x.regime+' • '+detail],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['S/R CONTEXT',sr.state],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
+  $('detailOut').innerHTML=[['DIRECTION',tlv182_trueState(x)],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)+' • '+x.rsiStatus],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volumeStatus+' • SELECTED TF'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',(x.marketStructure?.bias||'—')+' • '+(x.marketStructure?.event||'NONE')],['REGIME',x.regime+' • '+detail],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['S/R CONTEXT',sr.state],['CANDLE AGE',x.freshness+' ('+fmt(x.ageMin,0)+'m)'],['API FETCH AGE',fmt(x.apiFetchAgeMin||0,1)+'m']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
   $('checks').innerHTML=q.checks.map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
   const ms=x.marketStructure||{};
   $('structureSummary').innerHTML=[['BIAS',ms.bias||'—'],['SWING HIGH',ms.hh||'—'],['SWING LOW',ms.hl||'—'],['EVENT',ms.event||'NONE'],['RETEST',ms.retest||'NONE'],['SUPPORT',fmt(ms.support)],['RESISTANCE',fmt(ms.resistance)],['S/R CONTEXT',sr.state],['ALIGNED MTF STRUCTURE',sa.aligned+'/3'],['CONFIRMED SWINGS',fmt((ms.swingsH?.length||0)+(ms.swingsL?.length||0),0)]].map(z=>`<div class="tl-structure-card"><div class="k">${z[0]}</div><div class="v">${z[1]}</div></div>`).join('');
@@ -634,7 +637,8 @@ render=tlv182_render;
 function renderRisk(x,c,q){
   const acct=+$('account').value||500,risk=(+$('risk').value||1)/100,max=acct*risk;
   if(!q||q.status!=='QUALIFIED'||c.direction==='MIXED'){
-    $('riskOut').innerHTML=[['STATUS','RISK PLAN LOCKED'],['REASON',q?.blockers?.[0]||'No qualified direction'],['DIRECTION','NONE'],['ENTRY','—'],['STOP','—'],['TARGET','—'],['POSITION SIZE','—'],['MAX LOSS','—'],['POTENTIAL PROFIT','—'],['R:R','—']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');return;
+    const reasons=(q?.blockers?.length?q.blockers.join(' • '):'No qualified direction');
+  $('riskOut').innerHTML=[['STATUS','RISK PLAN LOCKED'],['BLOCKERS',reasons],['DIRECTION','NONE'],['ENTRY','—'],['STOP','—'],['TARGET','—'],['POSITION SIZE','—'],['MAX LOSS','—'],['POTENTIAL PROFIT','—'],['R:R','—']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');return;
   }
   const dist=Math.max(1.25*x.at,x.p*.005),short=c.direction==='BEARISH',stop=short?x.p+dist:x.p-dist,target=short?x.p-2*dist:x.p+2*dist,size=max/dist;
   $('riskOut').innerHTML=[['STATUS','QUALIFIED PAPER PLAN'],['DIRECTION',short?'SHORT':'LONG'],['ENTRY',fmt(x.p)],['STOP',fmt(stop)],['TARGET',fmt(target)],['POSITION SIZE',fmt(size,6)],['MAX LOSS','$'+fmt(max)],['POTENTIAL PROFIT','$'+fmt(max*2)],['R:R','1 : 2']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
@@ -648,7 +652,7 @@ async function tlv182_onePair(symbol){
 
 async function run(){
  try{
-  $('status').textContent='V18.2 scanning market with closed-candle analysis...';
+  $('status').textContent='V18.3 scanning market with closed-candle analysis...';
   const selected=await tlv182_onePair($('pair').value);
   const ob=await tlv182_orderbook($('pair').value);
   render(selected.rs,selected.c,selected.q,$('detail').value,ob);
@@ -661,16 +665,16 @@ async function run(){
   out.sort((a,b)=>(rank[b.qual]-rank[a.qual])||(b.trueConf-a.trueConf)||(b.strength-a.strength));
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}% weight<br>${r.trueConf}% true</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span><br><span class="small">${r.aligned}/3 TF</span></td><td>${r.regime}</td><td class="small">${esc(r.problem)}</td></tr>`).join('')||'<tr><td colspan="8">No pairs meet the selected minimum status.</td></tr>';
   const counts={QUALIFIED:0,WATCH:0,INVALID:0}; all.forEach(z=>counts[z.q.status]=(counts[z.q.status]||0)+1);
-  $('status').textContent='V18.2 scan complete • '+out.length+' pairs shown • analyzed '+all.length+' • QUALIFIED '+counts.QUALIFIED+' • WATCH '+counts.WATCH+' • INVALID '+counts.INVALID+' • closed candles only • selected-pair order book checked.';
- }catch(e){$('status').textContent='V18.2 scan failed: '+e.message;console.error(e)}
+  $('status').textContent='V18.3 scan complete • '+out.length+' pairs shown • analyzed '+all.length+' • QUALIFIED '+counts.QUALIFIED+' • WATCH '+counts.WATCH+' • INVALID '+counts.INVALID+' • closed candles only • selected-pair order book checked.';
+ }catch(e){$('status').textContent='V18.3 scan failed: '+e.message;console.error(e)}
 }
 
 const th=document.querySelector('#rows')?.parentElement?.querySelector('thead tr');
 if(th)th.innerHTML='<th>PAIR</th><th>PRICE</th><th>STRENGTH</th><th>MTF CONFLUENCE</th><th>STATE</th><th>QUALIFICATION</th><th>4H REGIME</th><th>PROBLEM</th>';
-const title=document.querySelector('h1');if(title)title.textContent='TradeLens V18.2';
+const title=document.querySelector('h1');if(title)title.textContent='TradeLens V18.3';
 const sub=document.querySelector('.sub');if(sub)sub.textContent='CORRECTED DECISION ENGINE • CLOSED-CANDLE MTF CONFIRMATION • MARKET STRUCTURE • PAPER TRADING';
-const intro=document.querySelector('body>.card b');if(intro)intro.textContent='V18.2 Decision & Structure Engine:';
-const scanBtn=$('scan');if(scanBtn)scanBtn.textContent='RUN V18.2 SCAN';
+const intro=document.querySelector('body>.card b');if(intro)intro.textContent='V18.3 Decision & Structure Engine:';
+const scanBtn=$('scan');if(scanBtn)scanBtn.textContent='RUN V18.3 SCAN';
 $('scan').onclick=run;
 $('pair').onchange=()=>{if(window._tlv18LastRs)run()};
 $('minQual').onchange=()=>{if(window._tlv18LastRs)run()};
