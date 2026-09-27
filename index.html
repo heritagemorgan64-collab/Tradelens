@@ -643,6 +643,14 @@ window.addEventListener("load",()=>{
   <p class="tl-v17-muted">The confirmation matrix, setup quality, market structure and trade gate are linked to the scanner's current 15m / 1h / 4h analysis. They are informational safeguards and do not place orders.</p>
 </div>
 <script>
+// V17.1 public state helper: the main dashboard renderer lives outside the correction IIFE.
+function tlv171_trueState(x){
+  if(x && x.trend==='BULLISH' && x.momentum==='POSITIVE') return 'BULLISH';
+  if(x && x.trend==='BEARISH' && x.momentum==='NEGATIVE') return 'BEARISH';
+  return 'NEUTRAL';
+}
+</script>
+<script>
 /* ================= TradeLens V17.1 correction layer =================
    Fixes: closed-candle analysis, directional-vs-confirmation split, structure conflicts,
    SR proximity, selected-vs-MTF volume wording, scanner filtering/ranking, chart state,
