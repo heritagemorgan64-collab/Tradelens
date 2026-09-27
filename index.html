@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V18.3</title>
+<title>TradeLens V18.4</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -80,9 +80,9 @@ function TLv103_enforceDirectionIntegrity(a){
 
 
 </head>
-<body><div class="card" style="margin-top:12px"><b>V18.3 Decision & Structure Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Volume is graded by participation; weak volume lowers readiness but is shown separately from directional confirmation.</div>
+<body><div class="card" style="margin-top:12px"><b>V18.4 Decision & Structure Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Volume is graded by participation; weak volume lowers readiness but is shown separately from directional confirmation.</div>
 <div class="wrap">
-<h1>TradeLens V18.3</h1>
+<h1>TradeLens V18.4</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -126,7 +126,7 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel">
-<div class="sectionTitle"><h2>V18.3 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
+<div class="sectionTitle"><h2>V18.4 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
 <div id="indicatorSummary" class="grid3"></div>
 </section>
 
@@ -328,7 +328,7 @@ function render(rs,c,q,detail){
  const mtfStructure=q.structureConfirmed?'✓ CONFIRMED':'? NOT ALIGNED';
  $('why').innerHTML=[['MTF TREND',mtfTrend],['MTF MOMENTUM',mtfMomentum],['MTF RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'✓ HEALTHY':'⚠ CAUTION'],['MTF VOLUME',mtfVolume],['MTF STRUCTURE',mtfStructure],['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'✓ ACCEPTABLE':'⚠ HIGH'],['LIQUIDITY',rs.filter(x=>x.liquidityScore).length>=2?'✓ ADEQUATE':'? LIMITED'],['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'✓ ACCEPTABLE':'⚠ EXTENDED']].map(x=>`<div class="metric"><b>${x[0]}</b><br>${x[1]}</div>`).join('');
  const x=rs[detail==='15m'?0:detail==='1h'?1:2];
- $('detailOut').innerHTML=[['DIRECTION',x.state],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volume],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.marketStructure.bias+' • '+x.marketStructure.hh+'/'+x.marketStructure.hl],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['CANDLE AGE',x.freshness+' ('+fmt(x.ageMin,0)+'m)'],['API FETCH AGE',fmt(x.apiFetchAgeMin||0,1)+'m']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
+ $('detailOut').innerHTML=[['DIRECTION',x.state],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volume],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',x.marketStructure.bias+' • '+x.marketStructure.hh+'/'+x.marketStructure.hl],['REGIME',x.regime],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['CANDLE AGE',x.freshness+' ('+tlv182_ageText(x.ageMin)+')'],['LAST CLOSED',tlv182_timeLabel(x.lastClosedAt)],['API FETCH AGE',fmt(x.apiFetchAgeMin||0,1)+'m']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
  $('checks').innerHTML=q.checks.map(x=>`<div class="metric"><b>${x[0]}</b><br><span class="${x[1].includes('CONFIRMED')||x[1]==='HEALTHY'||x[1]==='ADEQUATE'||x[1]==='ACCEPTABLE'||x[1]==='FRESH'?'bull':x[1].includes('WEAK')||x[1].includes('STALE')||x[1].includes('EXTENDED')?'neutral':''}">${x[1]}</span></div>`).join('');
  const ms=x.marketStructure||{};
  $('structureSummary').innerHTML=[['BIAS',ms.bias||'—'],['SWING HIGH',ms.hh||'—'],['SWING LOW',ms.hl||'—'],['EVENT',ms.event||'NONE'],['RETEST',ms.retest||'NONE'],['SUPPORT',fmt(ms.support)],['RESISTANCE',fmt(ms.resistance)],['CONFIRMED SWINGS',fmt((ms.swingsH?.length||0)+(ms.swingsL?.length||0),0)]].map(z=>`<div class="tl-structure-card"><div class="k">${z[0]}</div><div class="v ${z[1]==='BULLISH'||String(z[1]).includes('UP')?'tl-structure-bull':z[1]==='BEARISH'||String(z[1]).includes('DOWN')?'tl-structure-bear':'tl-structure-neutral'}">${z[1]}</div></div>`).join('');
@@ -433,8 +433,8 @@ window.addEventListener("load",()=>{
 </script>
 
 <script>
-/* ================= TradeLens V18.3 Decision Engine =================
-   V18.3 transparency + scoring pass:
+/* ================= TradeLens V18.4 Decision Engine =================
+   V18.4 transparency + scoring pass:
    - timeframe-aware freshness
    - graded volume instead of binary weak/confirmed
    - explicit highest-weight vs strongest-score timeframe
@@ -468,6 +468,20 @@ function tlv182_volumeStatus(vr){
   if(x>=0.8)return 'NORMAL';
   return 'WEAK';
 }
+function tlv182_timeLabel(ms){
+  const n=Number(ms);
+  if(!Number.isFinite(n))return '—';
+  return new Date(n).toLocaleString([], {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+function tlv182_ageText(x){
+  const n=Number(x);
+  if(!Number.isFinite(n))return 'UNKNOWN';
+  if(n<1)return '<1m';
+  if(n<60)return Math.round(n)+'m';
+  const h=Math.floor(n/60),m=Math.round(n%60);
+  return h+'h '+m+'m';
+}
+
 function tlv182_srContext(x){
   const p=Number(x?.p),s=Number(x?.support),r=Number(x?.resistance),atrp=Number(x?.atrPct)||0;
   if(!Number.isFinite(p)||!Number.isFinite(s)||!Number.isFinite(r))return {state:'UNKNOWN',nearSupport:false,nearResistance:false,supportDist:null,resistanceDist:null,threshold:null};
@@ -489,14 +503,30 @@ function tlv182_srLabel(x){return tlv182_srContext(x).state;}
 const TLV182_BASE_ANALYZE=analyze;
 function tlv182_closed(c){
   const now=Date.now();
-  const closed=c.filter(x=>Number(x.closeTime)<=now);
-  return closed.length>=80?closed:(c.length>1?c.slice(0,-1):c);
+  // Never fall back to a possibly-forming candle. The decision engine is
+  // explicitly closed-candle only.
+  return (Array.isArray(c)?c:[]).filter(x=>Number.isFinite(Number(x.closeTime)) && Number(x.closeTime)<=now);
+}
+function tlv182_closeMeta(c){
+  const closed=tlv182_closed(c);
+  const last=closed.at(-1);
+  if(!last) return {lastClosedAt:null,lastClosedISO:null,ageMin:null,closedCount:0};
+  const ageMin=Math.max(0,(Date.now()-Number(last.closeTime))/60000);
+  return {lastClosedAt:Number(last.closeTime),lastClosedISO:new Date(Number(last.closeTime)).toISOString(),ageMin,closedCount:closed.length};
 }
 function tlv182_analyze(c){
-  const a=TLV182_BASE_ANALYZE(tlv182_closed(c));
+  const closed=tlv182_closed(c);
+  if(!closed.length) throw Error('No completed candle available for '+(window.__tlv182CurrentTF||'timeframe'));
+  const a=TLV182_BASE_ANALYZE(closed);
   const tf=(window.__tlv182CurrentTF||'15m');
+  const meta=tlv182_closeMeta(c);
   a.tf=tf;
   a.trueState=tlv182_trueState(a);
+  // Freshness is based ONLY on the timestamp of the last completed candle.
+  a.ageMin=meta.ageMin;
+  a.lastClosedAt=meta.lastClosedAt;
+  a.lastClosedISO=meta.lastClosedISO;
+  a.closedCount=meta.closedCount;
   a.freshness=tlv182_freshStatus(tf,a.ageMin);
   a.volumeStatus=tlv182_volumeStatus(a.vr);
   /* Treat 45-52 RSI as neutral rather than weak; extreme readings remain explicit. */
@@ -611,26 +641,26 @@ async function tlv182_orderbook(symbol){
 
 function tlv182_render(rs,c,q,detail,ob){
   const idx=detail==='15m'?0:detail==='1h'?1:2,x=rs[idx],sr=tlv182_srContext(x),sa=tlv182_structureAlignment(rs,c.direction),vs=q.volumeSummary;
-  $('selectedTitle').textContent=$('pair').value+' • V18.3 Analysis';
+  $('selectedTitle').textContent=$('pair').value+' • V18.4 Analysis';
   $('decisionBadge').textContent=q.status;$('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
-  $('fp').innerHTML=rs.map((z,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(tlv182_trueState(z))}">${tlv182_trueState(z)}</div><div class="small">Strength ${fmt(z.strength,1)}/10<br>Trend ${z.trend} • ${z.momentum}<br>RSI ${fmt(z.r,1)} • Vol ${fmt(z.vr,2)}x • ${z.volumeStatus}<br>Structure ${z.marketStructure?.bias||'—'}<br>Candle ${z.freshness} (${fmt(z.ageMin,0)}m)<br>Fetch age ${fmt(z.apiFetchAgeMin||0,1)}m</div></div>`).join('');
+  $('fp').innerHTML=rs.map((z,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(tlv182_trueState(z))}">${tlv182_trueState(z)}</div><div class="small">Strength ${fmt(z.strength,1)}/10<br>Trend ${z.trend} • ${z.momentum}<br>RSI ${fmt(z.r,1)} • Vol ${fmt(z.vr,2)}x • ${z.volumeStatus}<br>Structure ${z.marketStructure?.bias||'—'}<br>Candle ${z.freshness} (${tlv182_ageText(z.ageMin)})<br>Last closed: ${esc(tlv182_timeLabel(z.lastClosedAt))}<br>Fetch age: ${fmt(z.apiFetchAgeMin||0,1)}m</div></div>`).join('');
   $('confText').textContent='Directional weight '+c.directionalWeight+'% • True alignment '+c.trueConfirmation+'% • '+c.confirmationLabel;
   $('confBar').style.width=c.trueConfirmation+'%';
   const strongest=c.strongestScoreTF,weighted=c.highestWeightTF;
-  $('diagnosis').innerHTML=`<b>MTF BIAS:</b> ${c.direction}<br><b>DIRECTIONAL WEIGHT:</b> ${c.directionalWeight}%<br><b>TRUE MTF CONFIRMATION:</b> ${c.trueConfirmation}% (${c.confirmationLabel})<br><b>HIGHEST-WEIGHT CONFIRMATION:</b> ${weighted}<br><b>STRONGEST RAW SETUP SCORE:</b> ${strongest}<br><b>CONFIRMATION PROBLEM:</b> ${c.confirmation.length?esc(c.confirmation.join(' + ')+' not confirming '+c.direction):'None — all timeframes agree.'}<br><br><b>READINESS:</b> ${q.status}<br><b>TRADE GATE:</b> ${q.status==='QUALIFIED'?'OPEN':'LOCKED'}${q.blockers.length?'<br><b>BLOCKERS:</b> '+esc(q.blockers.join(' • ')):''}`;
+  $('diagnosis').innerHTML=`<b>MTF BIAS:</b> ${c.direction}<br><b>DIRECTIONAL WEIGHT:</b> ${c.directionalWeight}%<br><b>TRUE MTF CONFIRMATION:</b> ${c.trueConfirmation}% (${c.confirmationLabel})<br><b>HIGHEST-WEIGHT CONFIRMATION:</b> ${weighted}<br><b>STRONGEST RAW SETUP SCORE:</b> ${strongest}<br><b>CONFIRMATION PROBLEM:</b> ${c.confirmation.length?esc(c.confirmation.join(' + ')+' not confirming '+c.direction):'None — all timeframes agree.'}<br><br><b>READINESS:</b> ${q.status}<br><b>TRADE GATE:</b> ${q.status==='QUALIFIED'?'OPEN':'LOCKED'}${q.blockers.length?'<br><b>BLOCKERS:</b> '+esc(q.blockers.join(' • ')):''}<br><b>NOTE:</b> Directional confirmation and trade readiness are separate; weak participation does not by itself change the MTF direction.`;
   $('strength').textContent=fmt(c.avg,1)+'/10';
   const mtfTrend=c.direction==='MIXED'?'NOT ESTABLISHED':q.trendCount>=2?'✓ '+q.trendCount+'/3 CONFIRMED':'? '+q.trendCount+'/3';
   const mtfMomentum=c.direction==='MIXED'?'NOT ESTABLISHED':q.momentumCount>=2?'✓ '+q.momentumCount+'/3 CONFIRMED':'? '+q.momentumCount+'/3';
   const mtfVol=vs.state+' • avg '+fmt(vs.avg,2)+'x';
   $('why').innerHTML=[['DIRECTIONAL WEIGHT',c.directionalWeight+'%'],['TRUE CONFIRMATION',c.trueConfirmation+'%'],['MTF TREND',mtfTrend],['MTF MOMENTUM',mtfMomentum],['MTF RSI',q.rsiCount>=2?'✓ '+q.rsiCount+'/3 HEALTHY':'⚠ '+q.rsiCount+'/3'],['MTF VOLUME',mtfVol],['MTF STRUCTURE',q.structureConfirmed?'✓ '+sa.aligned+'/3 ALIGNED':'? '+sa.aligned+'/3'],['S/R CONTEXT',sr.state],['FRESHNESS',q.freshCount+'/3 CURRENT']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
-  $('detailOut').innerHTML=[['DIRECTION',tlv182_trueState(x)],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)+' • '+x.rsiStatus],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volumeStatus+' • SELECTED TF'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',(x.marketStructure?.bias||'—')+' • '+(x.marketStructure?.event||'NONE')],['REGIME',x.regime+' • '+detail],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['S/R CONTEXT',sr.state],['CANDLE AGE',x.freshness+' ('+fmt(x.ageMin,0)+'m)'],['API FETCH AGE',fmt(x.apiFetchAgeMin||0,1)+'m']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
+  $('detailOut').innerHTML=[['DIRECTION',tlv182_trueState(x)],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)+' • '+x.rsiStatus],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volumeStatus+' • SELECTED TF'],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',(x.marketStructure?.bias||'—')+' • '+(x.marketStructure?.event||'NONE')],['REGIME',x.regime+' • '+detail],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['S/R CONTEXT',sr.state],['CANDLE AGE',x.freshness+' ('+tlv182_ageText(x.ageMin)+')'],['LAST CLOSED',tlv182_timeLabel(x.lastClosedAt)],['API FETCH AGE',fmt(x.apiFetchAgeMin||0,1)+'m']].map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
   $('checks').innerHTML=q.checks.map(z=>`<div class="metric"><b>${z[0]}</b><br>${z[1]}</div>`).join('');
   const ms=x.marketStructure||{};
   $('structureSummary').innerHTML=[['BIAS',ms.bias||'—'],['SWING HIGH',ms.hh||'—'],['SWING LOW',ms.hl||'—'],['EVENT',ms.event||'NONE'],['RETEST',ms.retest||'NONE'],['SUPPORT',fmt(ms.support)],['RESISTANCE',fmt(ms.resistance)],['S/R CONTEXT',sr.state],['ALIGNED MTF STRUCTURE',sa.aligned+'/3'],['CONFIRMED SWINGS',fmt((ms.swingsH?.length||0)+(ms.swingsL?.length||0),0)]].map(z=>`<div class="tl-structure-card"><div class="k">${z[0]}</div><div class="v">${z[1]}</div></div>`).join('');
-  $('structureNote').textContent=`Structure uses ${fmt(ms.closedCount||0,0)} confirmed closed candles. ${sr.state}. Support distance ${sr.supportDist==null?'—':fmt(sr.supportDist*100,2)+'%'} • resistance distance ${sr.resistanceDist==null?'—':fmt(sr.resistanceDist*100,2)+'%'}.`;
+  $('structureNote').textContent=`Structure uses ${fmt(ms.closedCount||0,0)} confirmed closed candles. ${sr.state}. Support distance ${sr.supportDist==null?'—':fmt(sr.supportDist*100,2)+'%'} • resistance distance ${sr.resistanceDist==null?'—':fmt(sr.resistanceDist*100,2)+'%'}. Last completed ${detail}: ${tlv182_timeLabel(x.lastClosedAt)} (${tlv182_ageText(x.ageMin)} old).`;
   if(ob){$('structureNote').textContent+=' Order-book liquidity: '+ob.quality+(ob.spreadPct!=null?' • spread '+tlv182_spread(ob.spreadPct):'')+(ob.imbalance!=null?' • bid/ask imbalance '+fmt(ob.imbalance*100,1)+'%':'')+'.';}
   renderRisk(x,c,q);
-  if($('chartStatus'))$('chartStatus').textContent=`${$('pair').value} • ${detail} • ${x.candles?.length||0} closed candles • synced to completed scan`;
+  if($('chartStatus'))$('chartStatus').textContent=`${$('pair').value} • ${detail} • ${x.candles?.length||0} closed candles displayed • structure uses ${x.marketStructure?.closedCount||0} closed candles • synced to completed scan`;
 }
 render=tlv182_render;
 
@@ -652,7 +682,7 @@ async function tlv182_onePair(symbol){
 
 async function run(){
  try{
-  $('status').textContent='V18.3 scanning market with closed-candle analysis...';
+  $('status').textContent='V18.4 scanning market with closed-candle analysis...';
   const selected=await tlv182_onePair($('pair').value);
   const ob=await tlv182_orderbook($('pair').value);
   render(selected.rs,selected.c,selected.q,$('detail').value,ob);
@@ -665,16 +695,16 @@ async function run(){
   out.sort((a,b)=>(rank[b.qual]-rank[a.qual])||(b.trueConf-a.trueConf)||(b.strength-a.strength));
   $('rows').innerHTML=out.map(r=>`<tr><td><b>${r.symbol}</b></td><td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}% weight<br>${r.trueConf}% true</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span><br><span class="small">${r.aligned}/3 TF</span></td><td>${r.regime}</td><td class="small">${esc(r.problem)}</td></tr>`).join('')||'<tr><td colspan="8">No pairs meet the selected minimum status.</td></tr>';
   const counts={QUALIFIED:0,WATCH:0,INVALID:0}; all.forEach(z=>counts[z.q.status]=(counts[z.q.status]||0)+1);
-  $('status').textContent='V18.3 scan complete • '+out.length+' pairs shown • analyzed '+all.length+' • QUALIFIED '+counts.QUALIFIED+' • WATCH '+counts.WATCH+' • INVALID '+counts.INVALID+' • closed candles only • selected-pair order book checked.';
- }catch(e){$('status').textContent='V18.3 scan failed: '+e.message;console.error(e)}
+  $('status').textContent='V18.4 scan complete • '+out.length+' pairs shown • analyzed '+all.length+' • QUALIFIED '+counts.QUALIFIED+' • WATCH '+counts.WATCH+' • INVALID '+counts.INVALID+' • closed candles only • selected-pair order book checked.';
+ }catch(e){$('status').textContent='V18.4 scan failed: '+e.message;console.error(e)}
 }
 
 const th=document.querySelector('#rows')?.parentElement?.querySelector('thead tr');
 if(th)th.innerHTML='<th>PAIR</th><th>PRICE</th><th>STRENGTH</th><th>MTF CONFLUENCE</th><th>STATE</th><th>QUALIFICATION</th><th>4H REGIME</th><th>PROBLEM</th>';
-const title=document.querySelector('h1');if(title)title.textContent='TradeLens V18.3';
+const title=document.querySelector('h1');if(title)title.textContent='TradeLens V18.4';
 const sub=document.querySelector('.sub');if(sub)sub.textContent='CORRECTED DECISION ENGINE • CLOSED-CANDLE MTF CONFIRMATION • MARKET STRUCTURE • PAPER TRADING';
-const intro=document.querySelector('body>.card b');if(intro)intro.textContent='V18.3 Decision & Structure Engine:';
-const scanBtn=$('scan');if(scanBtn)scanBtn.textContent='RUN V18.3 SCAN';
+const intro=document.querySelector('body>.card b');if(intro)intro.textContent='V18.4 Decision & Structure Engine:';
+const scanBtn=$('scan');if(scanBtn)scanBtn.textContent='RUN V18.4 SCAN';
 $('scan').onclick=run;
 $('pair').onchange=()=>{if(window._tlv18LastRs)run()};
 $('minQual').onchange=()=>{if(window._tlv18LastRs)run()};
