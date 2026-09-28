@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V19.1</title>
+<title>TradeLens V19.2</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -82,9 +82,9 @@ function TLv103_enforceDirectionIntegrity(a){
 @media(max-width:700px){.v19-grid{grid-template-columns:1fr}.v19-smallgrid{grid-template-columns:1fr}}
 </style>
 </head>
-<body><div class="card" style="margin-top:12px"><b>V19.1 Real-Time Decision & Structure Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V19.2 Real-Time Decision & Structure Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V19.1</h1>
+<h1>TradeLens V19.2</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -98,7 +98,7 @@ function TLv103_enforceDirectionIntegrity(a){
 <label>RISK %<input id="risk" type="number" value="1" step=".1" min=".1"></label>
 <label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED</option><option value="WATCH">WATCH</option><option value="ANY">ANY</option></select></label>
 </div>
-<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V19.1 SCAN</button></div>
+<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V19.2 SCAN</button></div>
 <p id="status" class="small">Ready.</p>
 </section>
 
@@ -128,7 +128,7 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel">
-<div class="sectionTitle"><h2>V19.1 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
+<div class="sectionTitle"><h2>V19.2 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
 <div id="indicatorSummary" class="grid3"></div>
 </section>
 
@@ -167,11 +167,11 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel v19-rt-panel">
-<div class="sectionTitle"><h2>V19.1 Real-Time Engine</h2><span id="rtStatus" class="badge">STREAM: DISCONNECTED</span></div>
+<div class="sectionTitle"><h2>V19.2 Real-Time Engine</h2><span id="rtStatus" class="badge">STREAM: DISCONNECTED</span></div>
 <div class="grid4">
 <div class="metric"><b>LIVE PRICE</b><br><span id="rtPrice" class="big">—</span></div>
 <div class="metric"><b>STREAM AGE</b><br><span id="rtAge">—</span></div>
-<div class="metric"><b>LAST CLOSED</b><br><span id="rtClosed">—</span></div>
+<div class="metric"><b>LAST CLOSED</b><br><span id="rtClosed">Waiting for WebSocket candle-close event</span></div>
 <div class="metric"><b>LIVE SOURCE</b><br><span id="rtSource">Binance public WebSocket</span></div>
 </div>
 <p id="rtNote" class="small">The live stream updates price separately from the closed-candle decision engine. A new closed candle can refresh the selected-pair analysis.</p>
@@ -199,7 +199,7 @@ async function orderBook(symbol,limit=20){
   const imbalance=(bidQty+askQty)?((bidQty-askQty)/(bidQty+askQty))*100:0;
   const depthNotional=bids.slice(0,10).reduce((a,x)=>a+x[0]*x[1],0)+asks.slice(0,10).reduce((a,x)=>a+x[0]*x[1],0);
   const quality=spreadPct<=0.03 && depthNotional>100000?'GOOD':spreadPct<=0.10?'NORMAL':'LIMITED';
-  return {bid,ask,mid,spreadPct,imbalance,depthNotional,quality,source:'order book'};
+  return {bid,ask,mid,spreadPct,imbalance,bidQty,askQty,depthNotional,quality,source:'order book'};
  }catch(e){err=e}
  throw err||Error('Order book unavailable');
 }
@@ -268,12 +268,14 @@ function tlv19_structure(c,look=3){
   return {bias,event,retest,hh,hl,lastHigh:lastH?.price||resistance,lastLow:lastL?.price||support,support,resistance,swingsH:highs,swingsL:lows,structureScore,atr:atrVal,closedCount:src.length,structureDirection,stableDirection};
 }
 function analyze(c,ob=null){
- const a=c.map(x=>x.c),v=c.map(x=>x.v),q=c.map(x=>x.qv),p=a.at(-1);
+ const dc=c.filter(z=>!tlv19_isForming(z));
+ const d=dc.length>=80?dc:c.slice(0,-1);
+ const a=d.map(x=>x.c),v=d.map(x=>x.v),q=d.map(x=>x.qv),p=a.at(-1);
  const e20=ema(a,20),e50=ema(a,50),e100=ema(a,100),mac=ema(a,12)-ema(a,26),r=rsi(a),at=atr(c),atrPct=at/p;
  const recentVol=avg(v,20),priorVol=avg(v.slice(-60,-20),40)||1,vr=recentVol/priorVol;
  const recentQ=avg(q,20),priorQ=avg(q.slice(-60,-20),40)||1,liq=recentQ;
- const prevHigh=Math.max(...c.slice(-21,-1).map(x=>x.h)),prevLow=Math.min(...c.slice(-21,-1).map(x=>x.l));
- const support=Math.min(...c.slice(-50,-1).map(x=>x.l)),resistance=Math.max(...c.slice(-50,-1).map(x=>x.h));
+ const prevHigh=Math.max(...d.slice(-21,-1).map(x=>x.h)),prevLow=Math.min(...c.slice(-21,-1).map(x=>x.l));
+ const support=Math.min(...d.slice(-50,-1).map(x=>x.l)),resistance=Math.max(...c.slice(-50,-1).map(x=>x.h));
  const trend=p>e20&&e20>e50?'BULLISH':p<e20&&e20<e50?'BEARISH':'MIXED';
  const momentum=mac>0?'POSITIVE':mac<0?'NEGATIVE':'FLAT';
  const structure=p>prevHigh?'BREAKOUT UP':p<prevLow?'BREAKDOWN':(p>e50?'HIGHER-BIAS RANGE':'LOWER-BIAS RANGE');
@@ -294,7 +296,7 @@ function analyze(c,ob=null){
  const raw=trendScore+momScore+rsiScore+volScore+structureScore+volatilityScore+extensionScore+srScore+liquidityScore;
  const strength=Math.round((raw/11)*10*10)/10;
  const state=TLv102_direction(trend,momentum,rsi);
- const now=Date.now(),ageMin=Math.max(0,(now-c.at(-1).closeTime)/60000);
+ const now=Date.now(),ageMin=Math.max(0,(now-d.at(-1).closeTime)/60000);
  const freshness=ageMin<=30?'FRESH':ageMin<=180?'AGING':'STALE';
  const rsis=rsiSeries(a),mcd=macdSeries(a),bb=bollinger(a),vw=vwapSeries(c),ats=atrSeries(c),ms=tlv19_structure(c); return {p,e20,e50,e100,mac,r,at,atrPct,vr,liq,trend,momentum,structure,regime,rsiStatus,volume,trendScore,momScore,rsiScore,volScore,structureScore,volatilityScore,extensionStatus,extensionScore,srScore,liquidityScore,raw,strength,state,extension,support,resistance,freshness,ageMin,candles:c,marketStructure:ms,ema20Series:emaSeries(a,20),ema50Series:emaSeries(a,50),vwapSeries:vw,bbMid:bb.mid,bbUp:bb.up,bbLow:bb.low,rsiSeries:rsis,macdLine:mcd.line,macdSignal:mcd.signal,macdHist:mcd.hist,atrSeries:ats,orderBook:ob};
 }
@@ -321,7 +323,7 @@ function qualify(rs,c){
  ['TREND',d==='MIXED'?'NOT ESTABLISHED':trend>=2?'CONFIRMED':'NOT CONFIRMED'],
  ['MOMENTUM',d==='MIXED'?'NOT ESTABLISHED':mom>=2?'CONFIRMED':'NOT CONFIRMED'],
  ['RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'HEALTHY':'CAUTION'],
- ['VOLUME',vol>=2?'CONFIRMED':'WEAK'],
+ ['VOLUME',vol>=2?'CONFIRMED':vol===1?'INCOMPLETE':'WEAK'],
  ['STRUCTURE',rs.filter(x=>x.structure.includes('BREAK')||x.structure.includes('BIAS')).length>=2?'CONFIRMED':'UNCLEAR'],
  ['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'ACCEPTABLE':'HIGH / CAUTION'],
  ['LIQUIDITY',liq>=2?'ADEQUATE':liq===1?'NORMAL':'LIMITED'],
@@ -333,7 +335,7 @@ function qualify(rs,c){
  if(c.percent<67) blockers.push('Insufficient MTF confluence');
  if(d!=='MIXED'&&trend<2) blockers.push('Trend confirmation incomplete');
  if(d!=='MIXED'&&mom<2) blockers.push('Momentum confirmation incomplete');
- if(vol<2) blockers.push('Volume confirmation weak');
+ if(vol<2) blockers.push(vol===1?'Volume confirmation incomplete':'Volume confirmation weak');
  if(fresh<2) blockers.push('Data freshness');
  if(ext<2) blockers.push('Move may be extended');
  if(liq<2) blockers.push(obQuality==='NORMAL'?'Order-book liquidity is normal, not strong':'Order-book liquidity is unavailable or limited');
@@ -345,7 +347,7 @@ function qualify(rs,c){
  return {checks,blockers,status,volumeWeak:vol<2,structureConfirmed,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
 }
 function render(rs,c,q,detail){
- $('selectedTitle').textContent=$('pair').value+' • V19.1 Analysis';
+ $('selectedTitle').textContent=$('pair').value+' • V19.2 Analysis';
  $('decisionBadge').textContent=q.status;
  $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
  $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
@@ -359,17 +361,17 @@ function render(rs,c,q,detail){
  const selectedState=x=>x.state||'NEUTRAL';
  const mtfTrend=c.dominant==='MIXED'?'NOT ESTABLISHED':rs.filter(x=>x.trend===c.dominant).length>=2?'✓ CONFIRMED':'? MIXED';
  const mtfMomentum=!expectedMomentum?'NOT ESTABLISHED':rs.filter(x=>x.momentum===expectedMomentum).length>=2?'✓ CONFIRMED':'? MIXED';
- const avgParticipation=rs.reduce((sum,z)=>sum+(Number(z.vr)||0),0)/Math.max(1,rs.length); const mtfVolume=avgParticipation>=1?'✓ CONFIRMED • avg '+fmt(avgParticipation,2)+'x':avgParticipation>=.8?'⚠ NORMAL • avg '+fmt(avgParticipation,2)+'x':'? WEAK • avg '+fmt(avgParticipation,2)+'x';
+ const avgParticipation=rs.reduce((sum,z)=>sum+(Number(z.vr)||0),0)/Math.max(1,rs.length); const confirmedVol=rs.filter(x=>x.volume==='CONFIRMED').length; const mtfVolume=confirmedVol>=2?'✓ CONFIRMED • avg '+fmt(avgParticipation,2)+'x':confirmedVol===1?'⚠ INCOMPLETE • '+confirmedVol+'/3 confirmed • avg '+fmt(avgParticipation,2)+'x':'? WEAK • avg '+fmt(avgParticipation,2)+'x';
  const mtfStructure=q.structureConfirmed?'✓ CONFIRMED':'? NOT ALIGNED';
  $('why').innerHTML=[['MTF TREND',mtfTrend],['MTF MOMENTUM',mtfMomentum],['MTF RSI',rs.filter(x=>x.rsiStatus==='HEALTHY').length>=2?'✓ HEALTHY':'⚠ CAUTION'],['MTF VOLUME',mtfVolume],['MTF STRUCTURE',mtfStructure],['VOLATILITY',rs.filter(x=>x.atrPct<.025).length>=2?'✓ ACCEPTABLE':'⚠ HIGH'],['LIQUIDITY',(rs[0]?.orderBook?.quality==='GOOD')?'✓ ADEQUATE':(rs[0]?.orderBook?.quality==='NORMAL')?'⚠ NORMAL':'? LIMITED'],['EXTENSION',rs.filter(x=>x.extensionStatus==='ACCEPTABLE').length>=2?'✓ ACCEPTABLE':'⚠ EXTENDED']].map(x=>`<div class="metric"><b>${x[0]}</b><br>${x[1]}</div>`).join('');
  const x=rs[detail==='15m'?0:detail==='1h'?1:2];
- $('detailOut').innerHTML=[['DIRECTION',x.state],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volume],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',(x.marketStructure.bias||'—')+' • '+x.marketStructure.hh+'/'+x.marketStructure.hl],['REGIME',x.regime],['4H REGIME',rs[2]?.regime||'—'],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)'],['ORDER BOOK',x.orderBook?x.orderBook.quality:'UNAVAILABLE']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
- $('checks').innerHTML=q.checks.map(x=>`<div class="metric"><b>${x[0]}</b><br><span class="${x[1].includes('CONFIRMED')||x[1]==='HEALTHY'||x[1]==='ADEQUATE'||x[1]==='ACCEPTABLE'||x[1]==='FRESH'?'bull':x[1].includes('WEAK')||x[1].includes('STALE')||x[1].includes('EXTENDED')?'neutral':''}">${x[1]}</span></div>`).join('');
+ $('detailOut').innerHTML=[['DIRECTION',x.state],['TREND',x.trend],['MOMENTUM',x.momentum],['PRICE',fmt(x.p)],['ATR',fmt(x.at)],['ATR %',fmt(x.atrPct*100,2)+'%'],['RSI',fmt(x.r,1)],['VOL RATIO',fmt(x.vr,2)+'x'],['VOLUME STATUS',x.volume],['EMA 20',fmt(x.e20)],['EMA 50',fmt(x.e50)],['STRUCTURE',(x.marketStructure.bias||'—')+' • '+x.marketStructure.hh+'/'+x.marketStructure.hl],['REGIME',x.regime],['4H REGIME',rs[2]?.regime||'—'],['SUPPORT',fmt(x.support)],['RESISTANCE',fmt(x.resistance)],['DECISION CANDLE','CLOSED'],['FRESHNESS',x.freshness+' ('+fmt(x.ageMin,0)+'m)'],['ORDER BOOK',x.orderBook?x.orderBook.quality:'UNAVAILABLE']].map(q=>`<div class="metric"><b>${q[0]}</b><br>${q[1]}</div>`).join('');
+ $('checks').innerHTML=q.checks.map(x=>`<div class="metric"><b>${x[0]}</b><br><span class="${x[1].includes('CONFIRMED')||x[1]==='HEALTHY'||x[1]==='ADEQUATE'||x[1]==='ACCEPTABLE'||x[1]==='FRESH'?'bull':x[1].includes('WEAK')||x[1].includes('INCOMPLETE')||x[1].includes('STALE')||x[1].includes('EXTENDED')?'neutral':''}">${x[1]}</span></div>`).join('');
  const ms=x.marketStructure||{};
  $('structureSummary').innerHTML=[['BIAS',ms.bias||'—'],['SWING HIGH',ms.hh||'—'],['SWING LOW',ms.hl||'—'],['EVENT',ms.event||'NONE'],['RETEST',ms.retest||'NONE'],['SUPPORT',fmt(ms.support)],['RESISTANCE',fmt(ms.resistance)],['CONFIRMED SWINGS',fmt((ms.swingsH?.length||0)+(ms.swingsL?.length||0),0)]].map(z=>`<div class="tl-structure-card"><div class="k">${z[0]}</div><div class="v ${z[1]==='BULLISH'||String(z[1]).includes('UP')?'tl-structure-bull':z[1]==='BEARISH'||String(z[1]).includes('DOWN')?'tl-structure-bear':'tl-structure-neutral'}">${z[1]}</div></div>`).join('');
  $('structureNote').textContent=`${ms.bias||'Structure unavailable'} • ${ms.event||'No break'} • ${ms.retest||'No confirmed retest'}. Structure uses ${fmt(ms.closedCount||0,0)} closed candles to reduce repainting.`;
  const ob=x.orderBook||null;
- if($('obQuality')){ $('obQuality').textContent=ob?ob.quality:'UNAVAILABLE'; $('obQuality').className='v '+(ob?.quality==='GOOD'?'v191-good':ob?.quality==='NORMAL'?'v191-mid':'v191-bad'); $('obSpread').textContent=ob?fmt(ob.spreadPct,4)+'%':'—'; $('obImbalance').textContent=ob?fmt(ob.imbalance,1)+'%':'—'; $('obDepth').textContent=ob?fmt(ob.depthNotional,0):'—'; $('obNote').textContent=ob?`Top-10 depth context • bid ${fmt(ob.bid)} • ask ${fmt(ob.ask)} • imbalance is informational and does not create direction.`:'Order-book data unavailable; liquidity gating is conservative.';}
+ if($('obQuality')){ $('obQuality').textContent=ob?ob.quality:'UNAVAILABLE'; $('obQuality').className='v '+(ob?.quality==='GOOD'?'v191-good':ob?.quality==='NORMAL'?'v191-mid':'v191-bad'); $('obSpread').textContent=ob?fmt(ob.spreadPct,4)+'%':'—'; $('obImbalance').textContent=ob?fmt(ob.imbalance,1)+'%':'—'; $('obDepth').textContent=ob?fmt(ob.depthNotional,0):'—'; $('obNote').textContent=ob?`Top-10: bid depth ${fmt(ob.bidQty,2)} • ask depth ${fmt(ob.askQty,2)} • bid ${fmt(ob.bid)} • ask ${fmt(ob.ask)} • imbalance is informational and does not create direction.`:'Order-book data unavailable; liquidity gating is conservative.';}
  renderRisk(x,c,q);
 }
 function renderRisk(x,c,q){
@@ -416,7 +418,7 @@ async function run(){
   const rest=filtered.filter(r=>r.symbol!==selectedSym);
   if(selectedRow) rest.unshift(selectedRow);
   $('rows').innerHTML=rest.map(r=>`<tr>${r.symbol===selectedSym?'<td><b>'+r.symbol+'</b> <span class="badge">SELECTED</span></td>':`<td><b>${r.symbol}</b></td>`}<td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V19.1 scan complete. '+filtered.length+' pairs shown • '+out.length+' analyzed • selected pair pinned • closed-candle analysis + order-book context.';
+  $('status').textContent='V19.2 scan complete. '+filtered.length+' pairs shown • '+out.length+' analyzed • selected pair pinned • closed-candle decision engine + live-candle chart + order-book context.';
   tlv19_startRealtime();
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
@@ -426,7 +428,7 @@ $('pair').onchange=()=>{if($('status').textContent.includes('complete'))run()};
 </script>
 
 <script>
-/* ========================= TradeLens V19.1 Decision Engine ========================= */
+/* ========================= TradeLens V19.2 Decision Engine ========================= */
 const TLV19_WEIGHTS={ "15m":1, "1h":2, "4h":3 };
 
 function tlv19_num(x,d=0){ return Number.isFinite(Number(x))?Number(x):d; }
@@ -539,15 +541,15 @@ function tlv19_build(tfMap,summary){
 </script>
 
 <div class="card" style="margin-top:12px">
-  <h3>V19.1 Decision Engine</h3>
+  <h3>V19.2 Decision Engine</h3>
   <div class="v19-grid">
     <div class="v19-panel"><div class="v19-label">Setup Quality</div><div id="v19Quality" class="v19-value">—</div></div>
     <div class="v19-panel"><div class="v19-label">Trade Readiness</div><div id="v19Readiness" class="v19-value">WAITING</div></div>
     <div class="v19-panel"><div class="v19-label">Decision Direction</div><div id="v19Direction" class="v19-value">NONE</div></div>
     <div class="v19-panel"><div class="v19-label">Weighted Confluence</div><div id="v19Confluence" class="v19-value">—</div></div>
   </div>
-  <div id="v19Gate" class="v19-lock">V19.1 trade gate has not been evaluated.</div>
-  <div id="v19Explain" class="v19-explain">Run a scan to generate the V19.1 decision explanation.</div>
+  <div id="v19Gate" class="v19-lock">V19.2 trade gate has not been evaluated.</div>
+  <div id="v19Explain" class="v19-explain">Run a scan to generate the V19.2 decision explanation.</div>
   <div id="v19Context" class="v19-explain" style="margin-top:8px">Decision context will appear after a scan.</div>
   <h4 style="margin-top:14px">Confirmation Matrix</h4>
   <table class="v19-matrix">
@@ -569,7 +571,7 @@ function TLV19_renderDemo(tfMap,detailTf){
   c.textContent=result.confluence.percent+"% • weighted bias "+(result.confluence.direction||"MIXED");
   g.className=result.tradeGate.status==="READY"?"v19-ready":"v19-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ?"TRADE GATE OPEN — all V19.1 blocking conditions passed."
+    ?"TRADE GATE OPEN — all V19.2 blocking conditions passed."
     :"RISK PLAN LOCKED — "+result.tradeGate.blockers.join(" • ");
   if(ex){
     const dir=result.confluence.direction, pct=result.confluence.percent;
@@ -587,7 +589,7 @@ function TLV19_renderDemo(tfMap,detailTf){
 </script>
 
 <script>
-/* V19.1 live dashboard bridge — uses the actual scanner result directly. */
+/* V19.2 live dashboard bridge — uses the actual scanner result directly. */
 function TLV19_bridge(tfMap, detailTf, qualification, blockers){
   if(!tfMap) return null;
   return TLV19_render(tfMap, detailTf, qualification, blockers);
@@ -614,7 +616,7 @@ function TLV19_render(tfMap, detailTf, qualification, blockers){
 
   g.className=result.tradeGate.status==="READY"?"v19-ready":"v19-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ? "<b>TRADE GATE OPEN</b> — all V19.1 blocking conditions passed."
+    ? "<b>TRADE GATE OPEN</b> — all V19.2 blocking conditions passed."
     : "<b>RISK PLAN LOCKED</b> — "+(result.tradeGate.blockers.length?result.tradeGate.blockers.join(" • "):"No clean trade setup.");
   if(ex){
     const matrix=["15m","1h","4h"].map(tf=>{const x=result.timeframes[tf]||{};return tf+" "+(x.state||"NEUTRAL")+" ("+(TLV19_WEIGHTS[tf]||1)+"x)"}).join(" • ");
@@ -633,7 +635,7 @@ function TLV19_render(tfMap, detailTf, qualification, blockers){
     const selectedAgreement=selected.state===result.confluence.direction && result.confluence.direction!=="MIXED";
     const mtfVol=Object.values(result.timeframes).filter(x=>x.volume==='CONFIRMED').length;
     const mtfStruct=Object.values(result.timeframes).filter(x=>x.marketStructure&&x.marketStructure.stableDirection===result.confluence.direction).length;
-    ctx.innerHTML=`<b>V19.1 DECISION CONTEXT</b><br>Selected ${esc(detailTf||"15m")}: ${esc(selected.state||"NEUTRAL")} • Trend ${esc(selected.trend||"—")} • Momentum ${esc(selected.momentum||"—")} • Volume ${esc(selected.volume||"—")} • Structure ${esc(selected.marketStructure?.bias||"—")}<br>MTF alignment: ${selectedAgreement?"selected timeframe agrees with the dominant direction":"selected timeframe does not override the higher-timeframe decision"} • ${mtfStruct}/3 timeframes structurally aligned • ${mtfVol}/3 timeframes volume-confirmed.`;
+    ctx.innerHTML=`<b>V19.2 DECISION CONTEXT</b><br>Selected ${esc(detailTf||"15m")}: ${esc(selected.state||"NEUTRAL")} • Trend ${esc(selected.trend||"—")} • Momentum ${esc(selected.momentum||"—")} • Volume ${esc(selected.volume||"—")} • Structure ${esc(selected.marketStructure?.bias||"—")}<br>MTF alignment: ${selectedAgreement?"selected timeframe agrees with the dominant direction":"selected timeframe does not override the higher-timeframe decision"} • ${mtfStruct}/3 timeframes structurally aligned • ${mtfVol}/3 timeframes volume-confirmed.`;
   }
 
   m.innerHTML=["15m","1h","4h"].map(tf=>{
@@ -686,12 +688,12 @@ window.addEventListener("load",()=>{
 </script>
 
 <div class="card" style="margin-top:12px">
-  <b>V19.1 Live Decision Layer</b>
+  <b>V19.2 Live Decision Layer</b>
   <p class="tl-v19-muted">The confirmation matrix, setup quality, market structure and trade gate are linked to the scanner's current 15m / 1h / 4h analysis. They are informational safeguards and do not place orders.</p>
 </div>
 
 <script>
-/* ========================= TradeLens V19.1 Real-Time Engine ========================= */
+/* ========================= TradeLens V19.2 Real-Time Engine ========================= */
 let TLV19_WS=null, TLV19_WS_TIMER=null, TLV19_RECONNECT=0, TLV19_LAST_TICK=0, TLV19_CLOSED_REFRESH=0, TLV19_LAST_CLOSED={};
 function tlv19_setRT(state,msg){
   const b=$('rtStatus'), note=$('rtNote'); if(!b)return;
@@ -731,14 +733,14 @@ function tlv19_startRealtime(){
           const now=Date.now();
           if(now-TLV19_CLOSED_REFRESH>2000){
             TLV19_CLOSED_REFRESH=now;
-            $('rtClosed').textContent=new Date(Number(k.T)).toLocaleString();
+            $('rtClosed').textContent=tf+' • '+new Date(Number(k.T)).toLocaleString();
             $('rtNote').textContent='Closed '+tf+' candle received. Refreshing selected-pair closed-candle analysis…';
             try{
               const selected=await onePair($('pair').value);
               render(selected.rs,selected.c,selected.q,$('detail').value);
               window._tlv19LastRs=selected.rs; TLV19_chart.tf=$('detail').value; drawMTFChart(selected.rs);
               TLV19_render({'15m':selected.rs[0],'1h':selected.rs[1],'4h':selected.rs[2]},$('detail').value,selected.q.status,selected.q.blockers);
-              $('rtNote').textContent='Closed '+tf+' candle processed. Decision engine remains closed-candle based.';
+              $('rtNote').textContent='Closed '+tf+' decision candle processed. Live chart may still show the next forming candle.';
             }catch(e){$('rtNote').textContent='Closed candle received, but analysis refresh failed: '+e.message;}
           }
         }
