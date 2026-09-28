@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V19.3</title>
+<title>TradeLens V20</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -82,9 +82,9 @@ function TLv103_enforceDirectionIntegrity(a){
 @media(max-width:700px){.v19-grid{grid-template-columns:1fr}.v19-smallgrid{grid-template-columns:1fr}}
 </style>
 </head>
-<body><div class="card" style="margin-top:12px"><b>V19.3 Real-Time Decision & Structure Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V20 Market Intelligence & Real-Time Decision Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V19.3</h1>
+<h1>TradeLens V20</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -98,13 +98,30 @@ function TLv103_enforceDirectionIntegrity(a){
 <label>RISK %<input id="risk" type="number" value="1" step=".1" min=".1"></label>
 <label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED</option><option value="WATCH">WATCH</option><option value="ANY">ANY</option></select></label>
 </div>
-<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V19.3 SCAN</button></div>
+<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V20 SCAN</button></div>
 <p id="status" class="small">Ready.</p>
 </section>
 
 <section class="panel">
 <div class="sectionTitle"><h2>Market Scanner</h2><span class="small">Ranking uses setup strength; decision state remains separate. 4h regime is shown for market context.</span></div>
 <div style="overflow:auto"><table><thead><tr><th>PAIR</th><th>PRICE</th><th>STRENGTH</th><th>CONFLUENCE</th><th>STATE</th><th>QUALIFICATION</th><th>4H REGIME</th><th>PROBLEM</th></tr></thead><tbody id="rows"><tr><td colspan="8">Run scan.</td></tr></tbody></table></div>
+</section>
+
+<section class="panel">
+<div class="sectionTitle"><h2>Market Intelligence</h2><span class="small">Market-wide context supports the decision engine but does not create direction by itself.</span></div>
+<div id="marketIntel" class="grid4">
+<div class="metric"><b>MARKET REGIME</b><br><span id="miRegime" class="big">—</span></div>
+<div class="metric"><b>MARKET BREADTH</b><br><span id="miBreadth" class="big">—</span></div>
+<div class="metric"><b>VOLUME PARTICIPATION</b><br><span id="miVolume" class="big">—</span></div>
+<div class="metric"><b>VOLATILITY ENVIRONMENT</b><br><span id="miVolatility" class="big">—</span></div>
+</div>
+<div class="v19-smallgrid" style="margin-top:9px">
+<div class="metric"><b>BTC MARKET CONTEXT</b><br><span id="miBtc">—</span></div>
+<div class="metric"><b>ETH CONTEXT</b><br><span id="miEth">—</span></div>
+<div class="metric"><b>ALTCOIN ALIGNMENT</b><br><span id="miAlt">—</span></div>
+<div class="metric"><b>BTC → ALT CONTEXT</b><br><span id="miInfluence">—</span></div>
+</div>
+<div class="metric" style="margin-top:9px"><b>MARKET INTELLIGENCE SUMMARY</b><br><span id="miSummary">Run a scan to calculate market-wide context.</span></div>
 </section>
 
 <section class="panel">
@@ -128,7 +145,7 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel">
-<div class="sectionTitle"><h2>V19.3 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
+<div class="sectionTitle"><h2>V20 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
 <div id="indicatorSummary" class="grid3"></div>
 </section>
 
@@ -167,7 +184,7 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel v19-rt-panel">
-<div class="sectionTitle"><h2>V19.3 Real-Time Engine</h2><span id="rtStatus" class="badge">STREAM: DISCONNECTED</span></div>
+<div class="sectionTitle"><h2>V20 Real-Time Engine</h2><span id="rtStatus" class="badge">STREAM: DISCONNECTED</span></div>
 <div class="grid4">
 <div class="metric"><b>LIVE PRICE</b><br><span id="rtPrice" class="big">—</span></div>
 <div class="metric"><b>STREAM AGE</b><br><span id="rtAge">—</span></div>
@@ -350,7 +367,7 @@ function qualify(rs,c){
  return {checks,blockers,status,volumeWeak:vol<2,structureConfirmed,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
 }
 function render(rs,c,q,detail){
- $('selectedTitle').textContent=$('pair').value+' • V19.3 Analysis';
+ $('selectedTitle').textContent=$('pair').value+' • V20 Analysis';
  $('decisionBadge').textContent=q.status;
  $('decisionBadge').className='badge '+(q.status==='QUALIFIED'?'ok':q.status==='INVALID'?'bad':'warn');
  $('fp').innerHTML=rs.map((x,i)=>`<div class="card"><b>${TF[i]}</b><div class="big ${cls(x.state)}">${x.state}</div><div class="small">Strength ${fmt(x.strength,1)}/10<br>Trend ${x.trend} • ${x.momentum}<br>RSI ${fmt(x.r,1)} • Vol ${fmt(x.vr,2)}x</div></div>`).join('');
@@ -399,6 +416,38 @@ $('chartStatus').textContent=`${$('pair').value} • ${tf} • ${raw.length} can
 function tlv19_refreshChart(){if(TLV19_chart.rs)tlv19_draw(TLV19_chart.rs,TLV19_chart.tf,TLV19_chart.count)}
 function drawMTFChart(rs){TLV19_chart.rs=rs;tlv19_draw(rs,TLV19_chart.tf,TLV19_chart.count)}
 window.addEventListener('resize',tlv19_refreshChart);
+function tlv20_corr(a,b){const n=Math.min(a.length,b.length);if(n<20)return 0;const aa=a.slice(-n),bb=b.slice(-n),ma=avg(aa,n),mb=avg(bb,n);let num=0,da=0,db=0;for(let i=0;i<n;i++){const x=aa[i]-ma,y=bb[i]-mb;num+=x*y;da+=x*x;db+=y*y}return da&&db?num/Math.sqrt(da*db):0}
+function tlv20_marketRegime(results){
+ const dirs=results.map(x=>x.c.dominant).filter(x=>x==='BULLISH'||x==='BEARISH');
+ const bull=dirs.filter(x=>x==='BULLISH').length,bear=dirs.filter(x=>x==='BEARISH').length,total=results.length||1;
+ const directional=(bull+bear)/total;
+ const strong=Math.max(bull,bear);
+ if(directional<.4)return 'RANGE / TRANSITION';
+ if(strong/total>=.7)return bull>bear?'BULLISH TREND':'BEARISH TREND';
+ return 'MIXED / TRANSITION';
+}
+function tlv20_buildIntel(results){
+ const pairs=results.map(x=>x.symbol),bull=results.filter(x=>x.c.dominant==='BULLISH').length,bear=results.filter(x=>x.c.dominant==='BEARISH').length,neutral=results.length-bull-bear;
+ const avgVol=avg(results.map(x=>avg(x.rs.map(t=>t.volRatio),3)),results.length)||0;
+ const volLabel=avgVol>=1.05?'ELEVATED':avgVol>=.85?'NORMAL':'WEAK';
+ const avgAtr=avg(results.map(x=>x.rs[1]?.atrPct||0),results.length)||0;
+ const volEnv=avgAtr<.012?'LOW VOLATILITY':avgAtr>.025?'HIGH VOLATILITY':'NORMAL VOLATILITY';
+ const btc=results.find(x=>x.symbol==='BTCUSDT'),eth=results.find(x=>x.symbol==='ETHUSDT');
+ const btcState=btc?.c?.dominant||'MIXED',ethState=eth?.c?.dominant||'MIXED';
+ const alts=results.filter(x=>x.symbol!=='BTCUSDT'&&x.symbol!=='ETHUSDT');
+ const altDir=alts.filter(x=>x.c.dominant==='BULLISH'||x.c.dominant==='BEARISH');
+ const altAligned=altDir.length?Math.round(100*altDir.filter(x=>x.c.dominant===btcState).length/altDir.length):0;
+ let influence='MIXED';
+ if(btcState==='BULLISH'&&altAligned>=60)influence='SUPPORTIVE';
+ else if(btcState==='BEARISH'&&altAligned>=60)influence='OPPOSING TO LONGS';
+ else if(btcState==='BULLISH'&&altAligned<=40)influence='WEAK / DIVERGENT';
+ else if(btcState==='BEARISH'&&altAligned<=40)influence='WEAK / DIVERGENT';
+ const intel={breadth:{bull,bear,neutral,total:results.length},regime:tlv20_marketRegime(results),avgVolume:avgVol,volumeLabel:volLabel,volatility:volEnv,btcState,ethState,altAlignment:altAligned,influence};
+ if(btc&&eth){const b=btc.rs[1]?.candles?.map(z=>z.c)||[],e=eth.rs[1]?.candles?.map(z=>z.c)||[];intel.btcEthCorrelation=tlv20_corr(b,e)}else intel.btcEthCorrelation=null;
+ return intel;
+}
+function tlv20_renderIntel(intel){if(!intel)return;const set=(id,v)=>{const el=$(id);if(el)el.textContent=v};set('miRegime',intel.regime);set('miBreadth',`${intel.breadth.bull} Bullish • ${intel.breadth.bear} Bearish • ${intel.breadth.neutral} Neutral`);set('miVolume',`${intel.volumeLabel} • avg ${fmt(intel.avgVolume,2)}x`);set('miVolatility',intel.volatility);set('miBtc',intel.btcState);set('miEth',intel.ethState);set('miAlt',`${intel.altAlignment}% aligned with BTC directional state`);set('miInfluence',intel.influence);set('miSummary',`Market regime ${intel.regime}. Breadth is ${intel.breadth.bull} bullish / ${intel.breadth.bear} bearish / ${intel.breadth.neutral} neutral. Volume participation is ${intel.volumeLabel.toLowerCase()} at ${fmt(intel.avgVolume,2)}x average. BTC context is ${intel.btcState}; ETH is ${intel.ethState}. Altcoin directional alignment with BTC is ${intel.altAlignment}%.`+(intel.btcEthCorrelation!=null?` BTC/ETH 1h price correlation is ${fmt(intel.btcEthCorrelation,2)}.`:''));}
+
 async function onePair(symbol){const ob=await orderBook(symbol).catch(()=>null);const rs=await Promise.all(TF.map(t=>candles(symbol,t).then(c=>analyze(c,ob,t))));const c=confluence(rs),q=qualify(rs,c);return {symbol,rs,c,q,orderBook:ob}}
 async function run(){
  try{
@@ -407,12 +456,14 @@ async function run(){
   render(selected.rs,selected.c,selected.q,$('detail').value);
   window._tlv19LastRs=selected.rs; TLV19_chart.tf=$('detail').value; drawMTFChart(selected.rs);
   TLV19_render({"15m":selected.rs[0],"1h":selected.rs[1],"4h":selected.rs[2]}, $('detail').value, selected.q.status, selected.q.blockers);
-  const symbols=[...$('pair').options].map(o=>o.value),out=[];
+  const symbols=[...$('pair').options].map(o=>o.value),out=[],marketResults=[];
   for(const symbol of symbols)try{
    const z=await onePair(symbol);
+   marketResults.push(z);
    out.push({symbol,price:z.rs[0].p,strength:z.c.avg,conf:z.c.percent,state:z.c.dominant,qual:z.q.status,regime:z.rs[2].regime,problem:z.q.status==='QUALIFIED'?'None':(z.q.blockers.join('; ')||z.c.problem)});
   }catch(e){console.warn(symbol,e)}
   out.sort((a,b)=>b.strength-a.strength);
+  tlv20_renderIntel(tlv20_buildIntel(marketResults));
   const min=$('minQual').value;
   const rank={INVALID:0,WATCH:1,QUALIFIED:2};
   const selectedSym=$('pair').value;
@@ -421,7 +472,7 @@ async function run(){
   const rest=filtered.filter(r=>r.symbol!==selectedSym);
   if(selectedRow) rest.unshift(selectedRow);
   $('rows').innerHTML=rest.map(r=>`<tr>${r.symbol===selectedSym?'<td><b>'+r.symbol+'</b> <span class="badge">SELECTED</span></td>':`<td><b>${r.symbol}</b></td>`}<td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V19.3 scan complete. '+filtered.length+' pairs shown • '+out.length+' analyzed • selected pair pinned • closed-candle decision engine + live-candle chart + order-book context.';
+  $('status').textContent='V20 scan complete. '+filtered.length+' pairs shown • '+out.length+' analyzed • selected pair pinned • closed-candle decision engine + live-candle chart + order-book context.';
   tlv19_startRealtime();
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
@@ -431,7 +482,7 @@ $('pair').onchange=()=>{if($('status').textContent.includes('complete'))run()};
 </script>
 
 <script>
-/* ========================= TradeLens V19.3 Decision Engine ========================= */
+/* ========================= TradeLens V20 Decision Engine ========================= */
 const TLV19_WEIGHTS={ "15m":1, "1h":2, "4h":3 };
 
 function tlv19_num(x,d=0){ return Number.isFinite(Number(x))?Number(x):d; }
@@ -544,15 +595,15 @@ function tlv19_build(tfMap,summary){
 </script>
 
 <div class="card" style="margin-top:12px">
-  <h3>V19.3 Decision Engine</h3>
+  <h3>V20 Decision Engine</h3>
   <div class="v19-grid">
     <div class="v19-panel"><div class="v19-label">Setup Quality</div><div id="v19Quality" class="v19-value">—</div></div>
     <div class="v19-panel"><div class="v19-label">Trade Readiness</div><div id="v19Readiness" class="v19-value">WAITING</div></div>
     <div class="v19-panel"><div class="v19-label">Decision Direction</div><div id="v19Direction" class="v19-value">NONE</div></div>
     <div class="v19-panel"><div class="v19-label">Weighted Confluence</div><div id="v19Confluence" class="v19-value">—</div></div>
   </div>
-  <div id="v19Gate" class="v19-lock">V19.3 trade gate has not been evaluated.</div>
-  <div id="v19Explain" class="v19-explain">Run a scan to generate the V19.3 decision explanation.</div>
+  <div id="v19Gate" class="v19-lock">V20 trade gate has not been evaluated.</div>
+  <div id="v19Explain" class="v19-explain">Run a scan to generate the V20 decision explanation.</div>
   <div id="v19Context" class="v19-explain" style="margin-top:8px">Decision context will appear after a scan.</div>
   <h4 style="margin-top:14px">Confirmation Matrix</h4>
   <table class="v19-matrix">
@@ -574,7 +625,7 @@ function TLV19_renderDemo(tfMap,detailTf){
   c.textContent=result.confluence.percent+"% • weighted bias "+(result.confluence.direction||"MIXED");
   g.className=result.tradeGate.status==="READY"?"v19-ready":"v19-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ?"TRADE GATE OPEN — all V19.3 blocking conditions passed."
+    ?"TRADE GATE OPEN — all V20 blocking conditions passed."
     :"RISK PLAN LOCKED — "+result.tradeGate.blockers.join(" • ");
   if(ex){
     const dir=result.confluence.direction, pct=result.confluence.percent;
@@ -592,7 +643,7 @@ function TLV19_renderDemo(tfMap,detailTf){
 </script>
 
 <script>
-/* V19.3 live dashboard bridge — uses the actual scanner result directly. */
+/* V20 live dashboard bridge — uses the actual scanner result directly. */
 function TLV19_bridge(tfMap, detailTf, qualification, blockers){
   if(!tfMap) return null;
   return TLV19_render(tfMap, detailTf, qualification, blockers);
@@ -619,7 +670,7 @@ function TLV19_render(tfMap, detailTf, qualification, blockers){
 
   g.className=result.tradeGate.status==="READY"?"v19-ready":"v19-lock";
   g.innerHTML=result.tradeGate.status==="READY"
-    ? "<b>TRADE GATE OPEN</b> — all V19.3 blocking conditions passed."
+    ? "<b>TRADE GATE OPEN</b> — all V20 blocking conditions passed."
     : "<b>RISK PLAN LOCKED</b> — "+(result.tradeGate.blockers.length?result.tradeGate.blockers.join(" • "):"No clean trade setup.");
   if(ex){
     const matrix=["15m","1h","4h"].map(tf=>{const x=result.timeframes[tf]||{};return tf+" "+(x.state||"NEUTRAL")+" ("+(TLV19_WEIGHTS[tf]||1)+"x)"}).join(" • ");
@@ -638,7 +689,7 @@ function TLV19_render(tfMap, detailTf, qualification, blockers){
     const selectedAgreement=selected.state===result.confluence.direction && result.confluence.direction!=="MIXED";
     const mtfVol=Object.values(result.timeframes).filter(x=>x.volume==='CONFIRMED').length;
     const mtfStruct=Object.values(result.timeframes).filter(x=>x.marketStructure&&x.marketStructure.stableDirection===result.confluence.direction).length;
-    ctx.innerHTML=`<b>V19.3 DECISION CONTEXT</b><br>Selected ${esc(detailTf||"15m")}: ${esc(selected.state||"NEUTRAL")} • Trend ${esc(selected.trend||"—")} • Momentum ${esc(selected.momentum||"—")} • Volume ${esc(selected.volume||"—")} • Structure ${esc(selected.marketStructure?.bias||"—")}<br>MTF alignment: ${selectedAgreement?"selected timeframe agrees with the dominant direction":"selected timeframe does not override the higher-timeframe decision"} • ${mtfStruct}/3 timeframes structurally aligned • ${mtfVol}/3 timeframes volume-confirmed.`;
+    ctx.innerHTML=`<b>V20 DECISION CONTEXT</b><br>Selected ${esc(detailTf||"15m")}: ${esc(selected.state||"NEUTRAL")} • Trend ${esc(selected.trend||"—")} • Momentum ${esc(selected.momentum||"—")} • Volume ${esc(selected.volume||"—")} • Structure ${esc(selected.marketStructure?.bias||"—")}<br>MTF alignment: ${selectedAgreement?"selected timeframe agrees with the dominant direction":"selected timeframe does not override the higher-timeframe decision"} • ${mtfStruct}/3 timeframes structurally aligned • ${mtfVol}/3 timeframes volume-confirmed.`;
   }
 
   m.innerHTML=["15m","1h","4h"].map(tf=>{
@@ -691,12 +742,12 @@ window.addEventListener("load",()=>{
 </script>
 
 <div class="card" style="margin-top:12px">
-  <b>V19.3 Live Decision Layer</b>
+  <b>V20 Live Decision Layer</b>
   <p class="tl-v19-muted">The confirmation matrix, setup quality, market structure and trade gate are linked to the scanner's current 15m / 1h / 4h analysis. They are informational safeguards and do not place orders.</p>
 </div>
 
 <script>
-/* ========================= TradeLens V19.3 Real-Time Engine ========================= */
+/* ========================= TradeLens V20 Real-Time Engine ========================= */
 let TLV19_WS=null, TLV19_WS_TIMER=null, TLV19_RECONNECT=0, TLV19_LAST_TICK=0, TLV19_CLOSED_REFRESH=0, TLV19_LAST_CLOSED={};
 function tlv19_setRT(state,msg){
   const b=$('rtStatus'), note=$('rtNote'); if(!b)return;
