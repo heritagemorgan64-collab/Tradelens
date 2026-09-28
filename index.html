@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V20</title>
+<title>TradeLens V20.1</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -82,9 +82,9 @@ function TLv103_enforceDirectionIntegrity(a){
 @media(max-width:700px){.v19-grid{grid-template-columns:1fr}.v19-smallgrid{grid-template-columns:1fr}}
 </style>
 </head>
-<body><div class="card" style="margin-top:12px"><b>V20 Market Intelligence & Real-Time Decision Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V20.1 Market Intelligence & Real-Time Decision Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries the most confluence weight. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V20</h1>
+<h1>TradeLens V20.1</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -98,7 +98,7 @@ function TLv103_enforceDirectionIntegrity(a){
 <label>RISK %<input id="risk" type="number" value="1" step=".1" min=".1"></label>
 <label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED</option><option value="WATCH">WATCH</option><option value="ANY">ANY</option></select></label>
 </div>
-<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V20 SCAN</button></div>
+<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V20.1 SCAN</button></div>
 <p id="status" class="small">Ready.</p>
 </section>
 
@@ -119,7 +119,7 @@ function TLv103_enforceDirectionIntegrity(a){
 <div class="metric"><b>BTC MARKET CONTEXT</b><br><span id="miBtc">—</span></div>
 <div class="metric"><b>ETH CONTEXT</b><br><span id="miEth">—</span></div>
 <div class="metric"><b>ALTCOIN ALIGNMENT</b><br><span id="miAlt">—</span></div>
-<div class="metric"><b>BTC → ALT CONTEXT</b><br><span id="miInfluence">—</span></div>
+<div class="metric"><b>BTC → ALT CONTEXT</b><br><span id="miInfluence">—</span></div><div class="metric"><b>CONTEXT EFFECT</b><br><span id="miEffect">—</span></div>
 </div>
 <div class="metric" style="margin-top:9px"><b>MARKET INTELLIGENCE SUMMARY</b><br><span id="miSummary">Run a scan to calculate market-wide context.</span></div>
 </section>
@@ -427,26 +427,34 @@ function tlv20_marketRegime(results){
  return 'MIXED / TRANSITION';
 }
 function tlv20_buildIntel(results){
- const pairs=results.map(x=>x.symbol),bull=results.filter(x=>x.c.dominant==='BULLISH').length,bear=results.filter(x=>x.c.dominant==='BEARISH').length,neutral=results.length-bull-bear;
- const avgVol=avg(results.map(x=>avg(x.rs.map(t=>t.volRatio),3)),results.length)||0;
- const volLabel=avgVol>=1.05?'ELEVATED':avgVol>=.85?'NORMAL':'WEAK';
- const avgAtr=avg(results.map(x=>x.rs[1]?.atrPct||0),results.length)||0;
- const volEnv=avgAtr<.012?'LOW VOLATILITY':avgAtr>.025?'HIGH VOLATILITY':'NORMAL VOLATILITY';
+ const total=results.length||0;
+ const bull=results.filter(x=>x.c.dominant==='BULLISH').length,bear=results.filter(x=>x.c.dominant==='BEARISH').length,neutral=total-bull-bear;
+ const volSamples=results.flatMap(x=>x.rs.map(t=>Number(t.vr)).filter(Number.isFinite));
+ const avgVol=volSamples.length?volSamples.reduce((a,b)=>a+b,0)/volSamples.length:null;
+ const volConfirmed=results.filter(x=>x.rs.filter(t=>t.volume==='CONFIRMED').length>=2).length;
+ const volLabel=avgVol==null?'DATA UNAVAILABLE':avgVol>=1.05?'ELEVATED':avgVol>=.85?'NORMAL':'WEAK';
+ const avgAtr=results.map(x=>x.rs[1]?.atrPct).filter(Number.isFinite);
+ const atrAvg=avgAtr.length?avgAtr.reduce((a,b)=>a+b,0)/avgAtr.length:null;
+ const volEnv=atrAvg==null?'DATA UNAVAILABLE':atrAvg<.012?'LOW VOLATILITY':atrAvg>.025?'HIGH VOLATILITY':'NORMAL VOLATILITY';
  const btc=results.find(x=>x.symbol==='BTCUSDT'),eth=results.find(x=>x.symbol==='ETHUSDT');
  const btcState=btc?.c?.dominant||'MIXED',ethState=eth?.c?.dominant||'MIXED';
  const alts=results.filter(x=>x.symbol!=='BTCUSDT'&&x.symbol!=='ETHUSDT');
  const altDir=alts.filter(x=>x.c.dominant==='BULLISH'||x.c.dominant==='BEARISH');
- const altAligned=altDir.length?Math.round(100*altDir.filter(x=>x.c.dominant===btcState).length/altDir.length):0;
- let influence='MIXED';
- if(btcState==='BULLISH'&&altAligned>=60)influence='SUPPORTIVE';
- else if(btcState==='BEARISH'&&altAligned>=60)influence='OPPOSING TO LONGS';
- else if(btcState==='BULLISH'&&altAligned<=40)influence='WEAK / DIVERGENT';
- else if(btcState==='BEARISH'&&altAligned<=40)influence='WEAK / DIVERGENT';
- const intel={breadth:{bull,bear,neutral,total:results.length},regime:tlv20_marketRegime(results),avgVolume:avgVol,volumeLabel:volLabel,volatility:volEnv,btcState,ethState,altAlignment:altAligned,influence};
- if(btc&&eth){const b=btc.rs[1]?.candles?.map(z=>z.c)||[],e=eth.rs[1]?.candles?.map(z=>z.c)||[];intel.btcEthCorrelation=tlv20_corr(b,e)}else intel.btcEthCorrelation=null;
+ let altAlignment=null,influence='N/A — BTC has no confirmed directional state';
+ if(btcState==='BULLISH'||btcState==='BEARISH'){
+   altAlignment=altDir.length?Math.round(100*altDir.filter(x=>x.c.dominant===btcState).length/altDir.length):null;
+   if(altAlignment==null) influence='N/A — insufficient altcoin directional data';
+   else if(altAlignment>=60) influence='SUPPORTIVE';
+   else if(altAlignment<=40) influence=btcState==='BEARISH'?'OPPOSING TO LONGS':'WEAK / DIVERGENT';
+   else influence='MIXED';
+ }
+ let effect='NO DIRECTIONAL CONFIRMATION';
+ if(btcState!=='MIXED' && altAlignment!=null) effect=altAlignment>=60?'SUPPORTIVE CONTEXT':altAlignment<=40?'DIVERGENT CONTEXT':'MIXED CONTEXT';
+ const corr=btc&&eth?tlv20_corr(btc.rs[1]?.candles?.map(z=>z.c)||[],eth.rs[1]?.candles?.map(z=>z.c)||[]):null;
+ const intel={breadth:{bull,bear,neutral,total},breadthPct:{bull:total?Math.round(bull/total*100):0,bear:total?Math.round(bear/total*100):0,neutral:total?Math.round(neutral/total*100):0},regime:tlv20_marketRegime(results),avgVolume:avgVol,volumeLabel:volLabel,volumeConfirmed:volConfirmed,volatility:volEnv,btcState,ethState,altAlignment,influence,effect,btcEthCorrelation:corr,correlationSample:Math.min(btc?.rs[1]?.candles?.length||0,eth?.rs[1]?.candles?.length||0)};
  return intel;
 }
-function tlv20_renderIntel(intel){if(!intel)return;const set=(id,v)=>{const el=$(id);if(el)el.textContent=v};set('miRegime',intel.regime);set('miBreadth',`${intel.breadth.bull} Bullish • ${intel.breadth.bear} Bearish • ${intel.breadth.neutral} Neutral`);set('miVolume',`${intel.volumeLabel} • avg ${fmt(intel.avgVolume,2)}x`);set('miVolatility',intel.volatility);set('miBtc',intel.btcState);set('miEth',intel.ethState);set('miAlt',`${intel.altAlignment}% aligned with BTC directional state`);set('miInfluence',intel.influence);set('miSummary',`Market regime ${intel.regime}. Breadth is ${intel.breadth.bull} bullish / ${intel.breadth.bear} bearish / ${intel.breadth.neutral} neutral. Volume participation is ${intel.volumeLabel.toLowerCase()} at ${fmt(intel.avgVolume,2)}x average. BTC context is ${intel.btcState}; ETH is ${intel.ethState}. Altcoin directional alignment with BTC is ${intel.altAlignment}%.`+(intel.btcEthCorrelation!=null?` BTC/ETH 1h price correlation is ${fmt(intel.btcEthCorrelation,2)}.`:''));}
+function tlv20_renderIntel(intel){if(!intel)return;const set=(id,v)=>{const el=$(id);if(el)el.textContent=v};set('miRegime',intel.regime);set('miBreadth',`${intel.breadth.bull} Bullish • ${intel.breadth.bear} Bearish • ${intel.breadth.neutral} Neutral`);set('miBreadthPct',`${intel.breadthPct.bull}% Bullish • ${intel.breadthPct.bear}% Bearish • ${intel.breadthPct.neutral}% Neutral`);set('miVolumeSample',`${intel.volumeConfirmed}/${intel.breadth.total} pairs • avg ${intel.avgVolume==null?'—':fmt(intel.avgVolume,2)+'x'}`);set('miVolume',`${intel.volumeLabel} • avg ${intel.avgVolume==null?'—':fmt(intel.avgVolume,2)+'x'}`);set('miVolatility',intel.volatility);set('miBtc',intel.btcState);set('miEth',intel.ethState);set('miAlt',intel.altAlignment==null?'N/A — BTC has no confirmed directional state':`${intel.altAlignment}% aligned with BTC directional state`);set('miInfluence',intel.influence);set('miEffect',intel.effect);set('miSummary',`Market regime ${intel.regime}. Breadth is ${intel.breadth.bull} bullish / ${intel.breadth.bear} bearish / ${intel.breadth.neutral} neutral. Market volume participation is ${intel.volumeLabel.toLowerCase()} with ${intel.volumeConfirmed}/${intel.breadth.total} pairs meeting volume confirmation and ${intel.avgVolume==null?'no aggregate average':fmt(intel.avgVolume,2)+'x average participation'}. BTC context is ${intel.btcState}; ETH is ${intel.ethState}. Altcoin alignment is ${intel.altAlignment==null?'N/A because BTC has no confirmed direction':intel.altAlignment+'%'}. Context effect: ${intel.effect}.`+(intel.btcEthCorrelation!=null?` BTC/ETH 1h price correlation is ${fmt(intel.btcEthCorrelation,2)} using ${intel.correlationSample} candles.`:''));}
 
 async function onePair(symbol){const ob=await orderBook(symbol).catch(()=>null);const rs=await Promise.all(TF.map(t=>candles(symbol,t).then(c=>analyze(c,ob,t))));const c=confluence(rs),q=qualify(rs,c);return {symbol,rs,c,q,orderBook:ob}}
 async function run(){
@@ -472,7 +480,7 @@ async function run(){
   const rest=filtered.filter(r=>r.symbol!==selectedSym);
   if(selectedRow) rest.unshift(selectedRow);
   $('rows').innerHTML=rest.map(r=>`<tr>${r.symbol===selectedSym?'<td><b>'+r.symbol+'</b> <span class="badge">SELECTED</span></td>':`<td><b>${r.symbol}</b></td>`}<td>${fmt(r.price)}</td><td>${fmt(r.strength,1)}/10</td><td>${r.conf}%</td><td class="${cls(r.state)}">${r.state}</td><td><span class="badge ${r.qual==='QUALIFIED'?'ok':r.qual==='INVALID'?'bad':'warn'}">${r.qual}</span></td><td>${r.regime}</td><td class="small">${esc(r.problem==='NONE'?'None':r.problem)}</td></tr>`).join('');
-  $('status').textContent='V20 scan complete. '+filtered.length+' pairs shown • '+out.length+' analyzed • selected pair pinned • closed-candle decision engine + live-candle chart + order-book context.';
+  $('status').textContent='V20.1 scan complete. '+filtered.length+' pairs shown • '+out.length+' analyzed • selected pair pinned • closed-candle decision engine + live-candle chart + order-book context.';
   tlv19_startRealtime();
  }catch(e){$('status').textContent='Scan failed: '+e.message}
 }
@@ -482,7 +490,7 @@ $('pair').onchange=()=>{if($('status').textContent.includes('complete'))run()};
 </script>
 
 <script>
-/* ========================= TradeLens V20 Decision Engine ========================= */
+/* ========================= TradeLens V20.1 Decision Engine ========================= */
 const TLV19_WEIGHTS={ "15m":1, "1h":2, "4h":3 };
 
 function tlv19_num(x,d=0){ return Number.isFinite(Number(x))?Number(x):d; }
@@ -747,7 +755,7 @@ window.addEventListener("load",()=>{
 </div>
 
 <script>
-/* ========================= TradeLens V20 Real-Time Engine ========================= */
+/* ========================= TradeLens V20.1 Real-Time Engine ========================= */
 let TLV19_WS=null, TLV19_WS_TIMER=null, TLV19_RECONNECT=0, TLV19_LAST_TICK=0, TLV19_CLOSED_REFRESH=0, TLV19_LAST_CLOSED={};
 function tlv19_setRT(state,msg){
   const b=$('rtStatus'), note=$('rtNote'); if(!b)return;
