@@ -795,7 +795,7 @@ function TLV19_render(tfMap, detailTf, qualification, blockers){
 
   const setupInvalid=(qualification||"WATCH")==="INVALID";
   const cleanDirection=!setupInvalid && result.confluence.direction!=="MIXED" && result.confluence.percent>=67;
-  quality.textContent=setupStatus;
+  quality.textContent=result.confluence.avg!=null?fmt(result.confluence.avg,1)+"/10":"—";
   q.textContent=result.tradeGate.status==="READY"?"READY":(setupInvalid?"INVALID":result.readiness.status);
   d.textContent=cleanDirection?result.confluence.direction:"NONE";
   const directionalAgreement=authoritative?authoritative.directionalCount:["15m","1h","4h"].filter(tf=>result.timeframes[tf]?.state===result.confluence.direction && result.confluence.direction!=="MIXED").length;
