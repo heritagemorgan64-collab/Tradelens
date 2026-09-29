@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V26</title>
+<title>TradeLens V27</title>
 <style>
 :root{--bg:#061018;--panel:#0d1923;--card:#101f2b;--line:#203744;--text:#e9f2f7;--muted:#8ea5b4;--green:#42d19c;--red:#ff6f7d;--yellow:#f4c95d;--blue:#64b5ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif;padding:16px}.wrap{max-width:1180px;margin:auto}
@@ -49,6 +49,8 @@ table{width:100%;border-collapse:collapse}td,th{padding:9px 7px;border-bottom:1p
 
 
 .v25-gates{border:1px solid #334155;background:#0b1620;padding:12px;border-radius:10px;margin-top:10px}.v25-gates h4{margin:0 0 9px}.v25-gategrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.v25-gate{border:1px solid #334155;border-radius:8px;padding:8px;background:#0f172a}.v25-gate b{display:block;font-size:11px}.v25-gate span{font-size:12px;color:#cbd5e1}.v25-pass{color:#86efac}.v25-fail{color:#fca5a5}.v25-info{color:#fde68a}@media(max-width:700px){.v25-gategrid{grid-template-columns:1fr}}
+
+.v27-exec{border:1px solid #355064;background:#0a1721;padding:14px;border-radius:12px;margin:12px 0}.v27-exec h2{margin:0 0 5px}.v27-exec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.v27-exec .danger{color:#ffb4bd}.v27-exec .safe{color:#86efac}.v27-exec button{font-weight:900}.v27-exec .primary{border-color:#2e8b68;background:#103226}.v27-exec .disabled{opacity:.5;cursor:not-allowed}.v27-order-result{margin-top:10px;padding:10px;border:1px solid #334155;border-radius:9px;background:#0c1821;white-space:pre-wrap;font-size:12px}.v27-pill{display:inline-block;border:1px solid #334155;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800}@media(max-width:760px){.v27-exec-grid{grid-template-columns:1fr 1fr}}@media(max-width:500px){.v27-exec-grid{grid-template-columns:1fr}}
 </style>
 
 <script>
@@ -107,9 +109,9 @@ function TLv103_enforceDirectionIntegrity(a){
 @media(max-width:700px){.v19-grid{grid-template-columns:1fr}.v19-smallgrid{grid-template-columns:1fr}}
 </style>
 </head>
-<body><div class="card" style="margin-top:12px"><b>V26 Market Intelligence & Real-Time Decision Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries 3x confluence weight; trade readiness also requires 4h confirmation. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
+<body><div class="card" style="margin-top:12px"><b>V27 Market Intelligence & Real-Time Decision Engine:</b> timeframe direction requires trend and momentum agreement; 4h carries 3x confluence weight; trade readiness also requires 4h confirmation. Setup quality and trade readiness are evaluated separately. Weak volume reduces setup strength.</div>
 <div class="wrap">
-<h1>TradeLens V26</h1>
+<h1>TradeLens V27</h1>
 <div class="sub">STRUCTURED DECISION ENGINE • MULTI-TIMEFRAME SCANNER • QUALIFICATION • PAPER TRADING</div>
 
 <section class="panel">
@@ -123,7 +125,7 @@ function TLv103_enforceDirectionIntegrity(a){
 <label>RISK %<input id="risk" type="number" value="1" step=".1" min=".1"></label>
 <label>MIN QUALIFICATION<select id="minQual"><option value="QUALIFIED">QUALIFIED</option><option value="WATCH">WATCH</option><option value="ANY">ANY</option></select></label>
 </div>
-<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V26 SCAN</button></div>
+<div class="actions"><button id="test">TEST API</button><button id="scan">RUN V27 SCAN</button></div>
 <p id="status" class="small">Ready.</p>
 <div id="v21Pipeline" class="v21-pipeline">
   <div class="v21-stage" data-stage="api"><b>API</b><span>WAITING</span></div>
@@ -145,7 +147,7 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel">
-<div class="sectionTitle"><h2>Market Scanner</h2><span class="small">Ranking uses authoritative setup strength; Directional Agreement and Weighted Confluence come from the same V26 decision object. 4h regime is shown for market context.</span></div>
+<div class="sectionTitle"><h2>Market Scanner</h2><span class="small">Ranking uses authoritative setup strength; Directional Agreement and Weighted Confluence come from the same V27 decision object. 4h regime is shown for market context.</span></div>
 <div class="v21-desktop-scanner" style="overflow:auto"><table><thead><tr><th>PAIR</th><th>PRICE</th><th>STRENGTH</th><th>DIRECTIONAL AGREEMENT</th><th>STATE</th><th>QUALIFICATION</th><th>4H REGIME</th><th>PROBLEM</th></tr></thead><tbody id="rows"><tr><td colspan="8">Run scan.</td></tr></tbody></table></div>
 <div id="mobileScanner" class="v21-mobile-scanner"><div class="v21-mobile-card">Run scan.</div></div>
 </section>
@@ -188,7 +190,7 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel">
-<div class="sectionTitle"><h2>V26 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
+<div class="sectionTitle"><h2>V27 Technical + Structure Summary</h2><span class="small">Calculated from the selected timeframe candles</span></div>
 <div id="indicatorSummary" class="grid3"></div>
 </section>
 
@@ -227,7 +229,7 @@ function TLv103_enforceDirectionIntegrity(a){
 </section>
 
 <section class="panel v19-rt-panel">
-<div class="sectionTitle"><h2>V26 Real-Time Engine</h2><span id="rtStatus" class="badge">STREAM: DISCONNECTED</span></div>
+<div class="sectionTitle"><h2>V27 Real-Time Engine</h2><span id="rtStatus" class="badge">STREAM: DISCONNECTED</span></div>
 <div class="grid4">
 <div class="metric"><b>LIVE PRICE</b><br><span id="rtPrice" class="big">—</span></div>
 <div class="metric"><b>STREAM AGE</b><br><span id="rtAge">—</span></div>
@@ -237,7 +239,7 @@ function TLv103_enforceDirectionIntegrity(a){
 <p id="rtNote" class="small">The live stream updates price separately from the closed-candle decision engine. A new closed candle can refresh the selected-pair analysis.</p>
 </section>
 
-<p class="small">Informational / paper-trading tool. No real orders are placed. Market data is fetched from public Binance market endpoints. Scores are analytical heuristics and do not guarantee future results.</p>
+<p class="small">Market-analysis and guarded Binance Spot execution tool. Real orders are only possible when the server is explicitly configured for live trading and the authoritative V27 trade gate passes. Analysis is not a guarantee of profit.</p>
 </div>
 
 <script>
@@ -376,7 +378,7 @@ function confluence(rs){
  return {bull,bear,dominant,percent,dominantIdx,confirmation,problem,avg:rs.reduce((a,x)=>a+x.strength,0)/rs.length};
 }
 function qualify(rs,c){
- // V26: setup quality only. Trade readiness is owned exclusively by V26_buildAuthoritativeDecision().
+ // V27: setup quality only. Trade readiness is owned exclusively by V27_buildAuthoritativeDecision().
  const avg=c?.avg ?? (Array.isArray(rs)&&rs.length ? rs.reduce((a,x)=>a+(Number(x.strength)||0),0)/rs.length : 0);
  const volumeConfirmedCount=Array.isArray(rs)?rs.filter(x=>x.volume==='CONFIRMED').length:0;
  const avgVolumeRatio=Array.isArray(rs)&&rs.length?rs.reduce((sum,z)=>sum+(Number(z.vr)||0),0)/rs.length:0;
@@ -518,7 +520,7 @@ async function onePair(symbol){
  if(!Array.isArray(rs)||rs.length!==3||rs.some(x=>!x)) throw Error('Incomplete MTF analysis for '+symbol);
  const setup=qualify(rs,confluence(rs));
  const detailTf=$('detail')?.value||'15m';
- const decision=V26_buildAuthoritativeDecision(rs,setup,ob,detailTf);
+ const decision=V27_buildAuthoritativeDecision(rs,setup,ob,detailTf);
  const directionalCounts={BULLISH:rs.filter(x=>x.state==='BULLISH').length,BEARISH:rs.filter(x=>x.state==='BEARISH').length};
  const directionalDirection=decision.rawDirectional.direction;
  const directionalCount=decision.rawDirectional.count;
@@ -533,7 +535,7 @@ async function onePair(symbol){
  return {symbol,rs,c:decision.weightedConfluence,q:setup,decision,analysis,orderBook:ob}
 }
 
-/* ========================= V26 SINGLE-SOURCE DECISION ENGINE =========================
+/* ========================= V27 SINGLE-SOURCE DECISION ENGINE =========================
    This is the only place where trade-gate fields are calculated.
    Scanner, Setup/Qualification display, Gate Checklist, Decision Engine and Risk Plan
    all consume this same authoritative object. No UI section recomputes gate values.
@@ -551,7 +553,7 @@ function tlv19_entryPlan(a){
  return {direction:a.direction,entry:p,stop,target,rr:reward/risk,atr};
 }
 
-function V26_buildAuthoritativeDecision(rs,setup,ob,detailTf){
+function V27_buildAuthoritativeDecision(rs,setup,ob,detailTf){
  const TFN=['15m','1h','4h'];
  const weights={"15m":1,"1h":2,"4h":3};
  const states={"15m":rs[0]?.state||'NEUTRAL',"1h":rs[1]?.state||'NEUTRAL',"4h":rs[2]?.state||'NEUTRAL'};
@@ -634,7 +636,7 @@ function V26_buildAuthoritativeDecision(rs,setup,ob,detailTf){
  const plan=ready?tlv19_entryPlan({direction:weightedDirection,price:selected.p,atr:selected.at,tradeGate:{status:'READY'}}):null;
 
  return {
-   version:'V26',
+   version:'V27',
    rawDirectional:{direction:rawDirection,count:rawCount,percent:rawPercent,bullCount,bearCount},
    weightedConfluence:{direction:weightedDirection,percent:weightedPercent,bull:bullWeight,bear:bearWeight,total:totalWeight},
    gates,
@@ -722,7 +724,7 @@ async function run(){
   if(selectedRow)rest.unshift(selectedRow);
   const visible=rest.map(r=>({...r,visible:true}));
   TLV21_renderScanner(visible,selectedSym);
-  $('status').textContent='V26 scan complete. '+filtered.length+' pairs shown • '+out.length+' analyzed • selected pair pinned • closed-candle decision engine + live-candle chart + order-book context.';
+  $('status').textContent='V27 scan complete. '+filtered.length+' pairs shown • '+out.length+' analyzed • selected pair pinned • closed-candle decision engine + live-candle chart + order-book context.';
   tlv19_startRealtime();
   TLV21_diag('diagWs','STARTING');
  }catch(e){
@@ -745,10 +747,10 @@ $('pair').onchange=()=>{if($('status').textContent.includes('complete'))run()};
     <div class="v19-panel"><div class="v19-label">Directional Agreement</div><div id="v19Agreement" class="v19-value">—</div></div>
     <div class="v19-panel"><div class="v19-label">Weighted Confluence (1x / 2x / 3x)</div><div id="v19Confluence" class="v19-value">—</div></div>
   </div>
-  <div id="v19Gate" class="v19-lock">V26 trade gate has not been evaluated.</div>
+  <div id="v19Gate" class="v19-lock">V27 trade gate has not been evaluated.</div>
   <div id="v19Explain" class="v19-explain">Run a scan to generate the decision explanation.</div>
   <div id="v19Context" class="v19-explain" style="margin-top:8px">Decision context will appear after a scan.</div>
-  <div id="v25Gates" class="v25-gates"><h4>V26 Qualification Gate Checklist</h4><div class="v25-gategrid"><div class="v25-gate"><b>Directional agreement</b><span id="v25DirectionGate">Waiting</span></div><div class="v25-gate"><b>Weighted confluence</b><span id="v25WeightGate">Waiting</span></div><div class="v25-gate"><b>4h confirmation</b><span id="v25H4Gate">Waiting</span></div><div class="v25-gate"><b>MTF trend</b><span id="v25TrendGate">Waiting</span></div><div class="v25-gate"><b>MTF momentum</b><span id="v25MomentumGate">Waiting</span></div><div class="v25-gate"><b>MTF volume</b><span id="v25VolumeGate">Waiting</span></div><div class="v25-gate"><b>MTF structure</b><span id="v25StructureGate">Waiting</span></div><div class="v25-gate"><b>MTF extension</b><span id="v25MtfExtGate">Waiting</span></div><div class="v25-gate"><b>Selected-TF extension</b><span id="v25SelExtGate">Waiting</span></div><div class="v25-gate"><b>Freshness</b><span id="v25FreshGate">Waiting</span></div><div class="v25-gate"><b>Liquidity</b><span id="v25LiquidityGate">Waiting</span></div><div class="v25-gate"><b>Trade readiness</b><span id="v25ReadyGate">Waiting</span></div></div></div>
+  <div id="v25Gates" class="v25-gates"><h4>V27 Qualification Gate Checklist</h4><div class="v25-gategrid"><div class="v25-gate"><b>Directional agreement</b><span id="v25DirectionGate">Waiting</span></div><div class="v25-gate"><b>Weighted confluence</b><span id="v25WeightGate">Waiting</span></div><div class="v25-gate"><b>4h confirmation</b><span id="v25H4Gate">Waiting</span></div><div class="v25-gate"><b>MTF trend</b><span id="v25TrendGate">Waiting</span></div><div class="v25-gate"><b>MTF momentum</b><span id="v25MomentumGate">Waiting</span></div><div class="v25-gate"><b>MTF volume</b><span id="v25VolumeGate">Waiting</span></div><div class="v25-gate"><b>MTF structure</b><span id="v25StructureGate">Waiting</span></div><div class="v25-gate"><b>MTF extension</b><span id="v25MtfExtGate">Waiting</span></div><div class="v25-gate"><b>Selected-TF extension</b><span id="v25SelExtGate">Waiting</span></div><div class="v25-gate"><b>Freshness</b><span id="v25FreshGate">Waiting</span></div><div class="v25-gate"><b>Liquidity</b><span id="v25LiquidityGate">Waiting</span></div><div class="v25-gate"><b>Trade readiness</b><span id="v25ReadyGate">Waiting</span></div></div></div>
   <h4 style="margin-top:14px">Confirmation Matrix</h4>
   <table class="v19-matrix">
     <thead><tr><th>Timeframe</th><th>Direction</th><th>Trend</th><th>Momentum</th><th>Weight</th></tr></thead>
@@ -757,7 +759,7 @@ $('pair').onchange=()=>{if($('status').textContent.includes('complete'))run()};
 </div>
 
 <script>
-/* V26 single-source dashboard bridge — uses the actual scanner result directly. */
+/* V27 single-source dashboard bridge — uses the actual scanner result directly. */
 function TLV19_bridge(tfMap, detailTf, qualification, blockers){
   if(!tfMap) return null;
   return TLV19_render(tfMap, detailTf, qualification, blockers);
@@ -768,6 +770,8 @@ function TLV19_render(tfMap, detailTf){
  const analysis=tfMap?.analysis||tfMap;
  const decision=analysis?.decision||tfMap?.decision;
  if(!decision) return null;
+ window._tlvV27Decision=decision; window._tlvV27DetailTf=detailTf||'15m'; window._tlvV27Symbol=$('pair')?.value||'BTCUSDT';
+ if(window.v27UpdateExecution) window.v27UpdateExecution(decision);
  const rs=analysis.timeframes||tfMap.timeframes||[];
  const setup=analysis.setupQuality||decision.setupQuality||{};
  const quality=$('v19Quality'), q=$('v19Readiness'), d=$('v19Direction'), c=$('v19Confluence'), g=$('v19Gate'), m=$('v19Matrix'), ex=$('v19Explain'), ctx=$('v19Context');
@@ -780,7 +784,7 @@ function TLV19_render(tfMap, detailTf){
  c.textContent=wcSafe.percent+'% • weighted bias '+wcSafe.direction+' • '+wcSafe.bull+' bullish / '+wcSafe.bear+' bearish / '+wcSafe.total+' total weight';
  g.className=decision.tradeGate.status==='READY'?'v19-ready':'v19-lock';
  g.innerHTML=decision.tradeGate.status==='READY'
-   ? '<b>TRADE GATE OPEN</b> — all authoritative V26 blocking conditions passed.'
+   ? '<b>TRADE GATE OPEN</b> — all authoritative V27 blocking conditions passed.'
    : '<b>RISK PLAN LOCKED</b> — '+(decision.tradeGate.blockers.join(' • ')||'No clean trade setup.');
  const matrix=['15m','1h','4h'].map(tf=>{const x=rs[['15m','1h','4h'].indexOf(tf)]||{};return tf+' '+(x.state||'NEUTRAL')+' ('+(TLV19_WEIGHTS[tf]||1)+'x)'}).join(' • ');
  const selected=rs[['15m','1h','4h'].indexOf(detailTf||'15m')]||rs[0]||{};
@@ -790,7 +794,7 @@ function TLV19_render(tfMap, detailTf){
  ex.innerHTML='<b>DECISION EXPLANATION</b><br>Decision: '+esc(decisionText)+'. '+esc(matrix)+'. Directional agreement is '+gates.directionalAgreement.percent+'% ('+gates.directionalAgreement.count+'/3); weighted confluence is '+wcSafe.percent+'% ('+wcSafe.bull+' bullish / '+wcSafe.bear+' bearish / '+wcSafe.total+' total weight). 4h confirmation is '+(gates.fourHourConfirmation.confirmed?'confirmed':'not confirmed')+'. '+esc(structureText)+'. '+esc(volumeText)+'.'+(decision.tradeGate.blockers.length?' Trade remains locked because '+esc(decision.tradeGate.blockers.join('; '))+'.':'');
  if(ctx){
    const ext=Number.isFinite(gates.selectedExtension.atr)?fmt(gates.selectedExtension.atr,2)+' ATR from EMA20':'DATA UNAVAILABLE';
-   ctx.innerHTML='<b>V26 DECISION CONTEXT</b><br>Setup Quality: '+(setup.avg!=null?fmt(setup.avg,1)+'/10':'—')+'<br>Selected '+esc(detailTf||'15m')+': '+esc(selected.state||'NEUTRAL')+' • Trend '+esc(selected.trend||'—')+' • Momentum '+esc(selected.momentum||'—')+' • Volume '+esc(selected.volume||'—')+' • Structure '+esc(selected.marketStructure?.bias||'—')+' • Extension '+ext+'<br>Directional agreement: '+gates.directionalAgreement.percent+'% • '+gates.directionalAgreement.count+'/3 • Weighted confluence: '+decision.weightedConfluence.percent+'% • gate requires ≥67% + 4h confirmation<br>MTF trend: '+(gates.mtfTrend.confirmed?'CONFIRMED':'NOT CONFIRMED')+' • momentum: '+(gates.mtfMomentum.confirmed?'CONFIRMED':'NOT CONFIRMED')+' • volume: '+gates.mtfVolume.count+'/3 • structure: '+gates.mtfStructure.count+'/3 • extension: '+gates.mtfExtension.count+'/3 • freshness: '+(gates.freshness.confirmed?'FRESH':'NOT FRESH')+' • liquidity: '+(gates.liquidity.confirmed?'ADEQUATE':'LIMITED');
+   ctx.innerHTML='<b>V27 DECISION CONTEXT</b><br>Setup Quality: '+(setup.avg!=null?fmt(setup.avg,1)+'/10':'—')+'<br>Selected '+esc(detailTf||'15m')+': '+esc(selected.state||'NEUTRAL')+' • Trend '+esc(selected.trend||'—')+' • Momentum '+esc(selected.momentum||'—')+' • Volume '+esc(selected.volume||'—')+' • Structure '+esc(selected.marketStructure?.bias||'—')+' • Extension '+ext+'<br>Directional agreement: '+gates.directionalAgreement.percent+'% • '+gates.directionalAgreement.count+'/3 • Weighted confluence: '+decision.weightedConfluence.percent+'% • gate requires ≥67% + 4h confirmation<br>MTF trend: '+(gates.mtfTrend.confirmed?'CONFIRMED':'NOT CONFIRMED')+' • momentum: '+(gates.mtfMomentum.confirmed?'CONFIRMED':'NOT CONFIRMED')+' • volume: '+gates.mtfVolume.count+'/3 • structure: '+gates.mtfStructure.count+'/3 • extension: '+gates.mtfExtension.count+'/3 • freshness: '+(gates.freshness.confirmed?'FRESH':'NOT FRESH')+' • liquidity: '+(gates.liquidity.confirmed?'ADEQUATE':'LIMITED');
  }
  const qGate=(id,ok,msg)=>{const el=$(id);if(el){el.className=ok?'v25-pass':'v25-fail';el.textContent=(ok?'✓ ':'✕ ')+msg;}};
  qGate('v25DirectionGate',gates.directionalAgreement.confirmed,gates.directionalAgreement.percent+'% agreement ('+gates.directionalAgreement.count+'/3) • requires ≥67%');
@@ -845,13 +849,32 @@ window.addEventListener("load",()=>{
 });
 </script>
 
+
+<section class="panel v27-exec">
+  <div class="sectionTitle"><h2>V27 Binance Execution</h2><span id="v27BinanceStatus" class="v27-pill">SERVER: CHECKING</span></div>
+  <div class="small" id="v27BinanceNote">Execution keys stay on the server. V27 defaults to Binance Spot Testnet.</div>
+  <div class="v27-exec-grid" style="margin-top:10px">
+    <label>SIDE<select id="v27Side"><option value="BUY">BUY</option><option value="SELL">SELL</option></select></label>
+    <label>TYPE<select id="v27Type"><option value="MARKET">MARKET</option><option value="LIMIT">LIMIT</option></select></label>
+    <label>QUANTITY<input id="v27Qty" type="number" min="0" step="any" placeholder="0.001"></label>
+    <label>LIMIT PRICE<input id="v27Price" type="number" min="0" step="any" placeholder="Only for LIMIT"></label>
+  </div>
+  <div id="v27OrderGate" class="v27-order-result">Run a V27 scan first. Real execution is locked until the authoritative trade gate is READY.</div>
+  <div class="actions">
+    <button id="v27Review" class="primary" onclick="v27ReviewOrder()">REVIEW ORDER</button>
+    <button id="v27Cancel" onclick="v27ClearOrder()">CLEAR</button>
+  </div>
+  <div id="v27OrderResult" class="v27-order-result" style="display:none"></div>
+  <div class="small danger" style="margin-top:8px">Never place API credentials in this HTML file. Use server environment variables. V27 is not a guarantee of profit; live trading can lose money.</div>
+</section>
+
 <div class="card" style="margin-top:12px">
-  <b>V26 Live Decision Layer</b>
-  <p class="tl-v19-muted">The confirmation matrix, setup quality, market structure and trade gate are linked to the scanner's current 15m / 1h / 4h analysis and the single authoritative V26 decision object. They are informational safeguards and do not place orders.</p>
+  <b>V27 Live Decision Layer</b>
+  <p class="tl-v19-muted">The confirmation matrix, setup quality, market structure and trade gate are linked to the scanner's current 15m / 1h / 4h analysis and the single authoritative V27 decision object. Orders require a passing gate plus explicit human confirmation.</p>
 </div>
 
 <script>
-/* ========================= TradeLens V26 Real-Time Engine ========================= */
+/* ========================= TradeLens V27 Real-Time Engine ========================= */
 let TLV19_WS=null, TLV19_WS_TIMER=null, TLV19_RECONNECT=0, TLV19_LAST_TICK=0, TLV19_CLOSED_REFRESH=0, TLV19_LAST_CLOSED={};
 function tlv19_setRT(state,msg){
   const b=$('rtStatus'), note=$('rtNote'); if(!b)return;
@@ -916,6 +939,56 @@ function tlv19_startRealtime(){
   };
 }
 window.addEventListener('beforeunload',tlv19_stopRealtime);
+</script>
+
+<script>
+/* ========================= TradeLens V27 Binance Execution Bridge ========================= */
+let TLV27_HEALTH=null;
+async function v27Api(path,options={}){
+  const r=await fetch(path,{...options,headers:{'Content-Type':'application/json',...(options.headers||{})}});
+  const data=await r.json().catch(()=>({ok:false,error:'Invalid server response'}));
+  if(!r.ok||data.ok===false) throw new Error(data.error||data.msg||('HTTP '+r.status));
+  return data;
+}
+async function v27Health(){
+  const badge=document.getElementById('v27BinanceStatus'), note=document.getElementById('v27BinanceNote');
+  try{
+    TLV27_HEALTH=await v27Api('/api/health');
+    badge.textContent='SERVER: '+(TLV27_HEALTH.credentialsConfigured?'READY':'KEYS NOT CONFIGURED');
+    badge.className='v27-pill '+(TLV27_HEALTH.credentialsConfigured?'safe':'danger');
+    note.textContent=TLV27_HEALTH.credentialsConfigured
+      ? ('Binance '+TLV27_HEALTH.environment.toUpperCase()+' connected • live execution '+(TLV27_HEALTH.liveTradingEnabled?'ENABLED':'DISABLED')+' • max order '+TLV27_HEALTH.maxOrderNotionalUsdt+' USDT')
+      : 'Server is running, but Binance API credentials are not configured. Add them as server environment variables.';
+    v27RefreshGate();
+  }catch(e){badge.textContent='SERVER: OFFLINE';badge.className='v27-pill danger';note.textContent='Execution server unavailable: '+e.message;v27RefreshGate();}
+}
+function v27CurrentDecision(){return window._tlvV27Decision||null}
+function v27RefreshGate(){
+  const box=document.getElementById('v27OrderGate'), btn=document.getElementById('v27Review'); if(!box)return;
+  const d=v27CurrentDecision();
+  if(!d){box.textContent='Run a V27 scan first. Real execution is locked until the authoritative trade gate is READY.';btn.disabled=true;btn.classList.add('disabled');return;}
+  const ready=d.tradeReadiness==='READY' && d.tradeGate?.status==='READY' && d.decisionDirection && d.decisionDirection!=='NONE';
+  if(!ready){box.innerHTML='<span class="danger"><b>EXECUTION LOCKED</b></span> — '+(d.tradeGate?.blockers?.join(' • ')||'Authoritative V27 trade gate is not READY.')+'<br><span class="small">Current decision: '+(d.tradeReadiness||'UNKNOWN')+' / '+(d.decisionDirection||'NONE')+'.</span>';btn.disabled=true;btn.classList.add('disabled');return;}
+  box.innerHTML='<span class="safe"><b>TRADE GATE READY</b></span> — '+d.decisionDirection+' '+(window._tlvV27Symbol||'')+' may be reviewed for execution. Human confirmation is still required.';btn.disabled=false;btn.classList.remove('disabled');
+  document.getElementById('v27Side').value=d.decisionDirection==='BEARISH'?'SELL':'BUY';
+}
+window.v27UpdateExecution=function(){v27RefreshGate()};
+function v27ClearOrder(){document.getElementById('v27OrderResult').style.display='none';document.getElementById('v27Qty').value='';document.getElementById('v27Price').value='';}
+function v27ReviewOrder(){
+  const d=v27CurrentDecision(), symbol=window._tlvV27Symbol||document.getElementById('pair')?.value||'BTCUSDT', side=document.getElementById('v27Side').value, type=document.getElementById('v27Type').value, qty=Number(document.getElementById('v27Qty').value), price=Number(document.getElementById('v27Price').value);
+  if(!d||d.tradeReadiness!=='READY'||d.tradeGate?.status!=='READY'||d.decisionDirection==='NONE'){alert('V27 execution is locked because the authoritative trade gate is not READY.');return;}
+  if(!Number.isFinite(qty)||qty<=0){alert('Enter a valid quantity.');return;}
+  if(type==='LIMIT'&&(!Number.isFinite(price)||price<=0)){alert('Enter a valid limit price.');return;}
+  const msg=['CONFIRM BINANCE ORDER','Environment: '+(TLV27_HEALTH?.environment||'unknown').toUpperCase(),'Symbol: '+symbol,'Side: '+side,'Type: '+type,'Quantity: '+qty,(type==='LIMIT'?'Limit price: '+price:''),'Decision: '+d.decisionDirection,'Readiness: '+d.tradeReadiness,'\nThis will submit a real order to the configured Binance account.'].filter(Boolean).join('\n');
+  if(!confirm(msg))return;
+  v27PlaceOrder({symbol,side,type,quantity:qty,price:type==='LIMIT'?price:undefined});
+}
+async function v27PlaceOrder(payload){
+  const out=document.getElementById('v27OrderResult'); out.style.display='block'; out.textContent='Submitting signed order to Binance…';
+  try{const r=await v27Api('/api/order',{method:'POST',body:JSON.stringify(payload)});out.textContent='ORDER ACCEPTED\nEnvironment: '+r.environment.toUpperCase()+'\nOrder ID: '+r.order.orderId+'\nStatus: '+r.order.status+'\nSymbol: '+r.order.symbol+'\nSide: '+r.order.side+'\nType: '+r.order.type+'\nExecuted quantity: '+r.order.executedQty+'\nNotional check: '+Number(r.notional).toFixed(4)+' USDT';}
+  catch(e){out.textContent='ORDER BLOCKED / FAILED\n'+e.message;}
+}
+document.addEventListener('DOMContentLoaded',v27Health);
 </script>
 </body>
 </html>
