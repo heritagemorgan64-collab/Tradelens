@@ -408,7 +408,7 @@ function qualify(rs,c){
  let status='WATCH';
  if(d==='MIXED'||c.percent<34||fresh===0) status='INVALID';
  else if(c.percent>=67&&trend>=2&&mom>=2&&fresh>=2&&ext>=2&&liq>=2&&vol>=1&&structureConfirmed&&c.avg>=8) status='QUALIFIED';
- return {checks,blockers,status,volumeWeak:vol<2,structureConfirmed,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL')};
+ return {checks,blockers,status,volumeWeak:vol<2,volumeConfirmedCount:vol,avgVolumeRatio:rs.reduce((sum,z)=>sum+(Number(z.vr)||0),0)/Math.max(1,rs.length),structureAlignedCount,structureConfirmed,confirmation:d==='MIXED'?'NO DOMINANT DIRECTION':(trend>=2&&mom>=2?'FULL':'PARTIAL'),avg:c.avg};
 }
 function render(rs,c,q,detail){
  $('selectedTitle').textContent=$('pair').value+' • MTF Analysis';
@@ -522,7 +522,7 @@ async function onePair(symbol){
  const ob=await orderBook(symbol).catch(()=>null);
  const rs=await Promise.all(TF.map(t=>candles(symbol,t).then(c=>analyze(c,ob,t))));
  const c=confluence(rs),q=qualify(rs,c);
- const decision=tlv19_build({"15m":rs[0],"1h":rs[1],"4h":rs[2]},{detailTf:$('detail')?.value||'15m',qualification:q.status,qualificationBlockers:q.blockers});
+ const decision=tlv19_build({"15m":rs[0],"1h":rs[1],"4h":rs[2]},{detailTf:$('detail')?.value||'15m',qualification:q.status,qualificationBlockers:q.blockers,setupQuality:q,volumeConfirmedCount:q.volumeConfirmedCount,avgVolumeRatio:q.avgVolumeRatio,structureAlignedCount:q.structureAlignedCount});
  const directionalCounts={BULLISH:rs.filter(x=>x.state==='BULLISH').length,BEARISH:rs.filter(x=>x.state==='BEARISH').length};
  const directionalDirection=directionalCounts.BULLISH>=2?'BULLISH':directionalCounts.BEARISH>=2?'BEARISH':'MIXED';
  const directionalCount=Math.max(directionalCounts.BULLISH,directionalCounts.BEARISH);
@@ -684,43 +684,35 @@ function tlv19_build(tfMap,summary){
   const normalized={};
   ["15m","1h","4h"].forEach(k=>{
     const raw=Object.assign({},tfMap[k]||{});
-    // Normalize the scanner fields into the single authoritative decision schema.
     raw.price=Number.isFinite(Number(raw.price))?Number(raw.price):Number(raw.p);
     raw.atr=Number.isFinite(Number(raw.atr))?Number(raw.atr):Number(raw.at);
     raw.volRatio=Number.isFinite(Number(raw.volRatio))?Number(raw.volRatio):Number(raw.vr);
+    raw.trend=raw.trend||"—"; raw.momentum=raw.momentum||"—"; raw.volume=raw.volume||"—";
+    raw.rsi=Number.isFinite(Number(raw.rsi))?Number(raw.rsi):Number(raw.r);
+    raw.rsiStatus=raw.rsiStatus||"—"; raw.marketStructure=raw.marketStructure||{};
+    raw.extensionAtrMultiple=Number.isFinite(Number(raw.extensionAtrMultiple))?Number(raw.extensionAtrMultiple):NaN;
+    raw.extensionStatus=raw.extensionStatus||"UNAVAILABLE";
     raw.freshness=raw.freshness||"FRESH";
     raw.rsiCaution=raw.rsiCaution===true || raw.rsiStatus==="CAUTION";
     raw.extensionRisk=raw.extensionRisk===true || raw.extensionStatus!=="ACCEPTABLE";
     raw.liquidityLimited=raw.liquidityLimited===true || raw.liquidityScore===false || raw.liquidityScore===0;
-    raw.state=tlv19_direction(raw);
-    normalized[k]=raw;
+    raw.state=tlv19_direction(raw); normalized[k]=raw;
   });
-  const c=tlv19_confluence(normalized);
-  const r=tlv19_readiness(normalized,c);
+  const c=tlv19_confluence(normalized), r=tlv19_readiness(normalized,c);
   const best=normalized[summary?.detailTf||"15m"]||normalized["15m"]||{};
-
-  // Setup quality and decision state are carried together in the authoritative analysis object.
   const qualification=summary?.qualification||"WATCH";
-  const mtfVolumeConfirmed=Object.values(normalized).filter(x=>x.volume==='CONFIRMED').length>=2;
-  const mtfStructureAligned=c.direction!=='MIXED' && Object.values(normalized).filter(x=>x.marketStructure && x.marketStructure.stableDirection===c.direction).length>=2;
+  const volumeConfirmedCount=Number.isFinite(Number(summary?.volumeConfirmedCount))?Number(summary.volumeConfirmedCount):Object.values(normalized).filter(x=>x.volume==="CONFIRMED").length;
+  const avgVolumeRatio=Number.isFinite(Number(summary?.avgVolumeRatio))?Number(summary.avgVolumeRatio):Object.values(normalized).reduce((sum,x)=>sum+(Number(x.volRatio)||0),0)/3;
+  const structureAlignedCount=Number.isFinite(Number(summary?.structureAlignedCount))?Number(summary.structureAlignedCount):Object.values(normalized).filter(x=>x.marketStructure&&x.marketStructure.stableDirection&&x.marketStructure.stableDirection!=="NEUTRAL"&&(c.direction==='MIXED'||x.marketStructure.stableDirection===c.direction)).length;
+  const mtfVolumeConfirmed=volumeConfirmedCount>=2, mtfStructureAligned=c.direction!=="MIXED"&&structureAlignedCount>=2;
   const gate=tlv19_tradeGate({
-    readiness:qualification,
-    readinessReason:(summary?.qualificationBlockers||[]).join(" • ")||r.reason,
-    direction:c.direction,
-    confluence:c.percent,
-    volumeRatio:best.volRatio,
-    mtfVolumeConfirmed,
-    mtfStructureAligned,
-    rsiCaution:best.rsiCaution,
-    extensionRisk:best.extensionRisk,
-    liquidityLimited:best.liquidityLimited,
-    freshness:best.freshness,
-    price:best.price,atr:best.atr
+    readiness:qualification, readinessReason:(summary?.qualificationBlockers||[]).join(" • ")||r.reason,
+    direction:c.direction, confluence:c.percent, volumeRatio:best.volRatio, mtfVolumeConfirmed, mtfStructureAligned,
+    rsiCaution:best.rsiCaution, extensionRisk:best.extensionRisk, extensionAtrMultiple:best.extensionAtrMultiple,
+    liquidityLimited:best.liquidityLimited, freshness:best.freshness, price:best.price, atr:best.atr
   });
-  const plan=gate.status==="READY"?tlv19_entryPlan({
-    direction:c.direction,price:best.price,atr:best.atr,tradeGate:gate
-  }):null;
-  return {timeframes:normalized,confluence:c,readiness:r,tradeGate:gate,plan};
+  const plan=gate.status==="READY"?tlv19_entryPlan({direction:c.direction,price:best.price,atr:best.atr,tradeGate:gate}):null;
+  return {timeframes:normalized,confluence:c,readiness:r,tradeGate:gate,plan,setupQuality:summary?.setupQuality||null,volumeConfirmedCount,avgVolumeRatio,structureAlignedCount};
 }
 </script>
 
@@ -795,7 +787,7 @@ function TLV19_render(tfMap, detailTf, qualification, blockers){
 
   const setupInvalid=(qualification||"WATCH")==="INVALID";
   const cleanDirection=!setupInvalid && result.confluence.direction!=="MIXED" && result.confluence.percent>=67;
-  quality.textContent=result.confluence.avg!=null?fmt(result.confluence.avg,1)+"/10":"—";
+  quality.textContent=result.setupQuality?.avg!=null?fmt(result.setupQuality.avg,1)+"/10":"—";
   q.textContent=result.tradeGate.status==="READY"?"READY":(setupInvalid?"INVALID":result.readiness.status);
   d.textContent=cleanDirection?result.confluence.direction:"NONE";
   const directionalAgreement=authoritative?authoritative.directionalCount:["15m","1h","4h"].filter(tf=>result.timeframes[tf]?.state===result.confluence.direction && result.confluence.direction!=="MIXED").length;
@@ -812,8 +804,8 @@ function TLV19_render(tfMap, detailTf, qualification, blockers){
   if(ex){
     const matrix=["15m","1h","4h"].map(tf=>{const x=result.timeframes[tf]||{};return tf+" "+(x.state||"NEUTRAL")+" ("+(TLV19_WEIGHTS[tf]||1)+"x)"}).join(" • ");
     const best=result.timeframes[detailTf||"15m"]||{};
-    const mtfStructCount2=Object.values(result.timeframes).filter(x=>x.marketStructure&&x.marketStructure.stableDirection&&x.marketStructure.stableDirection!=='NEUTRAL'&&(result.confluence.direction==='MIXED'||x.marketStructure.stableDirection===result.confluence.direction)).length; const structureText=result.confluence.direction==='MIXED'?('MTF structure has no dominant direction ('+mtfStructCount2+'/3 structurally aligned)'):(mtfStructCount2>=2?'MTF structure aligned ('+mtfStructCount2+'/3)':'MTF structure not aligned ('+mtfStructCount2+'/3)');
-    const vfs=Object.values(result.timeframes); const avgParticipation=vfs.reduce((sum,x)=>sum+(Number(x.volRatio)||0),0)/Math.max(1,vfs.length); const confirmedVol=vfs.filter(x=>x.volume==='CONFIRMED').length; const volumeText=confirmedVol>=2?'Selected '+$('pair').value+' MTF participation confirmed ('+confirmedVol+'/3 confirmed • avg '+fmt(avgParticipation,2)+'x)':confirmedVol>0?'Selected '+$('pair').value+' MTF participation incomplete ('+confirmedVol+'/3 confirmed • avg '+fmt(avgParticipation,2)+'x)':'Selected '+$('pair').value+' MTF participation incomplete (0/3 confirmed • avg '+fmt(avgParticipation,2)+'x)';
+    const mtfStructCount2=Number(result.structureAlignedCount)||0; const structureText=result.confluence.direction==='MIXED'?('MTF structure has no dominant direction ('+mtfStructCount2+'/3 structurally aligned)'):(mtfStructCount2>=2?'MTF structure aligned ('+mtfStructCount2+'/3)':'MTF structure not aligned ('+mtfStructCount2+'/3)');
+    const avgParticipation=Number(result.avgVolumeRatio)||0; const confirmedVol=Number(result.volumeConfirmedCount)||0; const volumeText=confirmedVol>=2?'Selected '+$('pair').value+' MTF participation confirmed ('+confirmedVol+'/3 confirmed • avg '+fmt(avgParticipation,2)+'x)':confirmedVol>0?'Selected '+$('pair').value+' MTF participation incomplete ('+confirmedVol+'/3 confirmed • avg '+fmt(avgParticipation,2)+'x)':'Selected '+$('pair').value+' MTF participation incomplete (0/3 confirmed • avg '+fmt(avgParticipation,2)+'x)';
     const selectedText=(best.state||'NEUTRAL')+' selected on '+(detailTf||'15m')+'; selected timeframe is informational and does not override MTF gating.';
     ex.innerHTML=result.tradeGate.status==="READY"
       ? `<b>DECISION EXPLANATION</b><br>Decision: ${esc(result.confluence.direction)}. ${esc(matrix)}. Directional agreement is ${directionalPct}% (${directionalAgreement}/3 timeframes); weighted confluence is ${result.confluence.percent}% (${result.confluence.bull||0} bullish / ${result.confluence.bear||0} bearish / ${result.confluence.total||6} total weight). The decision gate requires at least 67% weighted confluence and 4h confirmation of the dominant direction. ${esc(structureText)}. ${esc(volumeText)}. ${esc(selectedText)}`
@@ -824,9 +816,10 @@ function TLV19_render(tfMap, detailTf, qualification, blockers){
     const selected=result.timeframes[detailTf||"15m"]||{};
     const expected=result.confluence.direction==='BULLISH'?'POSITIVE':result.confluence.direction==='BEARISH'?'NEGATIVE':null;
     const selectedAgreement=selected.state===result.confluence.direction && result.confluence.direction!=="MIXED";
-    const mtfVol=Object.values(result.timeframes).filter(x=>x.volume==='CONFIRMED').length;
-    const mtfStruct=Object.values(result.timeframes).filter(x=>x.marketStructure&&x.marketStructure.stableDirection===result.confluence.direction).length;
-    ctx.innerHTML=`<b>V23 DECISION CONTEXT</b><br>Selected ${esc(detailTf||"15m")}: ${esc(selected.state||"NEUTRAL")} • Trend ${esc(selected.trend||"—")} • Momentum ${esc(selected.momentum||"—")} • Volume ${esc(selected.volume||"—")} • Structure ${esc(selected.marketStructure?.bias||"—")}<br>Directional agreement: ${directionalPct}% • ${directionalAgreement}/3 timeframes • Weighted confluence: ${result.confluence.percent}% (${result.confluence.bull||0} bullish / ${result.confluence.bear||0} bearish / ${result.confluence.total||6} total weight) • gate: 67% weighted + 4h confirmation<br>MTF alignment: ${selectedAgreement?"selected timeframe agrees with the dominant direction":"selected timeframe does not override the higher-timeframe decision"} • ${(Object.values(result.timeframes).filter(x=>x.marketStructure&&x.marketStructure.stableDirection&&x.marketStructure.stableDirection!=='NEUTRAL'&&(result.confluence.direction==='MIXED'||x.marketStructure.stableDirection===result.confluence.direction)).length)+'/3 timeframes structurally aligned'}${result.confluence.direction==='MIXED'?' • no dominant structural direction':''} • ${mtfVol}/3 timeframes volume-confirmed.`;
+    const mtfVol=Number(result.volumeConfirmedCount)||0;
+    const mtfStruct=Number(result.structureAlignedCount)||0;
+    const setupScore=result.setupQuality?.avg!=null?fmt(result.setupQuality.avg,1)+"/10":"—"; const extText=Number.isFinite(selected.extensionAtrMultiple)?fmt(selected.extensionAtrMultiple,2)+" ATR from EMA20":"DATA UNAVAILABLE";
+    ctx.innerHTML=`<b>V23.1 DECISION CONTEXT</b><br>Setup Quality: ${setupScore}<br>Selected ${esc(detailTf||"15m")}: ${esc(selected.state||"NEUTRAL")} • Trend ${esc(selected.trend||"—")} • Momentum ${esc(selected.momentum||"—")} • Volume ${esc(selected.volume||"—")} • Structure ${esc(selected.marketStructure?.bias||"—")} • Extension ${extText}<br>Directional agreement: ${directionalPct}% • ${directionalAgreement}/3 timeframes • Weighted confluence: ${result.confluence.percent}% (${result.confluence.bull||0} bullish / ${result.confluence.bear||0} bearish / ${result.confluence.total||6} total weight) • gate: 67% weighted + 4h confirmation<br>MTF alignment: ${selectedAgreement?"selected timeframe agrees with the dominant direction":"selected timeframe does not override the higher-timeframe decision"} • ${(Object.values(result.timeframes).filter(x=>x.marketStructure&&x.marketStructure.stableDirection&&x.marketStructure.stableDirection!=='NEUTRAL'&&(result.confluence.direction==='MIXED'||x.marketStructure.stableDirection===result.confluence.direction)).length)+'/3 timeframes structurally aligned'}${result.confluence.direction==='MIXED'?' • no dominant structural direction':''} • ${mtfVol}/3 timeframes volume-confirmed • avg volume ${fmt(Number(result.avgVolumeRatio)||0,2)}x.`;
   }
 
   m.innerHTML=["15m","1h","4h"].map(tf=>{
