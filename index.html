@@ -774,8 +774,19 @@ function TLV19_bridge(tfMap, detailTf, qualification, blockers){
 
 function TLV19_render(tfMap, detailTf, qualification, blockers){
   if(!tfMap) return null;
-  const authoritative=tfMap.analysis?tfMap:null;
-  const result=authoritative?authoritative.decision:tlv19_build(tfMap,{detailTf:detailTf||"15m",qualification:qualification||"WATCH",qualificationBlockers:blockers||[]});
+  // Accept either the full scan wrapper ({ analysis: ... }) or the authoritative
+  // analysis object itself ({ timeframes, setupQuality, decision, ... }).
+  const authoritative=tfMap?.analysis?.decision?tfMap.analysis:(tfMap?.decision?tfMap:null);
+  const sourceTimeframes=authoritative?.timeframes||tfMap?.timeframes||tfMap;
+  const result=authoritative?.decision?authoritative.decision:tlv19_build(sourceTimeframes,{
+    detailTf:detailTf||"15m",
+    qualification:qualification||authoritative?.setupQuality?.status||"WATCH",
+    qualificationBlockers:blockers||authoritative?.setupQuality?.blockers||[],
+    setupQuality:authoritative?.setupQuality||null,
+    volumeConfirmedCount:authoritative?.decision?.volumeConfirmedCount??authoritative?.setupQuality?.volumeConfirmedCount,
+    avgVolumeRatio:authoritative?.decision?.avgVolumeRatio??authoritative?.setupQuality?.avgVolumeRatio,
+    structureAlignedCount:authoritative?.decision?.structureAlignedCount??authoritative?.setupQuality?.structureAlignedCount
+  });
   const quality=document.getElementById("v19Quality"),
         q=document.getElementById("v19Readiness"),
         d=document.getElementById("v19Direction"),
