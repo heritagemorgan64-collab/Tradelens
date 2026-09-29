@@ -1,108 +1,1033 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V31 Advanced</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sequence AI Analyzer</title>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
 <style>
-:root{--bg:#06101c;--p:#0c1a2b;--p2:#10243a;--line:#213650;--txt:#edf5ff;--mut:#8fa6c0;--g:#39d98a;--r:#ff6675;--a:#ffc857;--b:#5da8ff;--c:#42d8e8}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#10243a 0,#06101c 42%,#040b13 100%);color:var(--txt);font:14px/1.45 Inter,system-ui,Arial,sans-serif}button,input,select{font:inherit}button{border:1px solid var(--line);border-radius:9px;padding:10px 14px;background:#15314e;color:var(--txt);font-weight:800;cursor:pointer}button:hover{filter:brightness(1.15)}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:#176bc1}.danger{background:#542431}.wrap{max-width:1400px;margin:auto;padding:16px}.top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.brand h1{margin:0;font-size:27px}.brand p{margin:3px 0;color:var(--mut)}.badge{padding:7px 11px;border:1px solid var(--line);border-radius:999px;color:var(--c);background:#0a1828}.controls,.card{background:rgba(12,26,43,.95);border:1px solid var(--line);border-radius:15px;padding:14px;margin:14px 0;box-shadow:0 12px 35px #0003}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.field{display:flex;flex-direction:column;gap:4px}.field label{font-size:10px;text-transform:uppercase;color:var(--mut);font-weight:800}.field input,.field select{background:#071322;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:9px;min-width:115px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.metric{background:#081625;border:1px solid var(--line);border-radius:11px;padding:11px}.metric .k{font-size:10px;text-transform:uppercase;color:var(--mut);font-weight:800}.metric .v{font-size:20px;font-weight:900;margin-top:3px;word-break:break-word}.good{color:var(--g)}.bad{color:var(--r)}.warn{color:var(--a)}.cyan{color:var(--c)}.neutral{color:var(--mut)}.title{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.title h2{font-size:16px;margin:0}.small{font-size:12px;color:var(--mut)}.decision{border:1px solid #315071;background:#081625;border-radius:13px;padding:15px}.big{font-size:29px;font-weight:950}.reason{margin-top:10px;padding:10px;border-radius:9px;background:#091b2d;border:1px solid var(--line)}.mtf{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.tf{border:1px solid var(--line);background:#081625;border-radius:12px;padding:13px}.tf h3{margin:0 0 8px;display:flex;justify-content:space-between}.pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:900}.bull{background:#0a3a28;color:#6ce4a0}.bear{background:#481c25;color:#ff8c97}.neu{background:#263446;color:#adbac9}.row{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #172b42;padding:6px 0}.row:first-child{border-top:0}.gate{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:start;padding:8px 0;border-bottom:1px solid #172b42}.gate:last-child{border:0}.check{font-weight:900}.bar{height:8px;background:#172b42;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--b)}.chart{height:310px;display:flex;align-items:flex-end;gap:2px;padding:12px;background:#06111e;border:1px solid var(--line);border-radius:10px;overflow:hidden}.c{width:5px;min-width:2px;background:var(--g);opacity:.8}.c.down{background:var(--r)}.log{max-height:180px;overflow:auto;white-space:pre-wrap;background:#040b13;border:1px solid var(--line);padding:10px;border-radius:9px;font:11px/1.45 ui-monospace,monospace}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:7px;border-bottom:1px solid #172b42;text-align:left}.table th{font-size:10px;text-transform:uppercase;color:var(--mut)}.footer{font-size:11px;color:var(--mut);padding:8px 2px 20px}.notice{padding:9px 11px;border-radius:9px;background:#101f30;border:1px solid var(--line);color:var(--mut)}@media(max-width:950px){.grid{grid-template-columns:repeat(2,1fr)}.mtf{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid,.grid2,.grid3{grid-template-columns:1fr}.top{flex-direction:column}.wrap{padding:9px}.brand h1{font-size:23px}}
-</style></head><body><main class="wrap">
-<header class="top"><div class="brand"><h1>TradeLens V31 Advanced</h1><p>Market Intelligence • Multi-Timeframe Decision Engine • Qualification • Paper Trading</p></div><div id="api" class="badge">API: CHECKING…</div></header>
-<section class="controls">
-<div class="field"><label>Pair</label><select id="symbol"><option value="ETHUSDT">Loading pairs…</option></select></div><div class="field"><label>Detail timeframe</label><select id="detail"><option>15m</option><option>1h</option><option>4h</option></select></div><div class="field"><label>Account</label><input id="account" type="number" value="500" min="0"></div><div class="field"><label>Risk %</label><input id="risk" type="number" value="1" min="0" max="2" step="0.1"></div><div class="field"><label>Min qualification</label><select id="minq"><option value="QUALIFIED">QUALIFIED</option></select></div>
-<button id="scan" class="primary">RUN ADVANCED V32 SCAN</button><button id="paper">PAPER ORDER</button><button id="clear" class="danger">CLEAR JOURNAL</button></section>
-<section class="grid" id="status"></section>
-<section class="card"><div class="title"><h2>Authoritative Decision Engine</h2><span id="scanTime" class="small">Waiting</span></div><div id="decision" class="decision">Run a scan. The decision object will be created from closed candles only.</div></section>
-<section class="card"><div class="title"><h2>Multi-Timeframe Analysis</h2><span class="small">15m / 1h / 4h • closed candles</span></div><div id="mtf" class="mtf"></div></section>
-<section class="card"><div class="title"><h2>Qualification Gate</h2><span class="small">No manual override</span></div><div id="gates"></div></section>
-<section class="card"><div class="title"><h2>Technical Workspace</h2><span id="meta" class="small">—</span></div><div id="tech" class="grid"></div><div id="chart" class="chart"></div></section>
-<section class="card"><div class="title"><h2>Market Structure & Levels</h2><span class="small">Confirmed swing analysis</span></div><div id="structure" class="grid3"></div></section>
-<section class="card"><div class="title"><h2>Market Intelligence</h2><span class="small">Context only • never creates direction</span></div><div id="intel" class="grid"></div><div id="intelText" class="notice" style="margin-top:10px"></div></section>
-<section class="card"><div class="title"><h2>Live Market Layer</h2><span class="small">WebSocket price is separate from decisions</span></div><div id="live" class="grid"></div></section>
-<section class="card"><div class="title"><h2>Risk Plan</h2><span class="small">Locked unless authoritative gate passes</span></div><div id="riskPlan" class="grid"></div></section>
-<section class="card"><div class="title"><h2>Paper Trading Journal</h2><span class="small">Browser-local • no real orders</span></div><div id="journal" class="log">No paper trades yet.</div></section>
-<section class="card"><div class="title"><h2>Engine Diagnostics</h2></div><div id="diag" class="log">V32 Advanced initialized.</div></section>
-<div class="footer">V32 Advanced uses public Binance Spot market data. It does not contain API secrets and cannot place live orders. Analysis is statistical and can be wrong; paper results are not proof of future performance.</div>
-</main><script>
-const $=id=>document.getElementById(id), W={'15m':1,'1h':2,'4h':3}, TF=['15m','1h','4h'];
-const S={symbol:'',tf:{},live:null,book:null,intel:null,decision:null,ws:null,wsAge:null};
-const log=x=>{$('diag').textContent+='\n'+new Date().toLocaleTimeString()+' '+x;$('diag').scrollTop=$('diag').scrollHeight};
-const n=(x,d=2)=>{let v=Number(x);return Number.isFinite(v)?v.toLocaleString(undefined,{maximumFractionDigits:d}):'—'};
-const p=x=>Math.round(x)+'%'; const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null;
-function ema(a,period){if(a.length<period)return null;let e=avg(a.slice(0,period)),k=2/(period+1);for(let i=period;i<a.length;i++)e=a[i]*k+e*(1-k);return e}
-function sma(a,period){return a.length<period?null:avg(a.slice(-period))}
-function rsi(a,period=14){if(a.length<=period)return null;let g=0,l=0;for(let i=a.length-period;i<a.length;i++){let d=a[i]-a[i-1];if(d>0)g+=d;else l-=d}if(l===0)return 100;let rs=(g/period)/(l/period);return 100-100/(1+rs)}
-function atr(rows,period=14){if(rows.length<=period)return null;let t=[];for(let i=1;i<rows.length;i++){let r=rows[i],pc=rows[i-1][4];t.push(Math.max(r[2]-r[3],Math.abs(r[2]-pc),Math.abs(r[3]-pc)))}return sma(t,period)}
-function macd(a){let a12=ema(a,12),a26=ema(a,26);return a12==null||a26==null?null:a12-a26}
-function boll(a,pd=20){let m=sma(a,pd);if(m==null)return null;let s=Math.sqrt(avg(a.slice(-pd).map(x=>(x-m)**2)));return {mid:m,upper:m+2*s,lower:m-2*s}}
-function percentile(a,q){if(!a.length)return null;let x=(a.length-1)*q,b=Math.floor(x),r=x-b;return a[b]+(a[b+1]===undefined?0:r*(a[b+1]-a[b]))}
-function swings(rows,look=3){let h=rows.map(r=>+r[2]),l=rows.map(r=>+r[3]),sh=[],sl=[];for(let i=look;i<rows.length-look;i++){let hi=h[i],lo=l[i];if(h.slice(i-look,i+look+1).every(x=>hi>=x)&&h.slice(i-look,i+look+1).some(x=>hi>x))sh.push({i,p:hi});if(l.slice(i-look,i+look+1).every(x=>lo<=x)&&l.slice(i-look,i+look+1).some(x=>lo<x))sl.push({i,p:lo})}return {highs:sh,lows:sl}}
-function structure(rows){
-  let sw=swings(rows),c=+rows.at(-1)[4],highs=sw.highs,lows=sw.lows;
-  let H=highs.slice(-6),L=lows.slice(-6);
-  let hh=H.length>=2&&H.at(-1).p>H.at(-2).p,
-      lh=H.length>=2&&H.at(-1).p<H.at(-2).p,
-      hl=L.length>=2&&L.at(-1).p>L.at(-2).p,
-      ll=L.length>=2&&L.at(-1).p<L.at(-2).p;
-  let bias=hh&&hl?'BULLISH':lh&&ll?'BEARISH':'RANGE';
-  let lastHigh=H.at(-1)||null,lastLow=L.at(-1)||null;
-  let prevHigh=H.length>=2?H.at(-2).p:null,prevLow=L.length>=2?L.at(-2).p:null;
-  let bosUp=prevHigh!=null&&c>prevHigh,bosDown=prevLow!=null&&c<prevLow;
-  let event=bosUp?'BOS UP':bosDown?'BOS DOWN':'NONE';
-  let transition=event==='BOS UP'&&bias!=='BULLISH'?'BULLISH TRANSITION':event==='BOS DOWN'&&bias!=='BEARISH'?'BEARISH TRANSITION':'NONE';
-  let brokenLevel=event==='BOS UP'?prevHigh:event==='BOS DOWN'?prevLow:null;
-  let barsAbove=0,barsBelow=0;
-  if(brokenLevel!=null){
-    for(let i=rows.length-1;i>=0;i--){
-      let cc=+rows[i][4];
-      if(event==='BOS UP'&&cc>brokenLevel)barsAbove++;else if(event==='BOS DOWN'&&cc<brokenLevel)barsBelow++;else break;
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:#f8fafc;
+}
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+header{
+    text-align:center;
+    padding:20px 0 10px;
+}
+h1{margin:0 0 8px;font-size:30px}
+.subtitle{color:#cbd5e1}
+.card{
+    background:#1e293b;
+    border-radius:18px;
+    padding:22px;
+    margin:18px 0;
+    box-shadow:0 8px 25px rgba(0,0,0,.18);
+}
+h2{margin-top:0}
+textarea,input[type=file]{
+    width:100%;
+    margin-top:10px;
+}
+textarea{
+    min-height:120px;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #475569;
+    background:#0f172a;
+    color:#fff;
+    font-size:16px;
+}
+button,.file-label{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:15px;
+    margin-top:12px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.analyze{background:#22c55e;color:#06240f}
+.clear{background:#ef4444;color:white}
+.ai{background:#8b5cf6;color:white}
+.primary{background:#2563eb;color:white}
+.file-label{
+    display:block;
+    text-align:center;
+    background:#2563eb;
+    color:white;
+}
+input[type=file]{display:none}
+.stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+.stat{
+    background:#0f172a;
+    padding:14px;
+    border-radius:12px;
+}
+.stat strong{display:block;font-size:20px;margin-top:5px}
+.result-box{
+    background:#0f172a;
+    border-radius:14px;
+    padding:16px;
+    overflow:auto;
+}
+video{
+    width:100%;
+    max-height:600px;
+    margin-top:15px;
+    border-radius:12px;
+    background:#000;
+}
+.progress{
+    width:100%;
+    height:16px;
+    background:#334155;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:16px;
+}
+.progress-bar{
+    width:0%;
+    height:100%;
+    background:#22c55e;
+    transition:width .15s;
+}
+table{width:100%;border-collapse:collapse}
+th,td{
+    padding:12px;
+    text-align:left;
+    border-top:1px solid #334155;
+}
+th{color:#cbd5e1}
+.small{color:#94a3b8;font-size:14px}
+canvas{background:#fff;border-radius:12px;padding:8px}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+    <h1>Sequence AI Analyzer</h1>
+    <div class="subtitle">Analyze numerical data, detect patterns and scan screen-recorded scores.</div>
+</header>
+
+<div class="card">
+    <h2>📊 Data Analysis</h2>
+    <textarea id="dataInput" placeholder="Enter numbers separated by commas, spaces or semicolons&#10;Example: 1, 2, 3, 4, 5, 6"></textarea>
+    <button class="analyze" onclick="analyzeData()">Analyze Data</button>
+    <button class="clear" onclick="clearData()">Clear</button>
+</div>
+
+<div class="card">
+    <h2>📁 Upload CSV / Excel</h2>
+    <label class="file-label">
+        Choose CSV / XLS / XLSX
+        <input id="fileInput" type="file" accept=".csv,.xls,.xlsx" onchange="handleSpreadsheet(event)">
+    </label>
+    <p id="uploadStatus" class="small">No file selected.</p>
+</div>
+
+<div class="card">
+    <h2>Basic Statistics</h2>
+    <div class="stats">
+        <div class="stat">Data Points<strong id="dataPoints">—</strong></div>
+        <div class="stat">Unique Values<strong id="uniqueValues">—</strong></div>
+        <div class="stat">Minimum<strong id="minimum">—</strong></div>
+        <div class="stat">Maximum<strong id="maximum">—</strong></div>
+        <div class="stat">Average<strong id="average">—</strong></div>
+        <div class="stat">Most Common<strong id="mostCommon">—</strong></div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Sequence Chart</h2>
+    <canvas id="sequenceChart"></canvas>
+</div>
+
+<div class="card">
+    <h2>Advanced Statistics</h2>
+    <div class="stats">
+        <div class="stat">Median<strong id="median">—</strong></div>
+        <div class="stat">Mode<strong id="mode">—</strong></div>
+        <div class="stat">Range<strong id="range">—</strong></div>
+        <div class="stat">Standard Deviation<strong id="standardDeviation">—</strong></div>
+        <div class="stat">Variance<strong id="variance">—</strong></div>
+        <div class="stat">Q1<strong id="q1">—</strong></div>
+        <div class="stat">Q3<strong id="q3">—</strong></div>
+        <div class="stat">IQR<strong id="iqr">—</strong></div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Pattern Detection</h2>
+    <div class="result-box">
+        <p>Arithmetic Sequence: <strong id="arithmetic">—</strong></p>
+        <p>Geometric Sequence: <strong id="geometric">—</strong></p>
+        <p>Repeating Period: <strong id="period">—</strong></p>
+        <p>Longest Run: <strong id="longestRun">—</strong></p>
+        <p>Average Change: <strong id="averageChange">—</strong></p>
+        <p>IQR Outliers: <strong id="outliers">—</strong></p>
+    </div>
+</div>
+
+<div class="card">
+    <h2>🧠 Deep AI Analysis</h2>
+    <button class="ai" onclick="deepAnalysis()">Run Deep Analysis</button>
+    <div class="result-box" id="aiResult" style="margin-top:14px">Not run yet.</div>
+</div>
+
+<div class="card">
+    <h2>🎥 Screen Recording</h2>
+    <p>Upload a screen recording containing the scrolling football scores.</p>
+
+    <label class="file-label">
+        📁 Choose Screen Recording
+        <input
+            id="videoInput"
+            type="file"
+            accept="video/*"
+            onchange="previewVideo(event)"
+        >
+    </label>
+
+    <video id="videoPreview" controls style="display:none"></video>
+
+    <button class="primary" onclick="scanFastScroll()">🔎 Scan Fast Scroll</button>
+    <button class="clear" onclick="clearVideo()">Clear Video</button>
+
+    <p id="ocrStatus" class="result-box" style="margin-top:14px">Ready to scan.</p>
+
+    <div class="progress">
+        <div id="scanProgress" class="progress-bar"></div>
+    </div>
+
+    <div id="betSlipResults" class="result-box" style="margin-top:16px">
+        No scan results yet.
+    </div>
+</div>
+
+<div class="card" id="extractedAnalysisCard">
+    <h2>📈 Extracted Score Sequence Analysis</h2>
+    <p class="small">After the scan, the confirmed scores are converted into ordered numerical sequences so the analyzer can detect trends and patterns.</p>
+    <div class="stats">
+        <div class="stat">Matches<strong id="extractedMatches">—</strong></div>
+        <div class="stat">Home Goals<strong id="extractedHomeGoals">—</strong></div>
+        <div class="stat">Away Goals<strong id="extractedAwayGoals">—</strong></div>
+        <div class="stat">Total Goals<strong id="extractedTotalGoals">—</strong></div>
+    </div>
+    <div class="result-box" style="margin-top:14px">
+        <p><strong>Score-pair sequence:</strong> <span id="scorePairSequence">—</span></p>
+        <p><strong>Home-goal sequence:</strong> <span id="homeGoalSequence">—</span></p>
+        <p><strong>Away-goal sequence:</strong> <span id="awayGoalSequence">—</span></p>
+        <p><strong>Total-goal sequence:</strong> <span id="totalGoalSequence">—</span></p>
+        <p><strong>Goal-difference sequence:</strong> <span id="goalDiffSequence">—</span></p>
+        <p><strong>Exact score frequencies:</strong> <span id="scoreFrequency">—</span></p>
+        <p><strong>Home-goal pattern:</strong> <span id="homeGoalPattern">—</span></p>
+        <p><strong>Away-goal pattern:</strong> <span id="awayGoalPattern">—</span></p>
+        <p><strong>Total-goal pattern:</strong> <span id="extractedPattern">—</span></p>
+        <p><strong>Goal-difference pattern:</strong> <span id="goalDiffPattern">—</span></p>
+    </div>
+    <button class="analyze" onclick="analyzeExtractedSequence()">Analyze All Extracted Scores</button>
+</div>
+
+<div class="card">
+    <h2>⚠️ Accuracy</h2>
+    <p class="small">
+        OCR accuracy depends on resolution, motion blur, compression, font size
+        and scrolling speed. The scanner deliberately accepts football scores
+        only when they are associated with an FT Score reading, reducing false
+        detections from odds, game IDs and other numbers.
+    </p>
+</div>
+
+</div>
+
+<script>
+let sequenceChart = null;
+let ocrWorker = null;
+let currentNumbers = [];
+window.extractedSequences = {home:[], away:[], total:[], diff:[], results:[]};
+
+function parseNumbers(text) {
+    return text
+        .split(/[\s,;]+/)
+        .map(Number)
+        .filter(n => Number.isFinite(n));
+}
+
+function analyzeData() {
+    const numbers = parseNumbers(document.getElementById("dataInput").value);
+
+    if (!numbers.length) {
+        alert("Please enter some numbers.");
+        return;
     }
-  }
-  let breakBars=event==='BOS UP'?barsAbove:event==='BOS DOWN'?barsBelow:0;
-  let bosConfirmed=event!=='NONE'&&breakBars>=2;
-  let retest=transition==='BULLISH TRANSITION'&&brokenLevel!=null&&c<=brokenLevel*1.003&&c>=brokenLevel*0.997?'BULLISH RETEST':
-             transition==='BEARISH TRANSITION'&&brokenLevel!=null&&c>=brokenLevel*0.997&&c<=brokenLevel*1.003?'BEARISH RETEST':
-             bias==='BULLISH'&&lastLow&&c>=lastLow.p&&c<=lastLow.p+(Math.max(c-(lastLow.p),Number.EPSILON)*.12)?'BULLISH RETEST':
-             bias==='BEARISH'&&lastHigh&&c<=lastHigh.p&&c>=lastHigh.p-(Math.max(lastHigh.p-c,Number.EPSILON)*.12)?'BEARISH RETEST':'NONE';
-  let state=transition!=='NONE'?(bosConfirmed?(event==='BOS UP'?'BULLISH BREAK CONFIRMED':'BEARISH BREAK CONFIRMED'):transition):bias;
-  let confirmedBull=bias==='BULLISH'||(transition==='BULLISH TRANSITION'&&bosConfirmed)||(transition==='BULLISH TRANSITION'&&retest==='BULLISH RETEST'&&hl);
-  let confirmedBear=bias==='BEARISH'||(transition==='BEARISH TRANSITION'&&bosConfirmed)||(transition==='BEARISH TRANSITION'&&retest==='BEARISH RETEST'&&ll);
-  let alignment=confirmedBull?'BULLISH':confirmedBear?'BEARISH':'NONE';
-  let structureQuality=0;
-  if(H.length>=2&&L.length>=2)structureQuality+=30;
-  if(hh||hl||lh||ll)structureQuality+=20;
-  if(event!=='NONE')structureQuality+=15;
-  if(transition!=='NONE')structureQuality+=10;
-  if(bosConfirmed)structureQuality+=15;
-  if(retest!=='NONE')structureQuality+=10;
-  if(alignment!=='NONE')structureQuality+=10;
-  let rangeHigh=lastHigh?.p||Math.max(...rows.slice(-40).map(r=>+r[2]));
-  let rangeLow=lastLow?.p||Math.min(...rows.slice(-40).map(r=>+r[3]));
-  return {bias,event,transition,state,retest,support:rangeLow,resistance:rangeHigh,swings:highs.length+lows.length,hh,hl,lh,ll,bosUp,bosDown,bosConfirmed,breakBars,brokenLevel,confirmedBull,confirmedBear,alignment,aligned:alignment!=='NONE',confidence:Math.min(100,structureQuality),bosAge:bosConfirmed?breakBars:event!=='NONE'?1:null};
+
+    currentNumbers = numbers;
+
+    const sorted = [...numbers].sort((a,b)=>a-b);
+    const counts = {};
+    numbers.forEach(n => counts[n] = (counts[n] || 0) + 1);
+
+    const maxFrequency = Math.max(...Object.values(counts));
+    const modes = Object.keys(counts)
+        .filter(k => counts[k] === maxFrequency)
+        .map(Number);
+
+    const sum = numbers.reduce((a,b)=>a+b,0);
+    const average = sum / numbers.length;
+
+    document.getElementById("dataPoints").textContent = numbers.length;
+    document.getElementById("uniqueValues").textContent = new Set(numbers).size;
+    document.getElementById("minimum").textContent = Math.min(...numbers);
+    document.getElementById("maximum").textContent = Math.max(...numbers);
+    document.getElementById("average").textContent = average.toFixed(4);
+    document.getElementById("mostCommon").textContent =
+        maxFrequency > 1 ? modes.join(", ") : "None";
+
+    const median = getMedian(sorted);
+    const q1 = getMedian(sorted.slice(0, Math.floor(sorted.length/2)));
+    const q3 = getMedian(
+        sorted.slice(Math.ceil(sorted.length/2))
+    );
+
+    const variance = numbers.reduce(
+        (acc,n)=>acc + Math.pow(n-average,2),0
+    ) / numbers.length;
+
+    document.getElementById("median").textContent = median;
+    document.getElementById("mode").textContent =
+        maxFrequency > 1 ? modes.join(", ") : "None";
+    document.getElementById("range").textContent =
+        Math.max(...numbers) - Math.min(...numbers);
+    document.getElementById("variance").textContent = variance.toFixed(4);
+    document.getElementById("standardDeviation").textContent =
+        Math.sqrt(variance).toFixed(4);
+    document.getElementById("q1").textContent = q1;
+    document.getElementById("q3").textContent = q3;
+    document.getElementById("iqr").textContent = (q3-q1).toFixed(4);
+
+    detectPatterns(numbers, sorted, q1, q3);
+    drawChart(numbers);
 }
-function classify(raw,interval){let closed=raw.slice(0,-1), c=closed.map(x=>+x[4]), v=closed.map(x=>+x[5]),qv=closed.map(x=>+x[7]), e20=ema(c,20),e50=ema(c,50),R=rsi(c),A=atr(closed),M=macd(c),prev=macd(c.slice(0,-4)),B=boll(c),VW=avg(qv.slice(-20));let trend=e20!=null&&e50!=null?(c.at(-1)>e20&&e20>e50?'BULLISH':c.at(-1)<e20&&e20<e50?'BEARISH':'MIXED'):'MIXED';let momentum=M!=null&&prev!=null?(M>0&&M>prev?'POSITIVE':M<0&&M<prev?'NEGATIVE':'MIXED'):'MIXED';let dir=trend==='BULLISH'&&momentum==='POSITIVE'?'BULLISH':trend==='BEARISH'&&momentum==='NEGATIVE'?'BEARISH':'NEUTRAL';let vol=v.at(-1)/(sma(v,20)||v.at(-1));let st=structure(closed);let ext=A?Math.abs(c.at(-1)-e20)/A:null;let strength=Math.max(0,Math.min(10,(trend!=='MIXED'?3.5:1.2)+(momentum!=='MIXED'?2.8:1.2)+(vol>=1.15?1.5:vol>=.8?1:.4)+(st.bias===dir?1.4:st.bias==='RANGE'?.5:.2)+(ext!=null&&ext<=2.5?1:.2)));return {interval,closed,c,v,qv,e20,e50,R,A,M,prev,B,VW,trend,momentum,dir,vol,structure:st,ext,strength:+strength.toFixed(1)}}
-async function getJSON(url){let r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return r.json()}
-async function klines(sym,interval,limit=250){return getJSON('https://api.binance.com/api/v3/klines?symbol='+encodeURIComponent(sym)+'&interval='+interval+'&limit='+limit)}
-async function ticker(sym){return getJSON('https://api.binance.com/api/v3/ticker/price?symbol='+encodeURIComponent(sym))}
-async function depth(sym){return getJSON('https://api.binance.com/api/v3/depth?symbol='+encodeURIComponent(sym)+'&limit=20')}
-async function exchange(sym){return getJSON('https://api.binance.com/api/v3/exchangeInfo?symbol='+encodeURIComponent(sym))}
-async function allExchangeInfo(){return getJSON('https://api.binance.com/api/v3/exchangeInfo')}
-function book(x){let bid=x.bids.reduce((s,a)=>s+(+a[0])*(+a[1]),0),ask=x.asks.reduce((s,a)=>s+(+a[0])*(+a[1]),0);let bb=+x.bids[0][0],ba=+x.asks[0][0];return {bid,ask,total:bid+ask,imb:(bid-ask)/(bid+ask||1)*100,spread:ba-bb}}
-async function marketIntel(sym){let pairs=['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','DOGEUSDT','ADAUSDT','AVAXUSDT','LINKUSDT','SUIUSDT'];let rows=await Promise.all(pairs.map(async s=>{try{let k=await klines(s,'1h',55),x=classify(k,'1h');return {symbol:s,dir:x.dir,vol:x.vol}}catch(e){return {symbol:s,dir:'UNAVAILABLE',vol:0}}}));let valid=rows.filter(x=>x.dir!=='UNAVAILABLE'),bull=valid.filter(x=>x.dir==='BULLISH').length,bear=valid.filter(x=>x.dir==='BEARISH').length;let eth=valid.find(x=>x.symbol==='ETHUSDT')?.dir||'UNAVAILABLE',btc=valid.find(x=>x.symbol==='BTCUSDT')?.dir||'UNAVAILABLE';return {rows,breadth:valid.length?bull/valid.length*100:0,bull,bear,neutral:valid.filter(x=>x.dir==='NEUTRAL').length,avgVol:avg(valid.map(x=>x.vol)),btc,eth,alts:valid.filter(x=>x.symbol!=='BTCUSDT'&&x.symbol!=='ETHUSDT').filter(x=>x.dir==='BULLISH').length,valid:valid.length}}
-function intervalMs(x){return x==='15m'?15*60*1000:x==='1h'?60*60*1000:4*60*60*1000}
-function authoritative(){
-  let xs=TF.map(x=>S.tf[x]),bull=xs.filter(x=>x.dir==='BULLISH'),bear=xs.filter(x=>x.dir==='BEARISH'),bw=bull.reduce((s,x)=>s+W[x.interval],0),sw=bear.reduce((s,x)=>s+W[x.interval],0),weighted=Math.max(bw,sw)/6*100,da=Math.max(bull.length,bear.length)/3*100,dom=bw>=sw&&bw>0?'BULLISH':sw>0?'BEARISH':'NONE',four=S.tf['4h'],trend=xs.filter(x=>x.trend===dom).length,mom=xs.filter(x=>x.momentum===(dom==='BULLISH'?'POSITIVE':dom==='BEARISH'?'NEGATIVE':'__')).length,vol=xs.filter(x=>x.vol>=1).length,structure=xs.filter(x=>x.structure.alignment===dom).length,transitions=xs.filter(x=>x.structure.transition===(dom==='BULLISH'?'BULLISH TRANSITION':dom==='BEARISH'?'BEARISH TRANSITION':'__')).length,ext=xs.filter(x=>x.ext!=null&&x.ext<=2.5).length,selected=S.tf[$('detail').value]||xs[0],rsiCaution=selected.R!=null&&(selected.R>=70||selected.R<=30),lastTs=selected.closed.at(-1)[0],fresh=Number.isFinite(+lastTs)?Date.now()-+lastTs<Math.max(15*60*1000,intervalMs(selected.interval)*2):false,liq=!!S.book&&S.book.total>=50000&&(S.book.spread==null||S.book.spread<=0.1);
-  let gates=[['Directional agreement',da>=67,`${p(da)} • ${Math.max(bull.length,bear.length)}/3`],['Weighted confluence',weighted>=67,`${p(weighted)} • ${bw}B / ${sw}S / 6`],['4h confirmation',dom!=='NONE'&&four.dir===dom,`4h ${four.dir}`],['MTF trend',dom!=='NONE'&&trend>=2,`${trend}/3 aligned`],['MTF momentum',dom!=='NONE'&&mom>=2,`${mom}/3 aligned`],['MTF volume',vol>=2,`${vol}/3 • avg ${n(avg(xs.map(x=>x.vol)),2)}x`],['MTF structure',dom!=='NONE'&&structure>=2,`${structure}/3 confirmed • ${transitions}/3 transitioning • ${xs.filter(x=>x.structure.bosConfirmed&&x.structure.alignment===dom).length}/3 confirmed breaks`],['MTF extension',ext>=2,`${ext}/3 acceptable`],['Selected RSI',!rsiCaution,`${n(selected.R,1)} • ${rsiCaution?'CAUTION':'OK'}`],['Freshness',fresh,`closed candle • ${fresh?'fresh':'stale'}`],['Liquidity',liq,liq?'adequate depth':'insufficient depth']];
-  let pass=gates.every(g=>g[1])&&dom!=='NONE';
-  let quality=Math.min(10,avg(xs.map(x=>x.strength))*0.68+(vol/3)*1.0+(structure/3)*1.1+(ext/3)*.7+(xs.filter(x=>x.structure.aligned===dom).length/3)*.4+(transitions/3)*.25);
-  let reasons=gates.filter(g=>!g[1]).map(g=>g[0]+': '+g[2]);
-  let structureDetail=xs.map(x=>{let st=x.structure,flags=[st.hh?'HH':null,st.hl?'HL':null,st.lh?'LH':null,st.ll?'LL':null].filter(Boolean).join(' '),transition=st.transition!=='NONE'?` • ${st.transition}`:'',retest=st.retest!=='NONE'?` • ${st.retest}`:'';return `${x.interval} ${st.state} (${flags||'no paired swing'}${st.event!=='NONE'?' • '+st.event:''}${transition}${retest})`;});
-  return {dom,da,bw,sw,weighted,four:dom!=='NONE'&&four.dir===dom,trend,mom,vol,structure,transitions,ext,selected,gates,pass,quality:+quality.toFixed(1),direction:pass?dom:'NONE',reasons,structureDetail,fresh,liq};
+
+function getMedian(arr) {
+    if (!arr.length) return "—";
+    const mid = Math.floor(arr.length/2);
+    return arr.length % 2
+        ? arr[mid]
+        : ((arr[mid-1] + arr[mid]) / 2);
 }
-function risk(d){let s=d.selected,entry=s.closed.at(-1)[4],A=s.A||0,stop=d.direction==='BULLISH'?entry-1.5*A:entry+1.5*A,target=d.direction==='BULLISH'?entry+3*A:entry-3*A,capital=+$('account').value,riskAmt=capital*(+$('risk').value/100),distance=Math.abs(entry-stop),qty=distance?riskAmt/distance:0;return {entry,stop,target,riskAmt,distance,qty,rr:distance?Math.abs(target-entry)/distance:0,notional:qty*entry}}
-function renderChart(rows){let a=rows.map(x=>+x[4]),lo=Math.min(...a),hi=Math.max(...a);$('chart').innerHTML=a.map((v,i)=>`<i class="c ${i&&v<a[i-1]?'down':''}" style="height:${18+((v-lo)/(hi-lo||1))*245}px"></i>`).join('')}
-function render(){let d=S.decision,xs=TF.map(x=>S.tf[x]),s=d.selected;$('decision').innerHTML=`<div class="small">V31 AUTHORITATIVE DECISION</div><div class="big ${d.pass?'good':'bad'}">${d.pass?'QUALIFIED':'INVALID'} • ${d.direction}</div><div class="small">Setup Quality ${d.quality}/10 • Directional Agreement ${p(d.da)} • Weighted Confluence ${p(d.weighted)} • 4h Confirmation ${d.four?'YES':'NO'}</div><div class="reason">${d.pass?'All authoritative gates passed. Paper execution is available; live execution remains disabled.':'<b>Gate blockers:</b> '+d.reasons.join(' • ')+`<br><span class="small">Structure map: ${d.structureDetail.join(' • ')}</span>`}</div>`;$('mtf').innerHTML=xs.map(x=>`<article class="tf"><h3>${x.interval}<span class="pill ${x.dir==='BULLISH'?'bull':x.dir==='BEARISH'?'bear':'neu'}">${x.dir}</span></h3><div class="row"><span>Trend</span><b>${x.trend}</b></div><div class="row"><span>Momentum</span><b>${x.momentum}</b></div><div class="row"><span>RSI</span><b>${n(x.R,1)}</b></div><div class="row"><span>Volume</span><b>${n(x.vol,2)}x</b></div><div class="row"><span>Structure</span><b>${x.structure.state}</b></div><div class="row"><span>Structure event</span><b>${x.structure.event}</b></div><div class="row"><span>Break confirmation</span><b>${x.structure.bosConfirmed?'YES':'NO'}</b></div><div class="row"><span>Extension</span><b>${n(x.ext,2)} ATR</b></div><div class="row"><span>Strength</span><b>${x.strength}/10</b></div></article>`).join('');$('gates').innerHTML=d.gates.map(g=>`<div class="gate"><div class="check ${g[1]?'good':'bad'}">${g[1]?'✓':'✕'}</div><div><b>${g[0]}</b><div class="small">${g[2]}</div></div><div class="small">${g[1]?'PASS':'BLOCK'}</div></div>`).join('');$('tech').innerHTML=[['Close',n(s.closed.at(-1)[4])],['EMA20',n(s.e20)],['EMA50',n(s.e50)],['RSI',n(s.R,1)],['MACD',n(s.M,4)],['ATR',n(s.A)],['ATR %',n(s.A/s.closed.at(-1)[4]*100,2)+'%'],['Volume ratio',n(s.vol,2)+'x']].map(x=>`<div class="metric"><div class="k">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('');$('meta').textContent=`${S.symbol} • ${s.interval} • ${s.closed.length} closed candles`;renderChart(s.closed.slice(-100));let st=s.structure;$('structure').innerHTML=[['Bias',st.bias],['Event',st.event],['Break confirmation',st.bosConfirmed?`YES • ${st.breakBars} closes`:'NO'],['Retest',st.retest],['HH / HL',st.hh&&st.hl?'YES':'NO'],['LH / LL',st.lh&&st.ll?'YES':'NO'],['Support',n(st.support)],['Resistance',n(st.resistance)],['Confirmed swings',st.swings],['Structure confidence',st.confidence+'%']].map(x=>`<div class="metric"><div class="k">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('');let I=S.intel||{};$('intel').innerHTML=[['Market breadth',`${I.bull||0} Bull / ${I.bear||0} Bear`],['Breadth %',p(I.breadth||0)],['Avg volume',n(I.avgVol||0,2)+'x'],['BTC context',I.btc||'—'],['ETH context',I.eth||'—'],['Alt alignment',`${I.alts||0}/8`],['Book imbalance',n(S.book?.imb,1)+'%'],['Top depth',n(S.book?.total,0)]].map(x=>`<div class="metric"><div class="k">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('');$('intelText').textContent=`Market intelligence is contextual only. It cannot create a trade direction. Current breadth is ${p(I.breadth||0)} across ${I.valid||0} valid market pairs; BTC=${I.btc||'—'}, ETH=${I.eth||'—'}.`;let live=S.live||0;$('live').innerHTML=[['Live price',n(live)],['WebSocket',S.ws?'CONNECTED':'DISCONNECTED'],['Stream age',S.wsAge==null?'—':n((Date.now()-S.wsAge)/1000,0)+'s'],['Closed decision',n(s.closed.at(-1)[4])],['Book spread',n(S.book?.spread,4)],['Liquidity',S.book?.total?'ADEQUATE':'UNAVAILABLE'],['Weighted confluence',p(d.weighted)],['Engine',d.pass?'READY':'LOCKED']].map(x=>`<div class="metric"><div class="k">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('');if(d.pass){let r=risk(d);$('riskPlan').innerHTML=[['Status','QUALIFIED'],['Direction',d.direction],['Entry',n(r.entry)],['Stop',n(r.stop)],['Target',n(r.target)],['Risk amount',n(r.riskAmt)],['Quantity',n(r.qty,6)],['Notional',n(r.notional)],['R:R',r.rr.toFixed(2)]].map(x=>`<div class="metric"><div class="k">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('')}else $('riskPlan').innerHTML='<div class="metric"><div class="k">STATUS</div><div class="v bad">NO TRADE PLAN</div></div>';$('status').innerHTML=[['API','ONLINE'],['MARKET DATA','10/10 context pairs'],['MTF ANALYSIS','15m / 1h / 4h'],['DECISION',d.pass?'QUALIFIED':'INVALID'],['SETUP QUALITY',d.quality+'/10'],['DIRECTIONAL',p(d.da)],['WEIGHTED',p(d.weighted)],['4H',S.tf['4h'].dir]].map(x=>`<div class="metric"><div class="k">${x[0]}</div><div class="v ${x[1]==='INVALID'?'bad':x[0]==='DECISION'?'good':''}">${x[1]}</div></div>`).join('');$('scanTime').textContent='Scanned '+new Date().toLocaleTimeString()}
-async function loadPairs(){let sel=$('symbol');try{let ex=await allExchangeInfo();let pairs=(ex.symbols||[]).filter(x=>x.status==='TRADING'&&x.quoteAsset==='USDT'&&(x.isSpotTradingAllowed!==false)).map(x=>x.symbol).sort();if(!pairs.includes('ETHUSDT'))pairs.unshift('ETHUSDT');sel.innerHTML=pairs.map(x=>`<option value="${x}">${x}</option>`).join('');sel.value='ETHUSDT';log(`Loaded ${pairs.length} Binance Spot USDT pairs`);return true}catch(e){sel.innerHTML='<option value="ETHUSDT">ETHUSDT</option>';sel.value='ETHUSDT';log('Pair list load failed; using ETHUSDT fallback: '+e.message);return false}}
-let wsRetry=0,wsTimer=null;function wsStart(){try{if(S.ws){try{S.ws.close()}catch{}}if(wsTimer){clearTimeout(wsTimer);wsTimer=null}let s=S.symbol.toLowerCase();S.ws=new WebSocket(`wss://stream.binance.com:9443/ws/${s}@ticker`);S.ws.onopen=()=>{wsRetry=0;log('WebSocket connected '+s+'@ticker')};S.ws.onmessage=e=>{let x=JSON.parse(e.data);S.live=+x.c;S.wsAge=Date.now();render()};S.ws.onclose=()=>{S.ws=null;log('WebSocket disconnected; scheduling reconnect');wsRetry=Math.min(wsRetry+1,6);let delay=Math.min(30000,1000*2**wsRetry);wsTimer=setTimeout(wsStart,delay)};S.ws.onerror=()=>log('WebSocket error; REST remains authoritative')}catch(e){log('WebSocket unavailable: '+e.message);wsRetry=Math.min(wsRetry+1,6);wsTimer=setTimeout(wsStart,Math.min(30000,1000*2**wsRetry))}}
-async function scan(){let sym=$('symbol').value.trim().toUpperCase();if(!/^[A-Z0-9]{5,20}$/.test(sym))return alert('Enter a valid Binance symbol.');S.symbol=sym;$('scan').disabled=true;$('api').textContent='API: RUNNING';try{let [ex,depthData,tick]=await Promise.all([exchange(sym),depth(sym),ticker(sym)]);if(!ex.symbols?.length)throw Error('Symbol not found on Binance Spot');S.book=book(depthData);S.live=+tick.price;for(let t of TF){S.tf[t]=classify(await klines(sym,t,250),t)}S.intel=await marketIntel(sym);S.decision=authoritative();render();wsStart();log(`Advanced V32 scan ${sym}: ${S.decision.pass?'QUALIFIED':'INVALID'}; DA ${p(S.decision.da)}; weighted ${p(S.decision.weighted)}; 4h ${S.tf['4h'].dir}; structure ${S.decision.structure}/3`);$('api').textContent='API: ONLINE'}catch(e){$('api').textContent='API: ERROR';$('decision').innerHTML=`<div class="big bad">SCAN ERROR</div><div>${e.message}</div>`;log('SCAN ERROR '+e.message)}finally{$('scan').disabled=false}}
-function journal(){let a=JSON.parse(localStorage.getItem('tradelens-v32a-paper')||'[]');$('journal').textContent=a.length?a.map((x,i)=>`${i+1}. ${x.time} • ${x.symbol} • ${x.side} • qty ${x.qty} • entry ${x.entry} • stop ${x.stop} • target ${x.target} • R:R ${x.rr} • ${x.note}`).join('\n'):'No paper trades yet.';return a}
-$('paper').onclick=()=>{if(!S.decision?.pass)return alert('PAPER ORDER LOCKED — authoritative V32 gate has not passed.');let r=risk(S.decision),a=journal();a.push({time:new Date().toLocaleString(),symbol:S.symbol,side:S.decision.direction,qty:+r.qty.toFixed(6),entry:+r.entry.toFixed(6),stop:+r.stop.toFixed(6),target:+r.target.toFixed(6),rr:+r.rr.toFixed(2),note:'V32 Advanced paper-only execution'});localStorage.setItem('tradelens-v32a-paper',JSON.stringify(a));journal()};$('clear').onclick=()=>{if(confirm('Clear the V32 paper journal?')){localStorage.removeItem('tradelens-v32a-paper');journal()}};$('scan').onclick=scan;journal();(async()=>{await loadPairs();$('api').textContent='API: ONLINE';log('Pair selector ready. Choose a pair, then run the V32 scan.');})();
-</script></body></html>
+
+function detectPatterns(numbers, sorted, q1, q3) {
+    if (numbers.length < 2) {
+        document.getElementById("arithmetic").textContent = "Insufficient data";
+        return;
+    }
+
+    const differences = [];
+    for (let i=1;i<numbers.length;i++) {
+        differences.push(numbers[i]-numbers[i-1]);
+    }
+
+    const arithmetic = differences.every(d =>
+        Math.abs(d-differences[0]) < 1e-10
+    );
+
+    let geometric = numbers.every((n,i) => {
+        if (i===0) return true;
+        if (numbers[i-1] === 0) return false;
+        return Math.abs(n/numbers[i-1] - numbers[1]/numbers[0]) < 1e-10;
+    });
+
+    document.getElementById("arithmetic").textContent =
+        arithmetic ? "Yes" : "No";
+    document.getElementById("geometric").textContent =
+        geometric ? "Yes" : "No";
+
+    let period = "None";
+    for (let p=1;p<=Math.floor(numbers.length/2);p++) {
+        let works = true;
+        for (let i=p;i<numbers.length;i++) {
+            if (numbers[i] !== numbers[i-p]) {
+                works = false;
+                break;
+            }
+        }
+        if (works) {
+            period = p;
+            break;
+        }
+    }
+    document.getElementById("period").textContent = period;
+
+    let longest = 1;
+    let current = 1;
+    for (let i=1;i<numbers.length;i++) {
+        if (numbers[i] === numbers[i-1]) current++;
+        else current = 1;
+        longest = Math.max(longest,current);
+    }
+    document.getElementById("longestRun").textContent = longest;
+
+    const avgChange =
+        differences.reduce((a,b)=>a+b,0) / differences.length;
+    document.getElementById("averageChange").textContent =
+        avgChange.toFixed(4);
+
+    const lower = q1 - 1.5*(q3-q1);
+    const upper = q3 + 1.5*(q3-q1);
+    const outliers = numbers.filter(n => n < lower || n > upper);
+
+    document.getElementById("outliers").textContent =
+        outliers.length ? outliers.join(", ") : "None";
+}
+
+function drawChart(numbers) {
+    const canvas = document.getElementById("sequenceChart");
+
+    if (sequenceChart) sequenceChart.destroy();
+
+    sequenceChart = new Chart(canvas, {
+        type:"line",
+        data:{
+            labels:numbers.map((_,i)=>i+1),
+            datasets:[{
+                label:"Sequence",
+                data:numbers,
+                tension:.2
+            }]
+        },
+        options:{
+            responsive:true,
+            plugins:{
+                legend:{display:true}
+            }
+        }
+    });
+}
+
+function clearData() {
+    document.getElementById("dataInput").value = "";
+    currentNumbers = [];
+}
+
+function handleSpreadsheet(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    document.getElementById("uploadStatus").textContent =
+        "Reading " + file.name + "...";
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        try {
+            const workbook = XLSX.read(e.target.result, {type:"array"});
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet, {header:1});
+
+            const numbers = [];
+
+            rows.forEach(row => {
+                row.forEach(value => {
+                    if (typeof value === "number" && Number.isFinite(value)) {
+                        numbers.push(value);
+                    } else if (typeof value === "string") {
+                        numbers.push(...parseNumbers(value));
+                    }
+                });
+            });
+
+            document.getElementById("dataInput").value =
+                numbers.join(", ");
+
+            document.getElementById("uploadStatus").textContent =
+                numbers.length + " number(s) loaded.";
+
+            analyzeData();
+        } catch (error) {
+            document.getElementById("uploadStatus").textContent =
+                "Could not read the file.";
+            console.error(error);
+        }
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+
+function deepAnalysis() {
+    const box = document.getElementById("aiResult");
+
+    if (!currentNumbers.length) {
+        box.textContent = "Analyze some numerical data first.";
+        return;
+    }
+
+    const numbers = currentNumbers;
+    const avg =
+        numbers.reduce((a,b)=>a+b,0) / numbers.length;
+
+    const increasing =
+        numbers.every((n,i)=>i===0 || n>=numbers[i-1]);
+
+    const decreasing =
+        numbers.every((n,i)=>i===0 || n<=numbers[i-1]);
+
+    box.innerHTML = `
+        <strong>Deep Analysis Summary</strong>
+        <p>Data points: ${numbers.length}</p>
+        <p>Average: ${avg.toFixed(4)}</p>
+        <p>Trend: ${
+            increasing ? "Non-decreasing" :
+            decreasing ? "Non-increasing" :
+            "Mixed"
+        }</p>
+        <p>The detailed statistical values are shown above.</p>
+    `;
+}
+
+/* =========================
+   VIDEO / OCR SCANNER
+   ========================= */
+
+function previewVideo(event) {
+    const file = event.target.files[0];
+    const video = document.getElementById("videoPreview");
+    const status = document.getElementById("ocrStatus");
+
+    if (!file) return;
+
+    const oldUrl = video.dataset.objectUrl;
+    if (oldUrl) URL.revokeObjectURL(oldUrl);
+
+    const url = URL.createObjectURL(file);
+    video.dataset.objectUrl = url;
+    video.src = url;
+    video.style.display = "block";
+    video.load();
+
+    status.textContent = "Video loaded. Ready to scan.";
+    document.getElementById("betSlipResults").textContent =
+        "Video ready. Press Scan Fast Scroll.";
+    document.getElementById("scanProgress").style.width = "0%";
+}
+
+function clearVideo() {
+    const video = document.getElementById("videoPreview");
+    const input = document.getElementById("videoInput");
+
+    if (video.dataset.objectUrl) {
+        URL.revokeObjectURL(video.dataset.objectUrl);
+    }
+
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+    video.style.display = "none";
+
+    input.value = "";
+    document.getElementById("ocrStatus").textContent = "Ready to scan.";
+    document.getElementById("betSlipResults").textContent =
+        "No scan results yet.";
+    document.getElementById("scanProgress").style.width = "0%";
+}
+
+function formatVideoTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+
+    return (
+        String(mins).padStart(2,"0") +
+        ":" +
+        String(secs).padStart(2,"0")
+    );
+}
+
+function extractFTScore(text, lines) {
+    const clean = value => value
+        .replace(/[|]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    const valid = (home, away, rawHome, rawAway) => {
+        // Football-score safety checks. Reject OCR junk such as 00-26.
+        if (!Number.isInteger(home) || !Number.isInteger(away)) return null;
+        if (home < 0 || away < 0 || home > 15 || away > 15) return null;
+        if (/^0\d$/.test(rawHome) || /^0\d$/.test(rawAway)) return null;
+        if (home === 0 && away === 0) return { home, away };
+        return { home, away };
+    };
+
+    // Best case: FT Score and the score are on the same OCR line.
+    for (let i = 0; i < lines.length; i++) {
+        if (!/FT\s*Score/i.test(lines[i])) continue;
+
+        const nearby = [
+            clean(lines[i]),
+            clean(lines[i + 1] || ""),
+            clean(lines[i + 2] || "")
+        ].join(" ");
+
+        const match = nearby.match(
+            /FT\s*Score\b[^0-9]{0,12}(\d{1,2})\s*[:\-]\s*(\d{1,2})\b/i
+        );
+
+        if (match) {
+            const result = valid(
+                Number(match[1]),
+                Number(match[2]),
+                match[1],
+                match[2]
+            );
+            if (result) return result;
+        }
+    }
+
+    return null;
+}
+
+function findTeam(lines, scoreIndex) {
+    const start = Math.max(0, scoreIndex - 10);
+    const end = Math.min(lines.length, scoreIndex + 4);
+    const candidates = [];
+
+    for (let i = start; i < end; i++) {
+        const line = lines[i]
+            .replace(/[|]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        // Team abbreviations on the betting slip are normally 2–5 letters.
+        const match = line.match(
+            /\b([A-Z]{2,5})\s+(?:VS|V)\s+([A-Z]{2,5})\b/i
+        );
+
+        if (match) {
+            candidates.push({
+                distance: Math.abs(i - scoreIndex),
+                team:
+                    match[1].toUpperCase() +
+                    " vs " +
+                    match[2].toUpperCase()
+            });
+        }
+    }
+
+    candidates.sort((a, b) => a.distance - b.distance);
+    return candidates.length ? candidates[0].team : null;
+}
+
+function buildScanResultsTable(results) {
+    if (!results.length) {
+        return "No confirmed football scores found.";
+    }
+
+    let html = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Team</th>
+                    <th>Score</th>
+                    <th>OCR</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    results.forEach(result => {
+        html += `
+            <tr>
+                <td>${result.time}</td>
+                <td>${result.team}</td>
+                <td><strong>${result.score}</strong></td>
+                <td>${result.confidence || "-"}%</td>
+            </tr>
+        `;
+    });
+
+    html += "</tbody></table>";
+    return html;
+}
+
+async function scanFastScroll() {
+    const video = document.getElementById("videoPreview");
+    const status = document.getElementById("ocrStatus");
+    const resultsBox = document.getElementById("betSlipResults");
+    const progress = document.getElementById("scanProgress");
+
+    if (!video || !video.src) {
+        status.textContent =
+            "Please upload a screen recording first.";
+        return;
+    }
+
+    if (typeof Tesseract === "undefined") {
+        status.textContent =
+            "OCR engine is not loaded. Check your internet connection.";
+        return;
+    }
+
+    try {
+        status.textContent =
+            "Preparing high-accuracy OCR scanner...";
+
+        if (!ocrWorker) {
+            ocrWorker = await Tesseract.createWorker("eng");
+        }
+
+        if (!video.duration || !isFinite(video.duration)) {
+            await new Promise(resolve => {
+                video.addEventListener("loadedmetadata", resolve, {
+                    once:true
+                });
+            });
+        }
+
+        const duration = video.duration;
+
+        if (!duration || !isFinite(duration)) {
+            throw new Error("Could not read video duration.");
+        }
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d", {
+            willReadFrequently:true
+        });
+
+        /*
+         * 0.45 seconds is a balance between speed and coverage.
+         */
+        const interval = 0.45;
+        const totalFrames = Math.max(
+            1,
+            Math.ceil(duration / interval)
+        );
+
+        const confirmed = new Map();
+
+        for (let frame=0; frame<totalFrames; frame++) {
+
+            const targetTime = Math.min(
+                frame * interval,
+                Math.max(0,duration - 0.05)
+            );
+
+            /*
+             * Seek to the exact video position.
+             */
+            await seekVideo(video,targetTime);
+
+            const actualTime = video.currentTime;
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            if (!canvas.width || !canvas.height) {
+                throw new Error("Video frame size is unavailable.");
+            }
+
+            ctx.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            const percent =
+                ((frame+1)/totalFrames)*100;
+
+            progress.style.width =
+                percent.toFixed(1) + "%";
+
+            status.textContent =
+                "Scanning " +
+                (frame+1) +
+                " / " +
+                totalFrames +
+                " • " +
+                formatVideoTime(actualTime);
+
+            const result =
+                await ocrWorker.recognize(canvas);
+
+            const confidence = Number(result.data.confidence || 0);
+            if (confidence < 50) {
+                continue;
+            }
+
+            const text = result.data.text || "";
+
+            const lines = text
+                .split(/\r?\n/)
+                .map(line =>
+                    line.replace(/\s+/g," ").trim()
+                )
+                .filter(Boolean);
+
+            const score = extractFTScore(text,lines);
+
+            /*
+             * Reject random / impossible values.
+             */
+            if (!score ||
+                score.home > 20 ||
+                score.away > 20) {
+                continue;
+            }
+
+            const scoreText =
+                score.home + "-" + score.away;
+
+            const scoreIndex =
+                lines.findIndex(line => /FT\s*Score/i.test(line));
+
+            const team = findTeam(
+                lines,
+                scoreIndex >= 0
+                    ? scoreIndex
+                    : Math.floor(lines.length/2)
+            );
+
+            /*
+             * Team + FT score are both required.
+             */
+            if (!team) continue;
+
+            // One final-score row per match. This also removes repeated
+            // frames of the same match while scrolling.
+            const key = team;
+
+            if (!confirmed.has(key)) {
+                confirmed.set(key,{
+                    time:formatVideoTime(actualTime),
+                    team:team,
+                    score:scoreText,
+                    confidence:Math.round(confidence)
+                });
+
+                resultsBox.innerHTML =
+                    buildScanResultsTable(
+                        Array.from(confirmed.values())
+                    );
+            }
+        }
+
+        const finalResults =
+            Array.from(confirmed.values());
+
+        if (!finalResults.length) {
+            status.textContent =
+                "Scan complete, but no confirmed FT scores were detected.";
+
+            resultsBox.textContent =
+                "No confirmed football scores found.";
+            return;
+        }
+
+        resultsBox.innerHTML =
+            buildScanResultsTable(finalResults);
+
+        updateExtractedSequenceAnalysis(finalResults);
+
+        // Automatically send the extracted total-goal sequence into the
+        // existing Sequence Analyzer so scanning and analysis are connected.
+        if (finalResults.length) {
+            const sequence = finalResults
+                .map(r => parseScoreText(r.score))
+                .filter(Boolean)
+                .map(s => s.home + s.away);
+            if (sequence.length) {
+                document.getElementById("dataInput").value = sequence.join(", ");
+                analyzeData();
+            }
+        }
+
+        status.textContent =
+            "Scan complete. " +
+            finalResults.length +
+            " confirmed score reading(s) detected.";
+
+        progress.style.width = "100%";
+
+    } catch(error) {
+        console.error(error);
+
+        status.textContent =
+            "OCR scanning failed. " + error.message;
+
+        resultsBox.textContent =
+            "Scanner error: " + error.message;
+    }
+}
+
+
+function parseScoreText(scoreText) {
+    const match = String(scoreText || "").match(/^(\d+)\s*-\s*(\d+)$/);
+    if (!match) return null;
+    const home = Number(match[1]);
+    const away = Number(match[2]);
+    if (!Number.isInteger(home) || !Number.isInteger(away)) return null;
+    return {home, away};
+}
+
+function sequencePattern(numbers) {
+    if (!numbers || numbers.length < 2) return "Insufficient data";
+
+    const differences = numbers.slice(1).map((n,i)=>n-numbers[i]);
+    const arithmetic = differences.every(d=>Math.abs(d-differences[0]) < 1e-10);
+    if (arithmetic) return `Arithmetic: change ${differences[0] >= 0 ? "+" : ""}${differences[0]} each step`;
+
+    if (numbers.every((n,i)=>i===0 || (numbers[i-1] !== 0 && Math.abs(n/numbers[i-1] - numbers[1]/numbers[0]) < 1e-10))) {
+        if (numbers[0] !== 0) return `Geometric: ×${(numbers[1]/numbers[0]).toFixed(4)} each step`;
+    }
+
+    for (let p=1;p<=Math.floor(numbers.length/2);p++) {
+        let works=true;
+        for (let i=p;i<numbers.length;i++) {
+            if (numbers[i] !== numbers[i-p]) { works=false; break; }
+        }
+        if (works) return `Repeating period: ${p}`;
+    }
+
+    const avgChange = differences.reduce((a,b)=>a+b,0)/differences.length;
+    return `Mixed sequence; average change ${avgChange.toFixed(4)}`;
+}
+
+function formatScoreFrequencies(results) {
+    const counts = {};
+    results.forEach(r => { counts[r.score] = (counts[r.score] || 0) + 1; });
+    return Object.entries(counts)
+        .sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0], undefined, {numeric:true}))
+        .map(([score,count])=>`${score} (${count}×)`)
+        .join(", ");
+}
+
+function averageOf(numbers) {
+    return numbers.length ? numbers.reduce((a,b)=>a+b,0) / numbers.length : 0;
+}
+
+function analyzeScoreSet(numbers) {
+    if (!numbers.length) return "No data";
+    const min = Math.min(...numbers);
+    const max = Math.max(...numbers);
+    const avg = averageOf(numbers);
+    const changes = numbers.length > 1 ? numbers.slice(1).map((n,i)=>n-numbers[i]) : [];
+    const ups = changes.filter(x=>x>0).length;
+    const downs = changes.filter(x=>x<0).length;
+    const same = changes.filter(x=>x===0).length;
+    return `min ${min}, max ${max}, average ${avg.toFixed(2)}; ${ups} increases, ${downs} decreases, ${same} unchanged`;
+}
+
+function updateExtractedSequenceAnalysis(results) {
+    const parsed = results.map(r=>({ ...r, scoreParts: parseScoreText(r.score) })).filter(r=>r.scoreParts);
+    const home = parsed.map(r=>r.scoreParts.home);
+    const away = parsed.map(r=>r.scoreParts.away);
+    const total = parsed.map(r=>r.scoreParts.home + r.scoreParts.away);
+    const diff = parsed.map(r=>r.scoreParts.home - r.scoreParts.away);
+    const scorePairs = parsed.map(r=>r.score);
+
+    document.getElementById("extractedMatches").textContent = parsed.length || "0";
+    document.getElementById("extractedHomeGoals").textContent = home.length ? home.reduce((a,b)=>a+b,0) : "0";
+    document.getElementById("extractedAwayGoals").textContent = away.length ? away.reduce((a,b)=>a+b,0) : "0";
+    document.getElementById("extractedTotalGoals").textContent = total.length ? total.reduce((a,b)=>a+b,0) : "0";
+    document.getElementById("scorePairSequence").textContent = scorePairs.length ? scorePairs.join(" → ") : "—";
+    document.getElementById("homeGoalSequence").textContent = home.length ? home.join(", ") : "—";
+    document.getElementById("awayGoalSequence").textContent = away.length ? away.join(", ") : "—";
+    document.getElementById("totalGoalSequence").textContent = total.length ? total.join(", ") : "—";
+    document.getElementById("goalDiffSequence").textContent = diff.length ? diff.join(", ") : "—";
+    document.getElementById("scoreFrequency").textContent = parsed.length ? formatScoreFrequencies(parsed) : "—";
+    document.getElementById("homeGoalPattern").textContent = home.length ? `${sequencePattern(home)}; ${analyzeScoreSet(home)}` : "—";
+    document.getElementById("awayGoalPattern").textContent = away.length ? `${sequencePattern(away)}; ${analyzeScoreSet(away)}` : "—";
+    document.getElementById("extractedPattern").textContent = total.length ? `${sequencePattern(total)}; ${analyzeScoreSet(total)}` : "No confirmed scores";
+    document.getElementById("goalDiffPattern").textContent = diff.length ? `${sequencePattern(diff)}; ${analyzeScoreSet(diff)}` : "—";
+
+    window.extractedSequences = {home, away, total, diff, scorePairs, results: parsed};
+}
+
+function analyzeExtractedSequence() {
+    if (!window.extractedSequences || !window.extractedSequences.total.length) {
+        alert("Scan a video and get confirmed scores first.");
+        return;
+    }
+
+    const {home, away, total, diff, scorePairs, results} = window.extractedSequences;
+
+    // Keep the main analyzer's numerical input as total goals so the existing
+    // statistics/chart remain compatible, while the report below analyzes
+    // every score component separately.
+    document.getElementById("dataInput").value = total.join(", ");
+    analyzeData();
+
+    const homeAvg = averageOf(home).toFixed(2);
+    const awayAvg = averageOf(away).toFixed(2);
+    const totalAvg = averageOf(total).toFixed(2);
+    const diffAvg = averageOf(diff).toFixed(2);
+    const homeWins = diff.filter(x=>x>0).length;
+    const draws = diff.filter(x=>x===0).length;
+    const awayWins = diff.filter(x=>x<0).length;
+
+    document.getElementById("aiResult").innerHTML = `
+        <strong>Deep Analysis of All Scanned Scores</strong>
+        <p><strong>Matches analyzed:</strong> ${results.length}</p>
+        <p><strong>Exact score sequence:</strong> ${scorePairs.join(" → ")}</p>
+        <p><strong>Home goals:</strong> ${home.join(", ")}</p>
+        <p><strong>Away goals:</strong> ${away.join(", ")}</p>
+        <p><strong>Total goals:</strong> ${total.join(", ")}</p>
+        <p><strong>Goal differences:</strong> ${diff.join(", ")}</p>
+        <hr>
+        <p><strong>Home-goal analysis:</strong> ${analyzeScoreSet(home)}</p>
+        <p><strong>Away-goal analysis:</strong> ${analyzeScoreSet(away)}</p>
+        <p><strong>Total-goal analysis:</strong> ${analyzeScoreSet(total)}</p>
+        <p><strong>Goal-difference analysis:</strong> ${analyzeScoreSet(diff)}</p>
+        <p><strong>Average home goals:</strong> ${homeAvg} &nbsp; <strong>Average away goals:</strong> ${awayAvg}</p>
+        <p><strong>Average total goals:</strong> ${totalAvg} &nbsp; <strong>Average goal difference:</strong> ${diffAvg}</p>
+        <p><strong>Result split:</strong> ${homeWins} home win(s), ${draws} draw(s), ${awayWins} away win(s).</p>
+        <p><strong>Home pattern:</strong> ${sequencePattern(home)}</p>
+        <p><strong>Away pattern:</strong> ${sequencePattern(away)}</p>
+        <p><strong>Total-goal pattern:</strong> ${sequencePattern(total)}</p>
+        <p><strong>Goal-difference pattern:</strong> ${sequencePattern(diff)}</p>
+        <p><strong>Most frequent exact scores:</strong> ${formatScoreFrequencies(results) || "None"}</p>
+        <p class="small">The chart and standard statistics above use the total-goal sequence, while this report retains and analyzes the full home/away score information.</p>
+    `;
+    document.getElementById("dataInput").scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function seekVideo(video,time) {
+    return new Promise(resolve => {
+        if (Math.abs(video.currentTime-time) < 0.02) {
+            resolve();
+            return;
+        }
+
+        const done = () => {
+            video.removeEventListener("seeked",done);
+            resolve();
+        };
+
+        video.addEventListener("seeked",done,{once:true});
+        video.currentTime = time;
+    });
+}
+</script>
+</body>
+</html>
