@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TradeLens V34 Advanced</title>
+<title>TradeLens V34.2 Stage 1 Stability</title>
 <style>
 :root{--bg:#06101c;--p:#0c1a2b;--p2:#10243a;--line:#213650;--txt:#edf5ff;--mut:#8fa6c0;--g:#39d98a;--r:#ff6675;--a:#ffc857;--b:#5da8ff;--c:#42d8e8}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#10243a 0,#06101c 42%,#040b13 100%);color:var(--txt);font:14px/1.45 Inter,system-ui,Arial,sans-serif}button,input,select{font:inherit}button{border:1px solid var(--line);border-radius:9px;padding:10px 14px;background:#15314e;color:var(--txt);font-weight:800;cursor:pointer}button:hover{filter:brightness(1.15)}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:#176bc1}.danger{background:#542431}.wrap{max-width:1400px;margin:auto;padding:16px}.top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.brand h1{margin:0;font-size:27px}.brand p{margin:3px 0;color:var(--mut)}.badge{padding:7px 11px;border:1px solid var(--line);border-radius:999px;color:var(--c);background:#0a1828}.controls,.card{background:rgba(12,26,43,.95);border:1px solid var(--line);border-radius:15px;padding:14px;margin:14px 0;box-shadow:0 12px 35px #0003}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.field{display:flex;flex-direction:column;gap:4px}.field label{font-size:10px;text-transform:uppercase;color:var(--mut);font-weight:800}.field input,.field select{background:#071322;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:9px;min-width:115px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.metric{background:#081625;border:1px solid var(--line);border-radius:11px;padding:11px}.metric .k{font-size:10px;text-transform:uppercase;color:var(--mut);font-weight:800}.metric .v{font-size:20px;font-weight:900;margin-top:3px;word-break:break-word}.good{color:var(--g)}.bad{color:var(--r)}.warn{color:var(--a)}.cyan{color:var(--c)}.neutral{color:var(--mut)}.title{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.title h2{font-size:16px;margin:0}.small{font-size:12px;color:var(--mut)}.decision{border:1px solid #315071;background:#081625;border-radius:13px;padding:15px}.big{font-size:29px;font-weight:950}.reason{margin-top:10px;padding:10px;border-radius:9px;background:#091b2d;border:1px solid var(--line)}.mtf{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.tf{border:1px solid var(--line);background:#081625;border-radius:12px;padding:13px}.tf h3{margin:0 0 8px;display:flex;justify-content:space-between}.pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:900}.bull{background:#0a3a28;color:#6ce4a0}.bear{background:#481c25;color:#ff8c97}.neu{background:#263446;color:#adbac9}.row{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #172b42;padding:6px 0}.row:first-child{border-top:0}.gate{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:start;padding:8px 0;border-bottom:1px solid #172b42}.gate:last-child{border:0}.check{font-weight:900}.bar{height:8px;background:#172b42;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--b)}.chart{height:310px;display:flex;align-items:flex-end;gap:2px;padding:12px;background:#06111e;border:1px solid var(--line);border-radius:10px;overflow:hidden}.c{width:5px;min-width:2px;background:var(--g);opacity:.8}.c.down{background:var(--r)}.log{max-height:180px;overflow:auto;white-space:pre-wrap;background:#040b13;border:1px solid var(--line);padding:10px;border-radius:9px;font:11px/1.45 ui-monospace,monospace}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:7px;border-bottom:1px solid #172b42;text-align:left}.table th{font-size:10px;text-transform:uppercase;color:var(--mut)}.footer{font-size:11px;color:var(--mut);padding:8px 2px 20px}.notice{padding:9px 11px;border-radius:9px;background:#101f30;border:1px solid var(--line);color:var(--mut)}@media(max-width:950px){.grid{grid-template-columns:repeat(2,1fr)}.mtf{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid,.grid2,.grid3{grid-template-columns:1fr}.top{flex-direction:column}.wrap{padding:9px}.brand h1{font-size:23px}}
 </style></head><body><main class="wrap">
-<header class="top"><div class="brand"><h1>TradeLens V34 Advanced</h1><p>Market Intelligence • Multi-Timeframe Decision Engine • Qualification • Paper Trading</p></div><div id="api" class="badge">MARKET DATA: CHECKING…</div></header>
+<header class="top"><div class="brand"><h1>TradeLens V34.2</h1><p>Stage 1 Stability • Backend Health • Binance Market Data • Paper Trading</p></div><div id="api" class="badge">MARKET DATA: CHECKING…</div></header>
 <section class="card" id="backendHealth" aria-live="polite">
   <div class="title"><h2>Backend Security & Connectivity</h2><span id="backendHealthBadge" class="pill neu">CHECKING…</span></div>
   <div class="grid3">
@@ -28,8 +28,8 @@
 <section class="card"><div class="title"><h2>Live Market Layer</h2><span class="small">WebSocket price is separate from decisions</span></div><div id="live" class="grid"></div></section>
 <section class="card"><div class="title"><h2>Risk Plan</h2><span class="small">Locked unless all authoritative gates pass</span></div><div id="riskPlan" class="grid"></div></section>
 <section class="card"><div class="title"><h2>Paper Trading Journal</h2><span class="small">Browser-local • no real orders</span></div><div id="journal" class="log">No paper trades yet.</div></section>
-<section class="card"><div class="title"><h2>Engine Diagnostics</h2></div><div id="diag" class="log">V34 Advanced initialized.</div></section>
-<div class="footer">V34 Advanced uses public Binance Spot market data. It does not contain API secrets and cannot place live orders. Analysis is statistical and can be wrong; paper results are not proof of future performance.</div>
+<section class="card"><div class="title"><h2>Engine Diagnostics</h2></div><div id="diag" class="log">V34.2 Stage 1 initialized.</div></section>
+<div class="footer">V34.2 Stage 1 uses public Binance Spot market data with REST endpoint failover. It does not contain API secrets and cannot place live orders. Analysis is statistical and can be wrong; paper results are not proof of future performance.</div>
 </main><script>
 const $=id=>document.getElementById(id), W={'15m':1,'1h':2,'4h':3}, TF=['15m','1h','4h'];
 const S={symbol:'',tf:{},live:null,book:null,intel:null,decision:null,ws:null,wsAge:null,api:false,contextExpected:0};
@@ -88,28 +88,59 @@ function structure(rows){
   return {bias,event,transition,state,retest,support:rangeLow,resistance:rangeHigh,swings:highs.length+lows.length,hh,hl,lh,ll,bosUp,bosDown,bosConfirmed,breakBars,brokenLevel,confirmedBull,confirmedBear,alignment,aligned:alignment!=='NONE',confidence:Math.min(100,structureQuality),bosAge:bosConfirmed?breakBars:event!=='NONE'?1:null};
 }
 function classify(raw,interval){let closed=raw.slice(0,-1), c=closed.map(x=>+x[4]), v=closed.map(x=>+x[5]),qv=closed.map(x=>+x[7]), e20=ema(c,20),e50=ema(c,50),R=rsi(c),A=atr(closed),M=macd(c),prev=macd(c.slice(0,-4)),B=boll(c),VW=avg(qv.slice(-20));let trend=e20!=null&&e50!=null?(c.at(-1)>e20&&e20>e50?'BULLISH':c.at(-1)<e20&&e20<e50?'BEARISH':'MIXED'):'MIXED';let momentum=M!=null&&prev!=null?(M>0&&M>prev?'POSITIVE':M<0&&M<prev?'NEGATIVE':'MIXED'):'MIXED';let dir=trend==='BULLISH'&&momentum==='POSITIVE'?'BULLISH':trend==='BEARISH'&&momentum==='NEGATIVE'?'BEARISH':'NEUTRAL';let vol=v.at(-1)/(sma(v,20)||v.at(-1));let st=structure(closed);let ext=A?Math.abs(c.at(-1)-e20)/A:null;let strength=Math.max(0,Math.min(10,(trend!=='MIXED'?3.5:1.2)+(momentum!=='MIXED'?2.8:1.2)+(vol>=1.15?1.5:vol>=.8?1:.4)+(st.bias===dir?1.4:st.bias==='RANGE'?.5:.2)+(ext!=null&&ext<=2.5?1:.2)));return {interval,closed,c,v,qv,e20,e50,R,A,M,prev,B,VW,trend,momentum,dir,vol,structure:st,ext,strength:+strength.toFixed(1)}}
-async function getJSON(url){let r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return r.json()}
+const BINANCE_REST_BASES=['https://api.binance.com','https://data-api.binance.vision','https://api-gcp.binance.com'];
+let lastRestHost=null;
+async function getJSON(url){
+ const parsed=new URL(url),path=parsed.pathname+parsed.search;let errors=[];
+ for(const base of BINANCE_REST_BASES){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
+  try{
+   const r=await fetch(base+path,{cache:'no-store',signal:controller.signal});
+   if(!r.ok)throw Error('HTTP '+r.status);
+   const data=await r.json();
+   if(lastRestHost!==base){if(base!==BINANCE_REST_BASES[0])log('Binance REST fallback active: '+new URL(base).host);else if(lastRestHost)log('Binance REST primary endpoint restored');lastRestHost=base;}
+   return data;
+  }catch(e){errors.push(new URL(base).host+': '+(e.name==='AbortError'?'timeout after 8s':e.message));}
+  finally{clearTimeout(timer);}
+ }
+ throw Error('All Binance REST endpoints failed — '+errors.join(' | '));
+}
 // Public health endpoint only. Never place TRADER_ACCESS_TOKEN in browser code.
 const BACKEND_HEALTH_URL='https://tradelens-backend-production-571b.up.railway.app/health';
 function setHealthValue(id,text,cls){const el=$(id);if(!el)return;el.textContent=text;el.className='v '+(cls||'neutral')}
+let healthCheckInFlight=false;
 async function refreshBackendHealth(){
+ if(healthCheckInFlight)return;
+ healthCheckInFlight=true;
  const badge=$('backendHealthBadge'),detail=$('backendHealthDetail');
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),8000);
  try{
-  const r=await fetch(BACKEND_HEALTH_URL,{method:'GET',cache:'no-store',headers:{'Accept':'application/json'}});
+  const r=await fetch(BACKEND_HEALTH_URL,{method:'GET',cache:'no-store',headers:{'Accept':'application/json'},signal:controller.signal});
   if(!r.ok)throw Error('HTTP '+r.status);
   const h=await r.json();
   if(h.ok!==true)throw Error('Health endpoint did not report ok=true');
+  if(typeof h.liveTradingEnabled!=='boolean'||typeof h.emergencyTradingLock!=='boolean')throw Error('Health response is missing trading safety flags');
   setHealthValue('backendConnection','ONLINE','good');
-  setHealthValue('backendLiveTrading',h.liveTradingEnabled===true?'ENABLED':h.liveTradingEnabled===false?'DISABLED':'UNKNOWN',h.liveTradingEnabled===true?'bad':h.liveTradingEnabled===false?'good':'neutral');
-  setHealthValue('backendEmergencyLock',h.emergencyTradingLock===true?'ACTIVE':h.emergencyTradingLock===false?'INACTIVE':'UNKNOWN',h.emergencyTradingLock===true?'good':h.emergencyTradingLock===false?'bad':'neutral');
+  setHealthValue('backendLiveTrading',h.liveTradingEnabled?'ENABLED':'DISABLED',h.liveTradingEnabled?'bad':'good');
+  setHealthValue('backendEmergencyLock',h.emergencyTradingLock?'ACTIVE':'INACTIVE',h.emergencyTradingLock?'good':'bad');
   badge.textContent='BACKEND ONLINE';badge.className='pill bull';
   detail.textContent=(h.service||'Backend service')+' • Last checked '+new Date().toLocaleTimeString()+(h.time?' • Server time '+h.time:'');
+  log('Backend health check succeeded; live trading '+(h.liveTradingEnabled?'ENABLED':'DISABLED')+'; emergency lock '+(h.emergencyTradingLock?'ACTIVE':'INACTIVE'));
  }catch(e){
-  setHealthValue('backendConnection','OFFLINE / BLOCKED','bad');
+  setHealthValue('backendConnection',e.name==='AbortError'?'TIMEOUT':'UNAVAILABLE','bad');
   setHealthValue('backendLiveTrading','UNKNOWN','neutral');
   setHealthValue('backendEmergencyLock','UNKNOWN','neutral');
-  badge.textContent='CONNECTION ERROR';badge.className='pill bear';
-  detail.textContent='Health check failed: '+e.message+'. Check Railway availability and ALLOWED_ORIGINS CORS settings for this frontend domain.';
+  badge.textContent=e.name==='AbortError'?'HEALTH TIMEOUT':'CONNECTION ERROR';badge.className='pill bear';
+  let reason;
+  if(e.name==='AbortError')reason='Health check timed out after 8 seconds. Check Railway availability and retry.';
+  else if(e instanceof TypeError)reason='Browser health request failed. Possible causes include network/DNS failure or CORS. If Railway ALLOWED_ORIGINS is configured, verify the exact deployed frontend origin.';
+  else reason='Health check failed: '+e.message+'. Verify that the Railway service and /health endpoint are available.';
+  detail.textContent=reason+' • Checked '+new Date().toLocaleTimeString();
+  log('Backend health check failed: '+(e.name==='AbortError'?'timeout after 8s':e.message));
+ }finally{
+  clearTimeout(timer);
+  healthCheckInFlight=false;
  }
 }
 
@@ -121,10 +152,29 @@ async function allExchangeInfo(){return getJSON('https://api.binance.com/api/v3/
 function book(x){let bid=x.bids.reduce((s,a)=>s+(+a[0])*(+a[1]),0),ask=x.asks.reduce((s,a)=>s+(+a[0])*(+a[1]),0);let bb=+x.bids[0][0],ba=+x.asks[0][0];return {bid,ask,total:bid+ask,imb:(bid-ask)/(bid+ask||1)*100,spread:ba-bb}}
 async function marketIntel(sym){let pairs=['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','DOGEUSDT','ADAUSDT','AVAXUSDT','LINKUSDT','SUIUSDT'];let rows=await Promise.all(pairs.map(async s=>{try{let k=await klines(s,'1h',55),x=classify(k,'1h');return {symbol:s,dir:x.dir,vol:x.vol}}catch(e){return {symbol:s,dir:'UNAVAILABLE',vol:0}}}));let valid=rows.filter(x=>x.dir!=='UNAVAILABLE'),bull=valid.filter(x=>x.dir==='BULLISH').length,bear=valid.filter(x=>x.dir==='BEARISH').length;let eth=valid.find(x=>x.symbol==='ETHUSDT')?.dir||'UNAVAILABLE',btc=valid.find(x=>x.symbol==='BTCUSDT')?.dir||'UNAVAILABLE';return {rows,breadth:valid.length?bull/valid.length*100:0,bull,bear,neutral:valid.filter(x=>x.dir==='NEUTRAL').length,avgVol:avg(valid.map(x=>x.vol)),btc,eth,alts:valid.filter(x=>x.symbol!=='BTCUSDT'&&x.symbol!=='ETHUSDT').filter(x=>x.dir==='BULLISH').length,valid:valid.length,expected:pairs.length}}
 function intervalMs(x){return x==='15m'?15*60*1000:x==='1h'?60*60*1000:4*60*60*1000}
-function rsiState(v){if(!Number.isFinite(v))return {label:'UNAVAILABLE',className:'neutral',blocked:true};if(v>=80)return {label:'EXTREME HIGH',className:'bad',blocked:true};if(v>=70)return {label:'HIGH CAUTION',className:'warn',blocked:true};if(v<=20)return {label:'EXTREME LOW',className:'bad',blocked:true};if(v<=30)return {label:'LOW CAUTION',className:'warn',blocked:true};return {label:'NORMAL',className:'good',blocked:false}}
+function rsiState(v,direction='NONE'){
+ if(!Number.isFinite(v))return {label:'UNAVAILABLE',className:'neutral',blocked:true};
+ if(direction==='BULLISH'){
+  if(v>=80)return {label:'EXTREME HIGH • LONG BLOCK',className:'bad',blocked:true};
+  if(v>=70)return {label:'HIGH CAUTION • LONG BLOCK',className:'warn',blocked:true};
+  if(v<=20)return {label:'EXTREME LOW • NOT A LONG BLOCKER',className:'warn',blocked:false};
+  if(v<=30)return {label:'LOW RSI • NOT A LONG BLOCKER',className:'warn',blocked:false};
+ }else if(direction==='BEARISH'){
+  if(v<=20)return {label:'EXTREME LOW • SHORT BLOCK',className:'bad',blocked:true};
+  if(v<=30)return {label:'LOW CAUTION • SHORT BLOCK',className:'warn',blocked:true};
+  if(v>=80)return {label:'EXTREME HIGH • NOT A SHORT BLOCKER',className:'warn',blocked:false};
+  if(v>=70)return {label:'HIGH RSI • NOT A SHORT BLOCKER',className:'warn',blocked:false};
+ }else{
+  if(v>=80)return {label:'EXTREME HIGH • DIRECTION UNSET',className:'bad',blocked:true};
+  if(v>=70)return {label:'HIGH CAUTION • DIRECTION UNSET',className:'warn',blocked:true};
+  if(v<=20)return {label:'EXTREME LOW • DIRECTION UNSET',className:'bad',blocked:true};
+  if(v<=30)return {label:'LOW CAUTION • DIRECTION UNSET',className:'warn',blocked:true};
+ }
+ return {label:'NORMAL',className:'good',blocked:false};
+}
 function structureEvidence(st){let flags=[st.hh?'HH':null,st.hl?'HL':null,st.lh?'LH':null,st.ll?'LL':null].filter(Boolean);return flags.length?flags.join(' • '):'No confirmed paired swing';}
 function authoritative(){
-  let xs=TF.map(x=>S.tf[x]),bull=xs.filter(x=>x.dir==='BULLISH'),bear=xs.filter(x=>x.dir==='BEARISH'),bw=bull.reduce((s,x)=>s+W[x.interval],0),sw=bear.reduce((s,x)=>s+W[x.interval],0),weighted=Math.max(bw,sw)/6*100,da=Math.max(bull.length,bear.length)/3*100,dom=bw>=sw&&bw>0?'BULLISH':sw>0?'BEARISH':'NONE',four=S.tf['4h'],trend=xs.filter(x=>x.trend===dom).length,mom=xs.filter(x=>x.momentum===(dom==='BULLISH'?'POSITIVE':dom==='BEARISH'?'NEGATIVE':'__')).length,vol=xs.filter(x=>x.vol>=1).length,structure=xs.filter(x=>x.structure.alignment===dom).length,transitions=xs.filter(x=>x.structure.transition===(dom==='BULLISH'?'BULLISH TRANSITION':dom==='BEARISH'?'BEARISH TRANSITION':'__')).length,confirmedBreaks=xs.filter(x=>x.structure.bosConfirmed&&x.structure.alignment===dom).length,ext=xs.filter(x=>x.ext!=null&&x.ext<=2.5).length,selected=S.tf[$('detail').value]||xs[0],rsi=rsiState(selected.R),lastTs=selected.closed.at(-1)[0],fresh=Number.isFinite(+lastTs)?Date.now()-+lastTs<Math.max(15*60*1000,intervalMs(selected.interval)*2):false,liq=!!S.book&&S.book.total>=50000&&(S.book.spread==null||S.book.spread<=0.1);
+  let xs=TF.map(x=>S.tf[x]),bull=xs.filter(x=>x.dir==='BULLISH'),bear=xs.filter(x=>x.dir==='BEARISH'),bw=bull.reduce((s,x)=>s+W[x.interval],0),sw=bear.reduce((s,x)=>s+W[x.interval],0),weighted=Math.max(bw,sw)/6*100,da=Math.max(bull.length,bear.length)/3*100,dom=bw>sw?'BULLISH':sw>bw?'BEARISH':'NONE',four=S.tf['4h'],trend=xs.filter(x=>x.trend===dom).length,mom=xs.filter(x=>x.momentum===(dom==='BULLISH'?'POSITIVE':dom==='BEARISH'?'NEGATIVE':'__')).length,vol=xs.filter(x=>x.vol>=1).length,structure=xs.filter(x=>x.structure.alignment===dom).length,transitions=xs.filter(x=>x.structure.transition===(dom==='BULLISH'?'BULLISH TRANSITION':dom==='BEARISH'?'BEARISH TRANSITION':'__')).length,confirmedBreaks=xs.filter(x=>x.structure.bosConfirmed&&x.structure.alignment===dom).length,ext=xs.filter(x=>x.ext!=null&&x.ext<=2.5).length,selected=S.tf[$('detail').value]||xs[0],rsi=rsiState(selected.R,dom),lastTs=selected.closed.at(-1)[0],fresh=Number.isFinite(+lastTs)?Date.now()-+lastTs<Math.max(15*60*1000,intervalMs(selected.interval)*2):false,liq=!!S.book&&S.book.total>=50000&&(S.book.spread==null||S.book.spread<=0.1);
   let fourDirectional=dom!=='NONE'&&four.dir===dom;
   let fourStructural=four.structure.alignment===dom;
   let gates=[
@@ -141,7 +191,7 @@ function authoritative(){
     ['Liquidity',liq,liq?'adequate depth':'insufficient depth']
   ];
   let pass=gates.every(g=>g[1])&&dom!=='NONE';
-  let quality=Math.min(10,avg(xs.map(x=>x.strength))*0.68+(vol/3)*1.0+(structure/3)*1.1+(ext/3)*.7+(xs.filter(x=>x.structure.aligned===dom).length/3)*.4+(transitions/3)*.25);
+  let quality=Math.min(10,avg(xs.map(x=>x.strength))*0.68+(vol/3)*1.0+(structure/3)*1.1+(ext/3)*.7+(xs.filter(x=>x.structure.alignment===dom).length/3)*.4+(transitions/3)*.25);
   let reasons=gates.filter(g=>!g[1]).map(g=>g[0]+': '+g[2]);
   let structureDetail=xs.map(x=>{let st=x.structure,flags=structureEvidence(st),transition=st.transition!=='NONE'?` • ${st.transition}`:'',retest=st.retest!=='NONE'?` • ${st.retest}`:'';return `${x.interval} ${st.state} (${flags}${st.event!=='NONE'?' • '+st.event:''}${transition}${retest})`;});
   let audit={
@@ -199,7 +249,7 @@ function render(){
   renderChart(s.closed.slice(-100));
 
   let st=s.structure;
-  let structureRows=[['Bias',st.bias],['Event',st.event],['Break confirmation',st.bosConfirmed?'YES • '+st.breakBars+' closes':'NO'],['Retest',st.retest],['HH',st.hh?'YES':'NO'],['HL',st.hl?'YES':'NO'],['LH',st.lh?'YES':'NO'],['LL',st.ll?'YES':'NO'],['Support',n(st.support)],['Resistance',n(st.resistance)],['Confirmed swings',st.swings],['Structure confidence',st.confidence+'%']];
+  let structureRows=[['Swing bias',st.bias],['Structure state',st.state],['Directional alignment',st.alignment],['Event',st.event],['Break confirmation',st.bosConfirmed?'YES • '+st.breakBars+' closes':'NO'],['Retest',st.retest],['HH',st.hh?'YES':'NO'],['HL',st.hl?'YES':'NO'],['LH',st.lh?'YES':'NO'],['LL',st.ll?'YES':'NO'],['Support',n(st.support)],['Resistance',n(st.resistance)],['Confirmed swings',st.swings],['Structure confidence',st.confidence+'%']];
   $('structure').innerHTML=structureRows.map(function(x){return '<div class="metric"><div class="k">'+x[0]+'</div><div class="v">'+x[1]+'</div></div>';}).join(''); $('structureNote').textContent='Swing evidence (HH/HL/LH/LL) is not the same as confirmed directional structure. A timeframe can show individual swing characteristics while remaining RANGE or transitioning. A confirmed break requires the persistence rule; retests are additional context and do not by themselves create direction.';
 
   let A=d.audit;
@@ -207,9 +257,9 @@ function render(){
   $('audit').innerHTML=auditRows.map(function(x){let cls=(x[0]==='Final decision'?(x[1]==='QUALIFIED'?'good':'bad'):x[1]==='PASS'?'good':x[1]==='BLOCK'?'bad':'');return '<div class="metric"><div class="k">'+x[0]+'</div><div class="v '+cls+'">'+x[1]+'</div></div>';}).join('');
 
   let I=S.intel||{};
-  let intelRows=[['Context pairs',(I.valid||0)+'/'+(I.expected||0)],['Bullish',(I.bull||0)],['Bearish',(I.bear||0)],['Neutral',(I.neutral||0)],['Breadth %',p(I.breadth||0)],['Avg volume',n(I.avgVol||0,2)+'x'],['BTC context',I.btc||'—'],['ETH context',I.eth||'—'],['Alt alignment',(I.alts||0)+'/8'],['Book imbalance',n(S.book?.imb,1)+'%'],['Top depth',n(S.book?.total,0)]];
+  let intelRows=[['Context pairs',(I.valid||0)+'/'+(I.expected||0)],['Bullish',(I.bull||0)],['Bearish',(I.bear||0)],['Neutral',(I.neutral||0)],['Bullish share %',p(I.breadth||0)],['Avg volume',n(I.avgVol||0,2)+'x'],['BTC context',I.btc||'—'],['ETH context',I.eth||'—'],['Alt alignment',(I.alts||0)+'/8'],['Book imbalance',n(S.book?.imb,1)+'%'],['Top depth',n(S.book?.total,0)]];
   $('intel').innerHTML=intelRows.map(function(x){return '<div class="metric"><div class="k">'+x[0]+'</div><div class="v">'+x[1]+'</div></div>';}).join('');
-  $('intelText').textContent='Market intelligence is contextual only. It cannot create a trade direction. Context result: '+(I.bull||0)+' bullish, '+(I.bear||0)+' bearish, '+(I.neutral||0)+' neutral, with '+(I.valid||0)+'/'+(I.expected||0)+' valid context pairs. Breadth is '+p(I.breadth||0)+'; BTC='+(I.btc||'—')+', ETH='+(I.eth||'—')+'.';
+  $('intelText').textContent='Market intelligence is contextual only. It cannot create a trade direction. Context result: '+(I.bull||0)+' bullish, '+(I.bear||0)+' bearish, '+(I.neutral||0)+' neutral, with '+(I.valid||0)+'/'+(I.expected||0)+' valid context pairs. Bullish share is '+p(I.breadth||0)+'; BTC='+(I.btc||'—')+', ETH='+(I.eth||'—')+'.';
 
   let live=S.live||0;
   let liveRows=[['Live price',n(live)],['WebSocket',S.ws?'CONNECTED':'DISCONNECTED'],['Stream age',S.wsAge==null?'—':n((Date.now()-S.wsAge)/1000,0)+'s'],['Closed decision',n(s.closed.at(-1)[4])],['Book spread',n(S.book?.spread,4)],['Liquidity',S.book?.total?'ADEQUATE':'UNAVAILABLE'],['Weighted confluence',p(d.weighted)],['Engine',d.pass?'READY':'LOCKED']];
